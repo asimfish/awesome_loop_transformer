@@ -33,8 +33,12 @@ bash scripts/build_pdfs.sh
 
 # 4. Slides
 open slides/html/index.html               # arrow keys / space to navigate, P to print
-python3 scripts/export_slides.py          # HTML -> PDF + PNG previews (Playwright), or use headless Chromium --print-to-pdf
+python3 scripts/export_slides.py          # HTML -> PDF + PNG previews with headless Chromium (set CHROME_BIN if needed)
 cd slides/beamer && xelatex loop_transformer_slides.tex && xelatex loop_transformer_slides.tex
+
+# 5. Editable PPTX through ppt-master (https://github.com/hugohe3/ppt-master; python>=3.10 + its requirements.txt)
+export PPT_MASTER_HOME=/path/to/ppt-master
+bash scripts/build_pptx.sh                # page SVGs -> quality gate -> SVG-to-DrawingML export -> slides/pptx/
 ```
 
 ## How this was made
@@ -43,7 +47,7 @@ cd slides/beamer && xelatex loop_transformer_slides.tex && xelatex loop_transfor
 - **Translation.** [SuperTranslate](https://github.com/asimfish/super_translate) native engine (layout-preserving, formulas and figures frozen, DeepSeek backend) followed by its object-level `inspect` QA. Three of five PDFs pass with zero issues; the remaining flags are documented in [`papers/zh/QA_SUMMARY.md`](papers/zh/QA_SUMMARY.md).
 - **Literature search.** arXiv API queries on 2026-09-06 for looped / recurrent-depth / depth-recurrent transformers, latent reasoning with loops or recursion, and named model families; abstracts of the 60 most relevant works are kept in [`data/related_abstracts.json`](data/related_abstracts.json).
 - **Writing style.** Claims first, necessary limits stated once, numbers checkable in place — following [anti-defensive-writing](https://github.com/Kiterlin/anti-defensive-writing) and [说人话 shuorenhua](https://github.com/MrGeDiao/shuorenhua).
-- **Layout.** Report PDFs via pandoc + XeLaTeX with a shared header (`scripts/pandoc_header.tex`); the Beamer deck follows the [beamer-skill](https://github.com/Noi1r/beamer-skill) rules (16:9, 10pt, no overlays, semantic color-blind-safe palette, references and backup slides); the HTML deck follows the `technical-deepdive` style contract of [ppt-master](https://github.com/hugohe3/ppt-master) (problem → mechanism → trade-off → implication, blueprint palette, every number with its conditions). Paper-writing conventions were checked against [PaperOrchestra](https://github.com/Ar9av/PaperOrchestra).
+- **Layout.** Report PDFs via pandoc + XeLaTeX with a shared header (`scripts/pandoc_header.tex`); the Beamer deck follows the [beamer-skill](https://github.com/Noi1r/beamer-skill) rules (16:9, 10pt, no overlays, semantic color-blind-safe palette, references and backup slides); the HTML deck and the PPTX follow the `technical-deepdive` style contract of [ppt-master](https://github.com/hugohe3/ppt-master) (problem → mechanism → trade-off → implication, blueprint palette, every number with its conditions); the PPTX itself is produced by ppt-master's Quick Generate route — `scripts/build_pptx_svgs.py` emits contract-conforming page SVGs (root bounds per module, one text frame per paragraph block, NBSP frame slack so renderers that ignore `wrap="none"` do not re-wrap), which pass its final quality gate and are exported to native DrawingML shapes. Paper-writing conventions were checked against [PaperOrchestra](https://github.com/Ar9av/PaperOrchestra).
 - **List format.** Follows [awesome-ml4co](https://github.com/Thinklab-SJTU/awesome-ml4co): `data/papers.csv` is the source of truth and `src/generator.py` renders the README.
 
 ## Contributing

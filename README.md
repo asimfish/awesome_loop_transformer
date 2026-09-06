@@ -6,7 +6,7 @@ A curated, annotated list of papers on **looped / recurrent-depth / weight-tied 
 
 This repository started from the WeChat article [《刚刚，GPT-6 Astra 背后的 Loop 技术全被挖出来了》](https://mp.weixin.qq.com/s/7vEMyFVpf2O9WL4Lu4gSFQ) (PaperAgent, after a thread by [@nrehiew_](https://x.com/nrehiew_/status/2095115984873062675)). The five papers it threads together are marked with ⭐ below and are covered by full-length reports, layout-preserving Chinese translations, and a survey with ten trend insights. Everything else was collected through arXiv searches on 2026-09-06.
 
-**中文读者**：五篇核心论文的逐篇深度解读在 [`reports/zh/`](reports/zh/)，保版式中译 PDF 在 [`papers/zh/`](papers/zh/)，趋势综述在 [`survey/zh/`](survey/zh/)，完整中文报告 PDF 见 [`reports/pdf/awesome_loop_transformer_report_zh.pdf`](reports/pdf/awesome_loop_transformer_report_zh.pdf)，HTML 演示见 [`slides/html/index.html`](slides/html/index.html)。
+**中文说明见 [README_zh.md](README_zh.md)。** 五篇核心论文的逐篇深度解读在 [`reports/zh/`](reports/zh/)，保版式中译 PDF 在 [`papers/zh/`](papers/zh/)，趋势综述在 [`survey/zh/`](survey/zh/)，完整中文报告 PDF 见 [`reports/pdf/awesome_loop_transformer_report_zh.pdf`](reports/pdf/awesome_loop_transformer_report_zh.pdf)，HTML 演示见 [`slides/html/index.html`](slides/html/index.html)。
 
 ## What is in this repository
 
@@ -19,7 +19,10 @@ This repository started from the WeChat article [《刚刚，GPT-6 Astra 背后�
 | Survey: taxonomy, timeline, ~60-paper map, ten trend insights, open problems | [`survey/zh/survey_zh.md`](survey/zh/survey_zh.md) ([PDF](survey/zh/survey_zh.pdf)), [`survey/en/survey_en.md`](survey/en/survey_en.md) ([PDF](survey/en/survey_en.pdf)) |
 | HTML slide deck (21 slides, Chinese) + PDF export | [`slides/html/index.html`](slides/html/index.html), [`slides/html/awesome_loop_transformer_slides_zh.pdf`](slides/html/awesome_loop_transformer_slides_zh.pdf) |
 | Beamer slide deck (English, 16:9, with backup slides) | [`slides/beamer/loop_transformer_slides.pdf`](slides/beamer/loop_transformer_slides.pdf) ([source](slides/beamer/loop_transformer_slides.tex)) |
+| Editable PowerPoint deck (Chinese, 21 slides, native shapes via ppt-master) + LibreOffice preview | [`slides/pptx/awesome_loop_transformer_slides_zh.pptx`](slides/pptx/awesome_loop_transformer_slides_zh.pptx) ([preview PDF](slides/pptx/awesome_loop_transformer_slides_zh.preview.pdf), [page SVGs](slides/pptx/svg_output/)) |
 | Machine-readable paper list and abstracts | [`data/papers.csv`](data/papers.csv), [`data/related_abstracts.json`](data/related_abstracts.json) |
+
+Online slides: [asimfish.github.io/awesome_loop_transformer/slides/html/](https://asimfish.github.io/awesome_loop_transformer/slides/html/)
 
 <p align="center">
   <a href="slides/html/index.html"><img src="assets/figures/slide_02.png" width="49%" alt="One-page conclusions slide"></a>
@@ -579,8 +582,12 @@ bash scripts/build_pdfs.sh
 
 # 4. Slides
 open slides/html/index.html               # arrow keys / space to navigate, P to print
-python3 scripts/export_slides.py          # HTML -> PDF + PNG previews (Playwright), or use headless Chromium --print-to-pdf
+python3 scripts/export_slides.py          # HTML -> PDF + PNG previews with headless Chromium (set CHROME_BIN if needed)
 cd slides/beamer && xelatex loop_transformer_slides.tex && xelatex loop_transformer_slides.tex
+
+# 5. Editable PPTX through ppt-master (https://github.com/hugohe3/ppt-master; python>=3.10 + its requirements.txt)
+export PPT_MASTER_HOME=/path/to/ppt-master
+bash scripts/build_pptx.sh                # page SVGs -> quality gate -> SVG-to-DrawingML export -> slides/pptx/
 ```
 
 ## How this was made
@@ -589,7 +596,7 @@ cd slides/beamer && xelatex loop_transformer_slides.tex && xelatex loop_transfor
 - **Translation.** [SuperTranslate](https://github.com/asimfish/super_translate) native engine (layout-preserving, formulas and figures frozen, DeepSeek backend) followed by its object-level `inspect` QA. Three of five PDFs pass with zero issues; the remaining flags are documented in [`papers/zh/QA_SUMMARY.md`](papers/zh/QA_SUMMARY.md).
 - **Literature search.** arXiv API queries on 2026-09-06 for looped / recurrent-depth / depth-recurrent transformers, latent reasoning with loops or recursion, and named model families; abstracts of the 60 most relevant works are kept in [`data/related_abstracts.json`](data/related_abstracts.json).
 - **Writing style.** Claims first, necessary limits stated once, numbers checkable in place — following [anti-defensive-writing](https://github.com/Kiterlin/anti-defensive-writing) and [说人话 shuorenhua](https://github.com/MrGeDiao/shuorenhua).
-- **Layout.** Report PDFs via pandoc + XeLaTeX with a shared header (`scripts/pandoc_header.tex`); the Beamer deck follows the [beamer-skill](https://github.com/Noi1r/beamer-skill) rules (16:9, 10pt, no overlays, semantic color-blind-safe palette, references and backup slides); the HTML deck follows the `technical-deepdive` style contract of [ppt-master](https://github.com/hugohe3/ppt-master) (problem → mechanism → trade-off → implication, blueprint palette, every number with its conditions). Paper-writing conventions were checked against [PaperOrchestra](https://github.com/Ar9av/PaperOrchestra).
+- **Layout.** Report PDFs via pandoc + XeLaTeX with a shared header (`scripts/pandoc_header.tex`); the Beamer deck follows the [beamer-skill](https://github.com/Noi1r/beamer-skill) rules (16:9, 10pt, no overlays, semantic color-blind-safe palette, references and backup slides); the HTML deck and the PPTX follow the `technical-deepdive` style contract of [ppt-master](https://github.com/hugohe3/ppt-master) (problem → mechanism → trade-off → implication, blueprint palette, every number with its conditions); the PPTX itself is produced by ppt-master's Quick Generate route — `scripts/build_pptx_svgs.py` emits contract-conforming page SVGs (root bounds per module, one text frame per paragraph block, NBSP frame slack so renderers that ignore `wrap="none"` do not re-wrap), which pass its final quality gate and are exported to native DrawingML shapes. Paper-writing conventions were checked against [PaperOrchestra](https://github.com/Ar9av/PaperOrchestra).
 - **List format.** Follows [awesome-ml4co](https://github.com/Thinklab-SJTU/awesome-ml4co): `data/papers.csv` is the source of truth and `src/generator.py` renders the README.
 
 ## Contributing

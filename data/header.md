@@ -6,7 +6,7 @@ A curated, annotated list of papers on **looped / recurrent-depth / weight-tied 
 
 This repository started from the WeChat article [《刚刚，GPT-6 Astra 背后的 Loop 技术全被挖出来了》](https://mp.weixin.qq.com/s/7vEMyFVpf2O9WL4Lu4gSFQ) (PaperAgent, after a thread by [@nrehiew_](https://x.com/nrehiew_/status/2095115984873062675)). The five papers it threads together are marked with ⭐ below and are covered by full-length reports, layout-preserving Chinese translations, and a survey with ten trend insights. Everything else was collected through arXiv searches on 2026-09-06.
 
-**中文读者**：五篇核心论文的逐篇深度解读在 [`reports/zh/`](reports/zh/)，保版式中译 PDF 在 [`papers/zh/`](papers/zh/)，趋势综述在 [`survey/zh/`](survey/zh/)，完整中文报告 PDF 见 [`reports/pdf/awesome_loop_transformer_report_zh.pdf`](reports/pdf/awesome_loop_transformer_report_zh.pdf)，HTML 演示见 [`slides/html/index.html`](slides/html/index.html)。
+**中文说明见 [README_zh.md](README_zh.md)。** 五篇核心论文的逐篇深度解读在 [`reports/zh/`](reports/zh/)，保版式中译 PDF 在 [`papers/zh/`](papers/zh/)，趋势综述在 [`survey/zh/`](survey/zh/)，完整中文报告 PDF 见 [`reports/pdf/awesome_loop_transformer_report_zh.pdf`](reports/pdf/awesome_loop_transformer_report_zh.pdf)，HTML 演示见 [`slides/html/index.html`](slides/html/index.html)。
 
 ## What is in this repository
 
@@ -19,7 +19,10 @@ This repository started from the WeChat article [《刚刚，GPT-6 Astra 背后�
 | Survey: taxonomy, timeline, ~60-paper map, ten trend insights, open problems | [`survey/zh/survey_zh.md`](survey/zh/survey_zh.md) ([PDF](survey/zh/survey_zh.pdf)), [`survey/en/survey_en.md`](survey/en/survey_en.md) ([PDF](survey/en/survey_en.pdf)) |
 | HTML slide deck (21 slides, Chinese) + PDF export | [`slides/html/index.html`](slides/html/index.html), [`slides/html/awesome_loop_transformer_slides_zh.pdf`](slides/html/awesome_loop_transformer_slides_zh.pdf) |
 | Beamer slide deck (English, 16:9, with backup slides) | [`slides/beamer/loop_transformer_slides.pdf`](slides/beamer/loop_transformer_slides.pdf) ([source](slides/beamer/loop_transformer_slides.tex)) |
+| Editable PowerPoint deck (Chinese, 21 slides, native shapes via ppt-master) + LibreOffice preview | [`slides/pptx/awesome_loop_transformer_slides_zh.pptx`](slides/pptx/awesome_loop_transformer_slides_zh.pptx) ([preview PDF](slides/pptx/awesome_loop_transformer_slides_zh.preview.pdf), [page SVGs](slides/pptx/svg_output/)) |
 | Machine-readable paper list and abstracts | [`data/papers.csv`](data/papers.csv), [`data/related_abstracts.json`](data/related_abstracts.json) |
+
+Online slides: [asimfish.github.io/awesome_loop_transformer/slides/html/](https://asimfish.github.io/awesome_loop_transformer/slides/html/)
 
 <p align="center">
   <a href="slides/html/index.html"><img src="assets/figures/slide_02.png" width="49%" alt="One-page conclusions slide"></a>
