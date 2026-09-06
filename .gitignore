@@ -1,0 +1,18 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+# OS / editor
+.DS_Store
+.vscode/
+# temp files created by build scripts
+scripts/_meta_*.md
+scripts/_pagebreak.md
+__pycache__/

@@ -1,0 +1,36 @@
+% Shared LaTeX header for report PDFs (XeLaTeX via pandoc)
+\usepackage{longtable,booktabs,array,etoolbox}
+\usepackage{xcolor}
+\usepackage{microtype}
+\definecolor{accent}{HTML}{1F4E79}
+\definecolor{rulegray}{HTML}{BBBBBB}
+\setlength{\emergencystretch}{3em}
+\setlength{\parskip}{4pt plus 1pt}
+\setlength{\LTpre}{6pt}
+\setlength{\LTpost}{6pt}
+% smaller tables so wide comparison tables fit the text block
+\AtBeginEnvironment{longtable}{\footnotesize\renewcommand{\arraystretch}{1.15}}
+% section styling
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{accent!85!black}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{14pt plus 2pt}{6pt}
+\titlespacing*{\subsection}{0pt}{10pt plus 2pt}{4pt}
+% header / footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.3pt}
+\fancyhead[L]{\small\color{gray}awesome\_loop\_transformer}
+\fancyhead[R]{\small\color{gray}\nouppercase{\leftmark}}
+\fancyfoot[C]{\small\thepage}
+% tighter lists
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=*}
+% blockquote styling
+\usepackage{framed}
+\renewenvironment{quote}{\begin{leftbar}\small}{\end{leftbar}}
+\renewenvironment{leftbar}{%
+  \def\FrameCommand{{\color{accent}\vrule width 2pt}\hspace{8pt}}%
+  \MakeFramed{\advance\hsize-\width\FrameRestore}}{\endMakeFramed}

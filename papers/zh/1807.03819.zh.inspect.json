@@ -1,0 +1,17 @@
+{
+  "issue_count": 2,
+  "issues": [
+    {
+      "page": 3,
+      "code": "untranslated_block",
+      "severity": "error",
+      "message": "Page 3: paragraph still in English (4 words, 0 CJK chars) at x=246.9, y=413.6: where headi =ATTENTION(HtW Q"
+    },
+    {
+      "page": 3,
+      "code": "untranslated_block",
+      "severity": "error",
+      "message": "Page 3: paragraph still in English (6 words, 0 CJK chars) at x=124.6, y=521.6: where At =LAYERNORM((Ht−1+P t)+MULTIHEADSELFATTENTION(Ht"
+    }
+  ]
+}

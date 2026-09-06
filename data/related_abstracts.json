@@ -1,0 +1,970 @@
+[
+ {
+  "id": "2507.10524v3",
+  "title": "Mixture-of-Recursions: Learning Dynamic Recursive Depths for Adaptive Token-Level Computation",
+  "date": "2025-07-14",
+  "authors": [
+   "Sangmin Bae",
+   "Yujin Kim",
+   "Reza Bayat",
+   "Sungnyun Kim",
+   "Jiyoun Ha",
+   "Tal Schuster",
+   "Adam Fisch",
+   "Hrayr Harutyunyan",
+   "Ziwei Ji",
+   "Aaron Courville",
+   "Se-Young Yun"
+  ],
+  "abstract": "Scaling language models unlocks impressive capabilities, but the accompanying computational and memory demands make both training and deployment expensive. Existing efficiency efforts typically target either parameter sharing or adaptive computation, leaving open the question of how to attain both simultaneously. We introduce Mixture-of-Recursions (MoR), a unified framework that combines the two axes of efficiency inside a single Recursive Transformer. MoR reuses a shared stack of layers across recursion steps to achieve parameter efficiency, while lightweight routers enable adaptive token-level thinking by dynamically assigning different recursion depths to individual tokens. This allows MoR to focus quadratic attention computation only among tokens still active at a given recursion depth, further improving memory access efficiency by selectively caching only their key-value pairs. Beyond these core mechanisms, we also propose a KV sharing variant that reuses KV pairs from the first recursion, specifically designed to further decrease memory footprint. Across model scales ranging from 135M to 1.7B parameters, MoR forms a new Pareto frontier: at equal training FLOPs and smaller model sizes, it significantly lowers validation perplexity and improves few-shot accuracy, while delivering higher throughput compared with vanilla and existing recursive baselines. These gains demonstrate that MoR is an effective path towards large-model quality without incurring large-model cost.",
+  "comment": "38 pages, 9 figures, 17 tables, codes at https://github.com/raymin0223/mixture_of_recursions"
+ },
+ {
+  "id": "2605.26733v1",
+  "title": "Stabilizing Recurrent Dynamics for Test-Time Scalable Latent Reasoning in Looped Language Models",
+  "date": "2026-05-26",
+  "authors": [
+   "Xiao-Wen Yang",
+   "Ziyu Han",
+   "Xi-Hua Zhang",
+   "Wen-Da Wei",
+   "Jie-Jing Shao",
+   "Lan-Zhe Guo",
+   "Yu-Feng Li"
+  ],
+  "abstract": "Looped Language Models (LoopLMs) enable efficient latent reasoning through depth recurrence, yet exhibit unreliable test-time scaling behavior: performance often peaks at a certain iteration depth and then collapses with further recurrence. Through latent dynamics analysis, we find an inherent trade-off between stability and effectiveness in existing architectures and strategies. By conceptualizing reasoning as uncertainty reduction, we propose that convergence toward stable fixed points while preserving effectiveness represents a promising way. To this end, we propose STARS (STAbility-driven Recurrent Scaling), a training framework that constrains latent states to approach asymptotically stable fixed points. This is realized via efficient Jacobian Spectral Radius Regularization with random loop sampling, enabling STARS to maximize effectiveness while ensuring rigorous stability. Experiments on arithmetic tasks show that STARS achieves reliable test-time scaling, and on complex mathematical reasoning it substantially mitigates performance degradation as recurrence depth increases while also improving peak performance.",
+  "comment": "ICML 2026"
+ },
+ {
+  "id": "2602.02156v1",
+  "title": "LoopViT: Scaling Visual ARC with Looped Transformers",
+  "date": "2026-02-02",
+  "authors": [
+   "Wen-Jie Shu",
+   "Xuerui Qiu",
+   "Rui-Jie Zhu",
+   "Harold Haodong Chen",
+   "Yexin Liu",
+   "Harry Yang"
+  ],
+  "abstract": "Recent advances in visual reasoning have leveraged vision transformers to tackle the ARC-AGI benchmark. However, we argue that the feed-forward architecture, where computational depth is strictly bound to parameter size, falls short of capturing the iterative, algorithmic nature of human induction. In this work, we propose a recursive architecture called Loop-ViT, which decouples reasoning depth from model capacity through weight-tied recurrence. Loop-ViT iterates a weight-tied Hybrid Block, combining local convolutions and global attention, to form a latent chain of thought. Crucially, we introduce a parameter-free Dynamic Exit mechanism based on predictive entropy: the model halts inference when its internal state ``crystallizes\" into a low-uncertainty attractor. Empirical results on the ARC-AGI-1 benchmark validate this perspective: our 18M model achieves 65.8% accuracy, outperforming massive 73M-parameter ensembles. These findings demonstrate that adaptive iterative computation offers a far more efficient scaling axis for visual reasoning than simply increasing network width. The code is available at https://github.com/WenjieShu/LoopViT.",
+  "comment": "8 pages, 11 figures"
+ },
+ {
+  "id": "2605.30202v1",
+  "title": "A Dual-Path Architecture for Scaling Compute and Capacity in LLMs",
+  "date": "2026-05-28",
+  "authors": [
+   "Markus Frey",
+   "Behzad Shomali",
+   "Joachim Koehler",
+   "Mehdi Ali"
+  ],
+  "abstract": "Looped transformers apply a shared block multiple times and have emerged as a parameter-efficient route to scaling compute in language models. However, at fixed FLOPs a looped model has strictly less capacity than a baseline transformer. We propose a novel dual-path block that can flexibly scale compute, the number of sequential operations applied to a hidden state, and capacity, the parameters available at a single step. For this we expose both axes as parallel pathways within a single layer: a deep sublayer re-applied K times with shared parameters, and a wide sublayer with an enlarged feed-forward network applied once. Independent per-token gates combine both axes and allow detailed per-token routing analyses. We show that across two FLOP budgets, our dual-path model surpasses iso-FLOP matched models on language modeling and downstream evaluations, while using fewer parameters than the baseline at matched FLOPs. The learned gates are directly interpretable and show systematic per-token allocation with function words and lexical content trend wide, while punctuation, symbols, and arithmetic tokens trend deep.",
+  "comment": ""
+ },
+ {
+  "id": "2603.08391v3",
+  "title": "Adaptive Loops and Memory in Transformers: Think Harder or Know More?",
+  "date": "2026-03-09",
+  "authors": [
+   "Markus Frey",
+   "Behzad Shomali",
+   "Ali Hamza Bashir",
+   "David Berghaus",
+   "Joachim Koehler",
+   "Mehdi Ali"
+  ],
+  "abstract": "Chain-of-thought (CoT) prompting enables reasoning in language models but requires explicit verbalization of intermediate steps. Looped transformers offer an alternative by iteratively refining representations within hidden states. This parameter efficiency comes at a cost, as looped models lack the storage capacity of deeper models which use unique weights per layer. In this work, we investigate transformer models that feature both adaptive per-layer looping, where each transformer block learns to iterate its hidden state via a learned halting mechanism, and gated memory banks, that provide additional learned storage. We find that looping primarily benefits mathematical reasoning, while memory banks help recover performance on commonsense tasks compared to parameter and FLOP matched models. Combining both mechanisms yields a model that outperforms an iso-FLOP baseline, with three times the number of layers, across math benchmarks. Analysis of model internals reveals layer specialization: early layers learn to loop minimally and access memory sparingly, while later layers do both more heavily.",
+  "comment": "Published at Latent & Implicit Thinking Workshop @ ICLR 2026"
+ },
+ {
+  "id": "2604.18839v1",
+  "title": "One Step Forward and K Steps Back: Better Reasoning with Denoising Recursion Models",
+  "date": "2026-04-20",
+  "authors": [
+   "Chris Cameron",
+   "Wangzheng Wang",
+   "Nikita Ivanov",
+   "Ashmita Bhattacharyya",
+   "Didier Chételat",
+   "Yingxue Zhang"
+  ],
+  "abstract": "Looped transformers scale computational depth without increasing parameter count by repeatedly applying a shared transformer block and can be used for iterative refinement, where each loop rewrites a full fixed-size prediction in parallel. On difficult problems, such as those that require search-like computation, reaching a highly structured solution starting from noise can require long refinement trajectories. Learning such trajectories is challenging when training specifies only the target solution and provides no supervision over the intermediate refinement path. Diffusion models tackle this issue by corrupting data with varying magnitudes of noise and training the model to reverse it in a \\textit{single step}. However, this process misaligns training and testing behaviour. We introduce Denoising Recursion Models, a method that similarly corrupts data with noise but trains the model to reverse the corruption over \\textit{multiple} recursive steps. This strategy provides a tractable curriculum of intermediate states, while better aligning training with testing and incentivizing non-greedy, forward-looking generation. Through extensive experiments, we show this approach outperforms the Tiny Recursion Model (TRM) on ARC-AGI, where it recently achieved breakthrough performance.",
+  "comment": ""
+ },
+ {
+  "id": "2607.22083v2",
+  "title": "Nanbeige4.2-3B: Unlocking Agentic Capabilities in a Compact Model",
+  "date": "2026-07-24",
+  "authors": [
+   "Nanbeige Lab",
+   " :",
+   "Chen Yang",
+   "Chengrui Huang",
+   "Fufeng Lan",
+   "Hanhui Chen",
+   "Hao Zhou",
+   "Huatong Song",
+   "Jiaqi Cao",
+   "Jiaying Zhu",
+   "Jinlin Niu",
+   "Kai Wang",
+   "Lisheng Huang",
+   "Qiliang Liang",
+   "Ran Le",
+   "Ruixiang Feng",
+   "Shuang Sun",
+   "Tao Gu",
+   "Tao Zhang",
+   "Tianyu Luo",
+   "Yang Song",
+   "Yun Xing",
+   "Yuntao Wen",
+   "Ziyao Xu",
+   "Zongchao Chen",
+   "Zongqiang Li"
+  ],
+  "abstract": "We present Nanbeige4.2-3B, a compact general agentic model with 3B non-embedding parameters. It delivers strong performance across code-agent, office-agent, and complex tool-use tasks while maintaining highly competitive reasoning capabilities in mathematics, coding, and science. Nanbeige4.2-3B is pretrained from scratch on 28T tokens with a Looped Transformer that reuses the layer stack to increase capacity without adding parameters. For SFT data and trajectory construction, we expand the diversity of executable environments, task assets, and agentic scaffolds through real-world deployment and large-scale synthesis. Our RL pipeline applies mixed-mode RLHF over Think and Non-Think responses to improve overall model quality and reduce failure cases, length-controlled reasoning RL to balance accuracy and reasoning efficiency, and agentic RL with outcome and process rewards to stabilize long-horizon training. Extensive evaluations show that Nanbeige4.2-3B outperforms larger models, including Qwen3.5-9B and Gemma4-12B, across diverse agentic benchmarks while remaining competitive on reasoning and alignment tasks. Performance with OpenClaw further supports its use as a compact local personal assistant.",
+  "comment": ""
+ },
+ {
+  "id": "2607.00341v2",
+  "title": "DiscoLoop: Looping Discrete Embeddings and Continuous Hidden States for Multi-hop Reasoning",
+  "date": "2026-07-01",
+  "authors": [
+   "Hengyu Fu",
+   "Tianyu Guo",
+   "Zixuan Wang",
+   "Hanlin Zhu",
+   "Jason D. Lee",
+   "Jiantao Jiao",
+   "Stuart Russell",
+   "Song Mei"
+  ],
+  "abstract": "Large language models achieve strong performance on many reasoning tasks when allowed to externalize intermediate steps as Chain-of-Thought (CoT). However, many questions require the model to internalize the multi-step reasoning within a single forward pass before generating the answer. We study this challenge through two-hop reasoning, a representative task where the model must compose multiple pieces of parametric knowledge within a single forward pass. Standard non-recurrent Transformers suffer from a depth-local storage problem: facts learned in earlier layers are unavailable where second-hop retrieval happens. We found that Looped Transformers mitigate this issue by reusing the same memory, but still generalize imperfectly. We show that the remaining bottleneck is representational. In the two-hop reasoning task, the first loop often makes the correct bridge entity nearly perfectly decodable, yet the corresponding hidden state remains poorly aligned with the bridge token embedding. Surprisingly, an easy training-free realignment intervention nearly closes the generalization gap. Building upon this insight, we propose DiscoLoop, a looping architecture whose recurrence carries both a discrete embedding channel and a continuous hidden-state channel. DiscoLoop achieves near-perfect accuracy with substantially fewer training steps across symbolic and synthetic-language multi-hop reasoning tasks. When applied to real-world pretraining, DiscoLoop attains lower training loss and stronger benchmark performance than looped-transformer baselines, suggesting that the mixed-channel design transfers to practical language modeling.",
+  "comment": "16 pages, 7 figures"
+ },
+ {
+  "id": "2606.18206v1",
+  "title": "Fixed-Point Reasoners: Stable and Adaptive Deep Looped Transformers",
+  "date": "2026-06-16",
+  "authors": [
+   "Sajad Movahedi",
+   "Vera Milovanović",
+   "Shlomo Libo Feigin",
+   "Alexander Theus",
+   "Thomas Hofmann",
+   "Valentina Boeva",
+   "T. Konstantin Rusch",
+   "Antonio Orvieto"
+  ],
+  "abstract": "Looped architectures provide an inductive bias toward learning step-by-step procedures for tasks that require compositional reasoning. The number of effective layers reached by looping determines the quality of the solution these models find. Like deep architectures, looped architectures are prone to a signal propagation problem induced by depth as the halting decision is postponed. In this paper, we address this signal propagation issue using pre-norm layers and residual scaling. Building on these architectural modifications, we propose FPRM, a Transformer-based Fixed-Point Reasoning Model that uses fixed-point convergence as an end-to-end halting mechanism in a looped architecture. We show that fixed-point halting allows FPRM to adapt its compute to task difficulty. FPRM is effective on common reasoning benchmarks, namely Sudoku, Maze, state-tracking, and ARC-AGI.",
+  "comment": "Code available at https://github.com/nilskiKonjIzDunava/fprm"
+ },
+ {
+  "id": "2608.13987v1",
+  "title": "Nanbeige4.2-3B on Apple Silicon: Fixing Deployment Bugs and Decreasing Looped Transformer Memory Overhead",
+  "date": "2026-08-14",
+  "authors": [
+   "John T. Halloran"
+  ],
+  "abstract": "Nanbeige4.2-3B is a 3B-parameter agentic model built around a Looped Transformer (LT) that reuses one stack of layers for a second forward pass, adding effective depth without additional parameters. Evaluated on Apple Silicon (MPS), we identify five independent bugs which prevent the released checkpoint from running via Hugging Face transformers out of the box (including a silently-zeroed RoPE buffer and calls to removed transformers cache APIs). Furthermore, we show that fixing these bugs is still not sufficient for agentic tasks, due to the LT's layer-reuse strategy (which effectively doubles peak attention memory) used to achieve parameter efficiency. We thus introduce a chunked-prefill strategy which alleviates the incurred memory-capacity penalty, extending allowable context width by $2.7 \\times$ on 32~GiB shared memory. However, even with the reduced memory overhead, we show that patches are required to render Nanbeige4.2-3B usable; resolving both system prompt and MPS-native memory bugs finally allows reliable evaluation on standard MCP and tool-calling benchmarks. On a subset of MCPMark, the debugged model completes up to 30\\% of real agentic tasks (up from the original's 0\\%), while, on BFCL, it is near-perfect at single tool calls (yet fails the majority of multi-tool tests). We release the patched checkpoint, system prompt optimizer, and evaluation harnesses at https://github.com/johnhalloran321/Nanbeige4.2-3B-mps-fix.",
+  "comment": "8 pages, 3 Tables"
+ },
+ {
+  "id": "2607.13491v2",
+  "title": "DeepLoop: Depth Scaling for Looped Transformers",
+  "date": "2026-07-15",
+  "authors": [
+   "Shuzhen Li",
+   "Yifan Zhang",
+   "Jiacheng Guo",
+   "Quanquan Gu",
+   "Mengdi Wang"
+  ],
+  "abstract": "Looped Transformers scale sequential computation by applying a compact stack of physical blocks for multiple rounds, increasing unrolled depth without increasing stored parameters. This reuse changes the residual-scaling problem: in an untied Transformer, each residual branch receives and applies its own parameter update, whereas in a looped Transformer one shared update aggregates gradients from repeated visits and is read back by those same visits in the next linearized forward pass. We formalize this tied-depth effect through a first-order perturbation bound controlled by a visit-alignment coefficient $κ_R$. The bound recovers the DeepNorm exponent when visits decorrelate, but in the conservative aligned regime it requires the exponent to increase from $1/4$ to $1/2$ as loop count grows at fixed physical depth. The resulting method, \\textbf{DeepLoop}, keeps the Post-LN DeepNorm architecture and sets $α=(2N)^{1/2}$ and $β=(8N)^{-1/2}$ for unrolled depth $N$. On GPT-style looped language models at GPT-2 small and GPT-2 medium scale, DeepLoop is neutral when no physical block is revisited and improves validation loss and downstream accuracy once recurrent depth is activated. These results show that stable recurrent depth requires residual scaling rules that account for parameter visits, not only nominal layer count.",
+  "comment": "25 pages"
+ },
+ {
+  "id": "2311.12424v3",
+  "title": "Looped Transformers are Better at Learning Learning Algorithms",
+  "date": "2023-11-21",
+  "authors": [
+   "Liu Yang",
+   "Kangwook Lee",
+   "Robert Nowak",
+   "Dimitris Papailiopoulos"
+  ],
+  "abstract": "Transformers have demonstrated effectiveness in in-context solving data-fitting problems from various (latent) models, as reported by Garg et al. However, the absence of an inherent iterative structure in the transformer architecture presents a challenge in emulating the iterative algorithms, which are commonly employed in traditional machine learning methods. To address this, we propose the utilization of looped transformer architecture and its associated training methodology, with the aim of incorporating iterative characteristics into the transformer architectures. Experimental results suggest that the looped transformer achieves performance comparable to the standard transformer in solving various data-fitting problems, while utilizing less than 10% of the parameter count.",
+  "comment": "Accepted for publication at ICLR 2024"
+ },
+ {
+  "id": "2410.20672v3",
+  "title": "Relaxed Recursive Transformers: Effective Parameter Sharing with Layer-wise LoRA",
+  "date": "2024-10-28",
+  "authors": [
+   "Sangmin Bae",
+   "Adam Fisch",
+   "Hrayr Harutyunyan",
+   "Ziwei Ji",
+   "Seungyeon Kim",
+   "Tal Schuster"
+  ],
+  "abstract": "Large language models (LLMs) are expensive to deploy. Parameter sharing offers a possible path towards reducing their size and cost, but its effectiveness in modern LLMs remains fairly limited. In this work, we revisit \"layer tying\" as form of parameter sharing in Transformers, and introduce novel methods for converting existing LLMs into smaller \"Recursive Transformers\" that share parameters across layers, with minimal loss of performance. Here, our Recursive Transformers are efficiently initialized from standard pretrained Transformers, but only use a single block of unique layers that is then repeated multiple times in a loop. We further improve performance by introducing Relaxed Recursive Transformers that add flexibility to the layer tying constraint via depth-wise low-rank adaptation (LoRA) modules, yet still preserve the compactness of the overall model. We show that our recursive models (e.g., recursive Gemma 1B) outperform both similar-sized vanilla pretrained models (such as TinyLlama 1.1B and Pythia 1B) and knowledge distillation baselines -- and can even recover most of the performance of the original \"full-size\" model (e.g., Gemma 2B with no shared parameters). Finally, we propose Continuous Depth-wise Batching, a promising new inference paradigm enabled by the Recursive Transformer when paired with early exiting. In a theoretical analysis, we show that this has the potential to lead to significant (2-3x) gains in inference throughput.",
+  "comment": "ICLR 2025; 49 pages, 17 figures, 19 tables"
+ },
+ {
+  "id": "2603.19714v1",
+  "title": "LoopRPT: Reinforcement Pre-Training for Looped Language Models",
+  "date": "2026-03-20",
+  "authors": [
+   "Guo Tang",
+   "Shixin Jiang",
+   "Heng Chang",
+   "Nuo Chen",
+   "Yuhan Li",
+   "Huiming Fan",
+   "Jia Li",
+   "Ming Liu",
+   "Bing Qin"
+  ],
+  "abstract": "Looped language models (LoopLMs) perform iterative latent computation to refine internal representations, offering a promising alternative to explicit chain-of-thought (CoT) reasoning. However, existing reinforcement learning (RL) paradigms primarily target output tokens, creating a structural mismatch with looped architectures whose reasoning unfolds implicitly. In this work, we propose LoopRPT, a reinforcement pre-training framework tailored for LoopLMs. By reframing next-token prediction as a next-token reasoning task, LoopRPT assigns reinforcement signals directly to latent steps using an EMA teacher reference and noisy latent rollouts. This formulation enables RL to directly shape intermediate representations, compressing effective reasoning into fewer iterations. We instantiate LoopRPT on the Ouro architecture across multiple model scales. Results demonstrate that LoopRPT consistently improves per-step representation quality, achieving Pareto dominance in accuracy-computation trade-offs. Notably, significant gains on hard tokens indicate that LoopRPT enhances early-stage reasoning rather than merely encouraging premature exits. Our findings highlight reinforcement pre-training as a principled paradigm for learning efficient latent reasoning in LoopLMs.",
+  "comment": ""
+ },
+ {
+  "id": "2409.15647v5",
+  "title": "Looped Transformers for Length Generalization",
+  "date": "2024-09-24",
+  "authors": [
+   "Ying Fan",
+   "Yilun Du",
+   "Kannan Ramchandran",
+   "Kangwook Lee"
+  ],
+  "abstract": "Recent work has shown that Transformers trained from scratch can successfully solve various arithmetic and algorithmic tasks, such as adding numbers and computing parity. While these Transformers generalize well on unseen inputs of the same length, they struggle with length generalization, i.e., handling inputs of unseen lengths. In this work, we demonstrate that looped Transformers with an adaptive number of steps significantly improve length generalization. We focus on tasks with a known iterative solution, involving multiple iterations of a RASP-L operation - a length-generalizable operation that can be expressed by a finite-sized Transformer. We train looped Transformers using our proposed learning algorithm and observe that they learn highly length-generalizable solutions for various tasks.",
+  "comment": "ICLR 2025"
+ },
+ {
+  "id": "2505.19245v2",
+  "title": "To CoT or To Loop? A Formal Comparison Between Chain-of-Thought and Looped Transformers",
+  "date": "2025-05-25",
+  "authors": [
+   "Kevin Xu",
+   "Issei Sato"
+  ],
+  "abstract": "Chain-of-Thought (CoT) and Looped Transformers have been shown to empirically improve performance on reasoning tasks and to theoretically enhance expressivity by recursively increasing the number of computational steps. However, their comparative capabilities are still not well understood. In this paper, we provide a formal analysis of their respective strengths and limitations. We show that Looped Transformers can efficiently simulate parallel computations for deterministic tasks, which we formalize as evaluation over directed acyclic graphs. In contrast, CoT with stochastic decoding excels at approximate inference for compositional structures, namely self-reducible problems. These separations suggest the tasks for which depth-driven recursion is more suitable, thereby offering practical cues for choosing between reasoning paradigms.",
+  "comment": "For the latest version, see arXiv:2509.25239"
+ },
+ {
+  "id": "2605.07721v2",
+  "title": "Memory-Efficient Looped Transformer: Decoupling Compute from Memory in Looped Language Models",
+  "date": "2026-05-08",
+  "authors": [
+   "Victor Conchello Vendrell",
+   "Arnau Padres Masdemont",
+   "Niccolò Grillo",
+   "Jordi Ros-Giralt",
+   "Arash Behboodi",
+   "Fabio Valerio Massoli"
+  ],
+  "abstract": "Recurrent LLM architectures have emerged as a promising approach for improving reasoning, as they enable multi-step computation in the embedding space without generating intermediate tokens. Models such as Ouro perform reasoning by iteratively updating internal representations while retaining a standard Key-Value (KV) cache across iterations, causing memory consumption to grow linearly with reasoning depth. Consequently, increasing the number of reasoning iterations can lead to prohibitive memory usage, limiting the practical scalability of such architectures. In this work, we propose Memory-Efficient Looped Transformer (MELT), a novel architecture that decouples reasoning depth from memory consumption. Instead of using a standard KV cache per layer and loop, MELT maintains a single KV cache per layer that is shared across reasoning loops. This cache is updated over time via a learnable gating mechanism. To enable stable and efficient training under this architecture, we propose to train MELT using chunk-wise training in a two phase procedure: interpolated transition, followed by attention-aligned distillation, both from the LoopLM starting model to MELT. Empirically, we show that MELT models fine-tuned from pretrained Ouro parameters outperform standard LLMs of comparable size, while maintaining a memory footprint comparable to those models and dramatically smaller than Ouro's. Overall, MELT achieves constant-memory iterative reasoning without sacrificing LoopLM performance, using only a lightweight post-training procedure.",
+  "comment": "22 pages, 5 figures, 11 tables"
+ },
+ {
+  "id": "2605.16343v1",
+  "title": "LoopQ: Quantization for Recursive Transformers",
+  "date": "2026-05-08",
+  "authors": [
+   "Rui Fang",
+   "Hsi-Wen Chen",
+   "Ming-Syan Chen"
+  ],
+  "abstract": "Looped language models (LoopLMs) improve parameter efficiency by recursively reusing Transformer blocks, enabling deeper computation under a fixed model size. However, this reuse makes LoopLMs more fragile under post-training quantization (PTQ). We present the first systematic study of quantization in LoopLMs and identify three challenges: distribution shift across roles, state reuse across loop transitions, and recursive error accumulation. To address these challenges, we propose LoopQ, a loop-aware PTQ framework that preserves a shared quantized backbone while introducing lightweight adaptations. LoopQ combines activation scaling, selective transformation, cross-loop state alignment, and trajectory-aware optimization to reduce distributional mismatch within loops and error accumulation across loops. Experiments across seven benchmarks show that, under W4A4 quantization, LoopQ improves average downstream accuracy by 68.8% and reduces average perplexity by 87.7% compared with the strongest static PTQ baseline.",
+  "comment": ""
+ },
+ {
+  "id": "2509.23314v2",
+  "title": "Two-Scale Latent Dynamics for Recurrent-Depth Transformers",
+  "date": "2025-09-27",
+  "authors": [
+   "Francesco Pappone",
+   "Donato Crisostomi",
+   "Emanuele Rodolà"
+  ],
+  "abstract": "Recurrent-depth transformers scale test-time compute by iterating latent computations before emitting tokens. We study the geometry of these iterates and argue for a simple, two-scale operational picture: (i) within a looped block, updates act as small-scale refinements; (ii) across consecutive blocks, states undergo a larger-scale drift. Across training, our measurements show that loop steps become smaller and increasingly orthogonal to one another, indicating better local modeling of fine structure rather than merely pushing in a single direction. These dynamics motivate an early-exit mechanism based on the model's second-order difference in step-size, which we show is superior in terms of performance, stability and time-efficiency, when compared to the KL-divergence exit strategy of Geiping et al. and its naive first-order counterpart.",
+  "comment": ""
+ },
+ {
+  "id": "2607.08186v1",
+  "title": "Hidden Decoding at Scale: Latent Computation Scaling for Large Language Models",
+  "date": "2026-07-09",
+  "authors": [
+   "Aiwei Liu",
+   "Cheng Shi",
+   "Chuhan Wu",
+   "Ci Lei",
+   "Di Lu",
+   "Donald He",
+   "Fan Zhang",
+   "Fanhao Kong",
+   "Feifei Zhang",
+   "Guan Wang",
+   "Haicheng Wang",
+   "Haoyu Liu",
+   "Houjin Yu",
+   "Jiachen Ding",
+   "Jiayi Feng",
+   "Jie Zhou",
+   "Jijun Chi",
+   "Jindi Shi",
+   "Jing Lei",
+   "Junjie Zhang",
+   "Laiyi Li",
+   "Le Tian",
+   "Linhao Zhang",
+   "Miao Fan",
+   "Sijun Zhang",
+   "Wei Jia",
+   "Weiwei Shi",
+   "Wenhan Li",
+   "Wentao Zhao",
+   "Wenteng Liang",
+   "Xiao Zhou",
+   "Xiaojin Zhou",
+   "Xihuai Wang",
+   "Xinyu Gao",
+   "Xuanliang Wang",
+   "Xuyang Ao",
+   "Yang Yu",
+   "Yangxiu You",
+   "Yinuo Zhao",
+   "Yufei Kuang",
+   "Yufei Wang",
+   "Yuan Liu",
+   "Yuan Liu",
+   "Yuwen Chen",
+   "Zhencong Tian",
+   "Zhongyin Zhao",
+   "Zilin Yu",
+   "Zitao Wang"
+  ],
+  "abstract": "Scaling Large Language Models (LLMs) has been driven mainly by enlarging the Transformer backbone, but for an already-strong model this requires another round of costly pretraining. We study whether an existing backbone can keep improving by allocating more computation to each token while leaving the Transformer backbone fixed. Depth-recurrent (looped) Transformers pursue this goal but are hard to scale, because looped computation does not fit naturally with the pipeline parallelism used to train the largest models. We add computation along the sequence-length dimension, where the extra computation is simply a longer input and stays compatible with standard large-model training. We propose Hidden Decoding, a sequence-length scaling method applied during continued pretraining (CPT). It expands each token into n streams with independent embedding tables and keeps the intermediate streams' key-value cache as context, so each token performs more internal computation without adding or widening Transformer layers. To keep this affordable at scale, we introduce Stream-Factorized Attention, in which most layers attend only within each stream and only a few layers mix across streams, reducing the attention cost from quadratic to roughly linear in n. Experiments support two scaling results. At frontier scale, we train WeLM-HD4-80B and WeLM-HD4-617B at n=4 and improve their matched non-HD baselines, making Hidden Decoding the first demonstrated sequence-length scaling method at the 100B+ MoE scale. Across expansion factors, the gains grow as n increases, showing that sequence-length expansion is a practical fixed-backbone scaling path for frontier-scale LLMs.",
+  "comment": "30 pages, 9 figures"
+ },
+ {
+  "id": "2606.29983v1",
+  "title": "Stabilizing Extrapolation in Looped Transformers via Learned Stochastic Stopping",
+  "date": "2026-06-29",
+  "authors": [
+   "Hsun-Yu Kuo",
+   "El Mahdi Chayti",
+   "Patrik Reizinger",
+   "Wieland Brendel",
+   "Martin Jaggi"
+  ],
+  "abstract": "Looped Transformers, which repeatedly apply a shared transformer block, are an architecturally natural fit for variable-length algorithmic tasks. Although they can exhibit strong length generalization beyond the length of training sequences, this behavior is brittle, yielding high out-of-distribution (OOD) variance, even across well-performing in-distribution solutions. We trace this variance to the spurious correlation in simple algorithmic tasks between sequence length and number of loops. Introducing stochasticity into the number of loops during training sharply reduces OOD variance and stabilizes predictions across inference-time loop counts. To improve upon heuristic randomization schemes, we further analyze RL-Halting as a learned stochastic schedule and find that it generally improves the accuracy-stability trade-off. Across binary addition, Dyck-1, Unique Set, and Copy, learned stochastic stopping often improves this trade-off but can also stabilize a suboptimal computation. Our work suggests that \"when to stop\" should be treated as a training-time design choice, not merely an inference-time computation-allocation rule.",
+  "comment": ""
+ },
+ {
+  "id": "2604.21254v3",
+  "title": "Hyperloop Transformers",
+  "date": "2026-04-23",
+  "authors": [
+   "Abbas Zeitoun",
+   "Lucas Torroba-Hennigen",
+   "Yoon Kim"
+  ],
+  "abstract": "LLM architecture research generally aims to maximize model quality subject to fixed compute/latency budgets. However, many applications of interest such as edge and on-device deployment are further constrained by the model's memory footprint, thus motivating parameter-efficient architectures for language modeling. This paper describes a simple architecture that improves the parameter-efficiency of LLMs. Our architecture makes use of looped Transformers as a core primitive, which reuse Transformer layers across depth and are thus more parameter-efficient than ordinary (depth-matched) Transformers. We organize the looped Transformer into three blocks--begin, middle, and end blocks--where each block itself consists of multiple Transformer layers, and only the middle block is applied recurrently across depth. We augment the looped middle block with hyper-connections (Xie et al., 2026), which expand the residual stream into matrix-valued residual streams. Hyper-connections are applied only after each loop, and therefore add minimal new parameters and compute cost. Across various model scales, we find that our Hyper-Connected Looped Transformer (Hyperloop Transformer) is able to perform well compared to depth-matched Transformer and mHC Transformer baselines despite using approximately 50% fewer parameters. This performance persists through post-training weight quantization, thus positioning Hyperloop Transformers as an attractive architecture for memory-efficient language modeling.",
+  "comment": ""
+ },
+ {
+  "id": "2412.06769v4",
+  "title": "Training Large Language Models to Reason in a Continuous Latent Space",
+  "date": "2024-12-09",
+  "authors": [
+   "Shibo Hao",
+   "Sainbayar Sukhbaatar",
+   "DiJia Su",
+   "Xian Li",
+   "Zhiting Hu",
+   "Jason Weston",
+   "Yuandong Tian"
+  ],
+  "abstract": "Large language models (LLMs) are typically constrained to reason in the language space, where they express the reasoning process through a chain-of-thought (CoT) to solve complex problems. However, the language space may not always be optimal for reasoning. Most word tokens primarily ensure textual coherence and are not essential for reasoning, while some critical tokens require complex planning and pose challenges to LLMs. To explore the potential of reasoning beyond language, we introduce a new paradigm called Coconut (Chain of Continuous Thought). Coconut utilizes the last hidden state of the LLM as a representation of the reasoning state, termed \"continuous thought.\" Instead of decoding this state into words, we feed it back to the model as the next input embedding directly in the continuous space. This latent reasoning paradigm enables an advanced reasoning pattern, where continuous thoughts can encode multiple alternative next steps, allowing the model to perform a breadth-first search (BFS) rather than committing prematurely to a single deterministic path as in CoT. Coconut outperforms CoT on logical reasoning tasks that require substantial search during planning and achieves a better trade-off between accuracy and efficiency.",
+  "comment": "Accepted to COLM 2025"
+ },
+ {
+  "id": "2301.13196v1",
+  "title": "Looped Transformers as Programmable Computers",
+  "date": "2023-01-30",
+  "authors": [
+   "Angeliki Giannou",
+   "Shashank Rajput",
+   "Jy-yong Sohn",
+   "Kangwook Lee",
+   "Jason D. Lee",
+   "Dimitris Papailiopoulos"
+  ],
+  "abstract": "We present a framework for using transformer networks as universal computers by programming them with specific weights and placing them in a loop. Our input sequence acts as a punchcard, consisting of instructions and memory for data read/writes. We demonstrate that a constant number of encoder layers can emulate basic computing blocks, including embedding edit operations, non-linear functions, function calls, program counters, and conditional branches. Using these building blocks, we emulate a small instruction-set computer. This allows us to map iterative algorithms to programs that can be executed by a looped, 13-layer transformer. We show how this transformer, instructed by its input, can emulate a basic calculator, a basic linear algebra library, and in-context learning algorithms that employ backpropagation. Our work highlights the versatility of the attention mechanism, and demonstrates that even shallow transformers can execute full-fledged, general-purpose programs.",
+  "comment": ""
+ },
+ {
+  "id": "2606.18524v1",
+  "title": "On the Residual Scaling of Looped Transformers: Stability and Transferability",
+  "date": "2026-06-16",
+  "authors": [
+   "Shaowen Wang",
+   "Bingrui Li",
+   "Ge Zhang",
+   "Wenhao Huang",
+   "Shen Yan",
+   "Jian Li"
+  ],
+  "abstract": "Looped (weight-tied) Transformers apply a shared residual block $N$ times ($h \\leftarrow h + \\varepsilon\\,f(h)$, same $f$ at each step), increasing effective depth without adding parameters. Prior depth-scaling analyses prescribe $\\varepsilon = 1/\\!\\sqrt{L}$ for depth-$L$ residual networks. We show that this is insufficient for looped architectures: weight sharing makes residual updates correlated across iterations, requiring the stronger scaling $\\varepsilon = 1/N$. For multi-layer blocks ($L$ unique layers looped $N$ times), we derive a factored parameterization $\\varepsilon = λ/(N\\!\\sqrt{L})$ that separates the two sources of growth: $1/N$ controls the within-layer loop correlation, and $1/\\!\\sqrt{L}$ controls the across-layer variance. A key consequence is that the optimal learning rate depends only on the number of unique layers $L$, not on the loop count $N$, enabling direct hyperparameter transfer from small to large $N$ without retuning. Experiments on looped Transformers confirm that $1/N$ scaling improves trainability and yields better loss than $1/\\!\\sqrt{N}$ scaling across loop counts.",
+  "comment": "19 pages, 9 figures"
+ },
+ {
+  "id": "2507.06203v2",
+  "title": "A Survey on Latent Reasoning",
+  "date": "2025-07-08",
+  "authors": [
+   "Rui-Jie Zhu",
+   "Tianhao Peng",
+   "Tianhao Cheng",
+   "Xingwei Qu",
+   "Jinfa Huang",
+   "Dawei Zhu",
+   "Hao Wang",
+   "Kaiwen Xue",
+   "Xuanliang Zhang",
+   "Yong Shan",
+   "Tianle Cai",
+   "Taylor Kergan",
+   "Assel Kembay",
+   "Andrew Smith",
+   "Chenghua Lin",
+   "Binh Nguyen",
+   "Yuqi Pan",
+   "Yuhong Chou",
+   "Zefan Cai",
+   "Zhenhe Wu",
+   "Yongchi Zhao",
+   "Tianyu Liu",
+   "Jian Yang",
+   "Wangchunshu Zhou",
+   "Chujie Zheng",
+   "Chongxuan Li",
+   "Yuyin Zhou",
+   "Zhoujun Li",
+   "Zhaoxiang Zhang",
+   "Jiaheng Liu",
+   "Ge Zhang",
+   "Wenhao Huang",
+   "Jason Eshraghian"
+  ],
+  "abstract": "Large Language Models (LLMs) have demonstrated impressive reasoning capabilities, especially when guided by explicit chain-of-thought (CoT) reasoning that verbalizes intermediate steps. While CoT improves both interpretability and accuracy, its dependence on natural language reasoning limits the model's expressive bandwidth. Latent reasoning tackles this bottleneck by performing multi-step inference entirely in the model's continuous hidden state, eliminating token-level supervision. To advance latent reasoning research, this survey provides a comprehensive overview of the emerging field of latent reasoning. We begin by examining the foundational role of neural network layers as the computational substrate for reasoning, highlighting how hierarchical representations support complex transformations. Next, we explore diverse latent reasoning methodologies, including activation-based recurrence, hidden state propagation, and fine-tuning strategies that compress or internalize explicit reasoning traces. Finally, we discuss advanced paradigms such as infinite-depth latent reasoning via masked diffusion models, which enable globally consistent and reversible reasoning processes. By unifying these perspectives, we aim to clarify the conceptual landscape of latent reasoning and chart future directions for research at the frontier of LLM cognition. An associated GitHub repository collecting the latest papers and repos is available at: https://github.com/multimodal-art-projection/LatentCoT-Horizon/.",
+  "comment": ""
+ },
+ {
+  "id": "2605.12466v1",
+  "title": "Solve the Loop: Attractor Models for Language and Reasoning",
+  "date": "2026-05-12",
+  "authors": [
+   "Jacob Fein-Ashley",
+   "Paria Rashidinejad"
+  ],
+  "abstract": "Looped Transformers offer a promising alternative to purely feed-forward computation by iteratively refining latent representations, improving language modeling and reasoning. Yet recurrent architectures remain unstable to train, costly to optimize and deploy, and constrained to small, fixed recurrence depths. We introduce Attractor Models, in which a backbone module first proposes output embeddings, then an attractor module refines them by solving for the fixed point, with gradients obtained through implicit differentiation. Thus, training memory remains constant in effective depth, and iterations are chosen adaptively by convergence. Empirically, Attractor Models outperform existing models across two regimes, large-scale language-model pretraining and reasoning with tiny models. In language modeling, Attractor Models deliver a Pareto improvement over standard Transformers and stable looped models across sizes, improving perplexity by up to 46.6% and downstream accuracy by up to 19.7% while reducing training cost. Notably, a 770M Attractor Model outperforms a 1.3B Transformer trained on twice as many tokens. On challenging reasoning tasks, we show that our model with only 27M parameters and approximately 1000 examples achieves 91.4% accuracy on Sudoku-Extreme and 93.1% on Maze-Hard, scaling favorably where frontier models like Claude and GPT o3, fail completely, and specialized recursive reasoners collapse at larger sizes. Lastly, we show that Attractor Models exhibit a novel phenomenon, which we call equilibrium internalization: fixed-point training places the model's initial output embedding near equilibrium, allowing the solver to be removed at inference time with little degradation. Together, these results suggest that Attractor Models make iterative refinement scalable by turning recurrence into a computation the model can learn to internalize.",
+  "comment": ""
+ },
+ {
+  "id": "2606.31779v2",
+  "title": "Bridging the Gap Between Latent and Explicit Reasoning with Looped Transformers",
+  "date": "2026-06-30",
+  "authors": [
+   "Ying Fan",
+   "Anej Svete",
+   "Kangwook Lee"
+  ],
+  "abstract": "Language models typically reason via explicit chain-of-thought (CoT), generating intermediate steps token-by-token. Latent CoT offers an alternative: it performs multi-step reasoning in the model's hidden states, replacing decoded tokens with continuous representations for greater efficiency. However, existing latent CoT methods underperform explicit CoT beyond 1B parameters, and the gap widens with scale. Looped, or recurrent-depth, Transformers, which reuse their weights to increase computation depth without adding parameters, are a natural fit for latent reasoning. We therefore ask whether looped Transformers can bridge this gap. We answer affirmatively with a simple recipe: a looped padded Transformer that processes K latent blocks in parallel for R iterations, with a cross-entropy loss on each latent position's gold CoT-step token, similar to explicit CoT supervision. We instantiate it as LOTUS (Looped Transformers with parallel supervision on latents). LOTUS is, to our knowledge, the first latent-CoT method to bridge the gap to explicit CoT at the 3B scale, while cutting thought-phase latency by 2.5x-6.9x from compact math expressions to natural language. Projecting LOTUS's post-loop latents through the base LM head recovers the gold reasoning steps and even surfaces alternative valid intermediate steps, evidence that its latent space is interpretable and CoT-aligned. Ablations confirm that both the looped backbone and the parallel supervision on gold CoT tokens are essential. Code is available at https://github.com/yingfan-bot/lotus.",
+  "comment": ""
+ },
+ {
+  "id": "2606.06574v2",
+  "title": "Skip a Layer or Loop It? Learning Program-of-Layers in LLMs",
+  "date": "2026-06-04",
+  "authors": [
+   "Ziyue Li",
+   "Yang Li",
+   "Tianyi Zhou"
+  ],
+  "abstract": "Large language models (LLMs) perform inference by following a fixed depth and order, non-recurrent execution of all layers. We reveal the wide existence of training-free, flexible, dynamic program-of-layers (PoLar), where pretrained layers can be packed as modules and then skipped or looped to form a customized program for each input. For most inputs, substantially shorter program executions can achieve the same or better accuracy, while incorrect predictions of the original LLM can be corrected by alternative programs with fewer layers. These observations indicate that inference admits multiple valid latent computations beyond the standard forward pass. To efficiently achieve PoLar in practice, we propose a lightweight PoLar prediction network, which learns to generate execution programs that dynamically skip or repeat pretrained layers for each input. Experiments on mathematical reasoning benchmarks demonstrate that PoLar consistently improves accuracy over standard inference and prior dynamic-depth methods, often while executing fewer layers, and that these gains persist under out-of-distribution evaluation. Our results suggest that fixed-depth execution captures only a narrow subset of an LLM's latent reasoning capacity.",
+  "comment": "Accepted at ICML 2026. Substantially extends arXiv:2507.07996. Updated DART-Math experiments by removing duplicate examples; conclusions remain unchanged. Code: https://github.com/tianyi-lab/PoLar"
+ },
+ {
+  "id": "2604.07822v2",
+  "title": "Loop, Think, & Generalize: Implicit Reasoning in Recurrent-Depth Transformers",
+  "date": "2026-04-09",
+  "authors": [
+   "Harsh Kohli",
+   "Srinivasan Parthasarathy",
+   "Huan Sun",
+   "Yuekun Yao"
+  ],
+  "abstract": "We study implicit reasoning, i.e. the ability to combine knowledge or rules within a single forward pass. While transformer-based large language models store substantial factual knowledge and rules, they often fail to compose this knowledge for implicit multi-hop reasoning, suggesting a lack of compositional generalization over their parametric knowledge. To address this limitation, we study recurrent-depth transformers, which enables iterative computation over the same transformer layers. We investigate two compositional generalization challenges under the implicit reasoning scenario: systematic generalization, i.e. combining knowledge that is never used for compositions during training, and depth extrapolation, i.e. generalizing from limited reasoning depth (e.g. training on up to 5-hop) to deeper compositions (e.g. 10-hop). Through controlled studies with models trained from scratch, we show that while vanilla transformers struggle with both generalization challenges, recurrent-depth transformers can effectively make such generalization. For systematic generalization, we find that this ability emerges through a three-stage grokking process, transitioning from memorization to in-distribution generalization and finally to systematic generalization, supported by mechanistic analysis. For depth extrapolation, we show that generalization beyond training depth can be unlocked by scaling inference-time recurrence, with more iterations enabling deeper reasoning. We further study how training strategies affect extrapolation, providing guidance on training recurrent-depth transformers, and identify a key limitation, overthinking, where excessive recurrence degrades predictions and limits generalization to very deep compositions.",
+  "comment": "21 pages, 21 figures. Accepted at COLM 2026"
+ },
+ {
+  "id": "2609.01343v1",
+  "title": "SMELT: Scaling Laws for Compute-Matched MoE Looped Transformers",
+  "date": "2026-09-01",
+  "authors": [
+   "Shaowen Wang",
+   "Ge Zhang",
+   "Kairong Luo",
+   "Yuhao Wu",
+   "Shaofan Liu",
+   "Jiaheng Liu",
+   "Wenhao Huang",
+   "Shen Yan",
+   "Jian Li"
+  ],
+  "abstract": "Looped Transformers increase effective depth by iterating a shared block of layers, but most evaluations compare at fixed model size, conflating architectural advantage with extra FLOPs. We study looping on Mixture-of-Experts Transformers while closely matching per-token FLOPs, total non-embedding parameters, and KV cache. Through a series of ablations, we arrive at a recipe we call SMELT (Sparse MoE Transformer, middle layers Loop Twice), which loops the middle half of layers twice while matching the unlooped Baseline on all three budgets. We scale SMELT across four sizes up to 54B non-embedding parameters and fit a separate Chinchilla-style scaling law for each architecture. SMELT's loss drops faster with compute, saving 6.8--18.0\\% of training FLOPs on the compute-optimal frontier. The advantage transfers to downstream benchmarks beyond what validation loss predicts, is largest on Code, and grows with sample length and the number of in-context examples. Mechanistic analysis shows that the second visit reduces the attention sink and redirects mass toward content-relevant tokens, an inductive bias that may underlie the observed performance gains. These results show that looping can improve Transformers even under budget matching, offering a practical recipe that turns depth reuse into measurable gains.",
+  "comment": "35 pages, 25 figures"
+ },
+ {
+  "id": "2502.17416v1",
+  "title": "Reasoning with Latent Thoughts: On the Power of Looped Transformers",
+  "date": "2025-02-24",
+  "authors": [
+   "Nikunj Saunshi",
+   "Nishanth Dikkala",
+   "Zhiyuan Li",
+   "Sanjiv Kumar",
+   "Sashank J. Reddi"
+  ],
+  "abstract": "Large language models have shown remarkable reasoning abilities and scaling laws suggest that large parameter count, especially along the depth axis, is the primary driver. In this work, we make a stronger claim -- many reasoning problems require a large depth but not necessarily many parameters. This unlocks a novel application of looped models for reasoning. Firstly, we show that for many synthetic reasoning problems like addition, $p$-hop induction, and math problems, a $k$-layer transformer looped $L$ times nearly matches the performance of a $kL$-layer non-looped model, and is significantly better than a $k$-layer model. This is further corroborated by theoretical results showing that many such reasoning problems can be solved via iterative algorithms, and thus, can be solved effectively using looped models with nearly optimal depth. Perhaps surprisingly, these benefits also translate to practical settings of language modeling -- on many downstream reasoning tasks, a language model with $k$-layers looped $L$ times can be competitive to, if not better than, a $kL$-layer language model. In fact, our empirical analysis reveals an intriguing phenomenon: looped and non-looped models exhibit scaling behavior that depends on their effective depth, akin to the inference-time scaling of chain-of-thought (CoT) reasoning. We further elucidate the connection to CoT reasoning by proving that looped models implicitly generate latent thoughts and can simulate $T$ steps of CoT with $T$ loops. Inspired by these findings, we also present an interesting dichotomy between reasoning and memorization, and design a looping-based regularization that is effective on both fronts.",
+  "comment": "ICLR 2025"
+ },
+ {
+  "id": "2507.02199v2",
+  "title": "Latent Chain-of-Thought? Decoding the Depth-Recurrent Transformer",
+  "date": "2025-07-02",
+  "authors": [
+   "Wenquan Lu",
+   "Yuechuan Yang",
+   "Kyle Lee",
+   "Yanshu Li",
+   "Enqi Liu"
+  ],
+  "abstract": "Chain-of-thought (CoT) reasoning has enabled transformer-based language models to excel at complex mathematics and multi-step planning. However, in standard decoder-only architectures, these reasoning steps are externalized in natural language, improving interpretability at the cost of efficiency. To capture reasoning that is not easily represented in words, many works have explored recurrent architectures that aim to internalize reasoning in latent space, potentially supporting latent CoT. In this paper, we investigate whether such reasoning structures emerge in Huginn-3.5B, a depth-recurrent Transformer that reuses layers at inference time without increasing parameter count. We examine the model's internal behavior on arithmetic tasks using a suite of probing techniques including the Logit Lens and Coda Lens. Our findings reveal limited evidence of interpretable latent CoT by tracking rank trajectories of final and intermediate result tokens. Furthermore, we uncover significant probing inconsistencies across recurrent blocks, where the interpretability of hidden states depends heavily on both the layer index and the decoding method. Finally, we empirically show that increasing recurrence depth yields only marginal gains and falls well short of models that explicitly externalize reasoning steps. The code is available at https://github.com/wenquanlu/huginn-latent-cot.",
+  "comment": "First Workshop on the Application of LLM Explainability to Reasoning and Planning at COLM 2025"
+ },
+ {
+  "id": "2511.07384v1",
+  "title": "Teaching Pretrained Language Models to Think Deeper with Retrofitted Recurrence",
+  "date": "2025-11-10",
+  "authors": [
+   "Sean McLeish",
+   "Ang Li",
+   "John Kirchenbauer",
+   "Dayal Singh Kalra",
+   "Brian R. Bartoldson",
+   "Bhavya Kailkhura",
+   "Avi Schwarzschild",
+   "Jonas Geiping",
+   "Tom Goldstein",
+   "Micah Goldblum"
+  ],
+  "abstract": "Recent advances in depth-recurrent language models show that recurrence can decouple train-time compute and parameter count from test-time compute. In this work, we study how to convert existing pretrained non-recurrent language models into depth-recurrent models. We find that using a curriculum of recurrences to increase the effective depth of the model over the course of training preserves performance while reducing total computational cost. In our experiments, on mathematics, we observe that converting pretrained models to recurrent ones results in better performance at a given compute budget than simply post-training the original non-recurrent language model.",
+  "comment": "code: https://github.com/mcleish7/retrofitting-recurrence, models: https://huggingface.co/collections/tomg-group-umd/retrofitting-recurrence"
+ },
+ {
+  "id": "2601.21582v1",
+  "title": "Depth-Recurrent Attention Mixtures: Giving Latent Reasoning the Attention it Deserves",
+  "date": "2026-01-29",
+  "authors": [
+   "Jonas Knupp",
+   "Jan Hendrik Metzen",
+   "Jeremias Bohn",
+   "Georg Groh",
+   "Kristian Kersting"
+  ],
+  "abstract": "Depth-recurrence facilitates latent reasoning by sharing parameters across depths. However, prior work lacks combined FLOP-, parameter-, and memory-matched baselines, underutilizes depth-recurrence due to partially fixed layer stacks, and ignores the bottleneck of constant hidden-sizes that restricts many-step latent reasoning. To address this, we introduce a modular framework of depth-recurrent attention mixtures (Dreamer), combining sequence attention, depth attention, and sparse expert attention. It alleviates the hidden-size bottleneck through attention along depth, decouples scaling dimensions, and allows depth-recurrent models to scale efficiently and effectively. Across language reasoning benchmarks, our models require 2 to 8x fewer training tokens for the same accuracy as FLOP-, parameter-, and memory-matched SOTA, and outperform ca. 2x larger SOTA models with the same training tokens. We further present insights into knowledge usage across depths, e.g., showing 2 to 11x larger expert selection diversity than SOTA MoEs.",
+  "comment": ""
+ },
+ {
+  "id": "2603.21676v1",
+  "title": "Thinking Deeper, Not Longer: Depth-Recurrent Transformers for Compositional Generalization",
+  "date": "2026-03-23",
+  "authors": [
+   "Hung-Hsuan Chen"
+  ],
+  "abstract": "Standard Transformers have a fixed computational depth, fundamentally limiting their ability to generalize to tasks requiring variable-depth reasoning, such as multi-hop graph traversal or nested logic. We propose a depth-recurrent Transformer that decouples computational depth from parameter count by iteratively applying a shared-weight Transformer block in latent space -- enabling the model to trade recurrence steps for deeper reasoning at inference time. Our architecture incorporates three mechanisms to make deep recurrence (20+ steps) stable: (1) a silent thinking objective that supervises only the final output, forcing genuine multi-step reasoning rather than intermediate heuristic shortcuts; (2) LayerScale initialization to protect fragile reasoning states from untrained layer noise; and (3) an identity-biased recurrence that creates a gradient highway across many steps. We evaluate on three compositional reasoning domains with decreasing inductive biases: graph reachability (strict adjacency masking), nested boolean logic (relative positioning), and unstructured relational text (where sequence position provides no structural hints). Across all tasks, we observe a clear \\emph{computational frontier} -- a boundary where performance transitions from chance to near-perfect as thinking steps scale with task complexity. Moreover, these tasks reveal qualitatively different generalization behaviors: precise but brittle (graph), approximate but robust (logic), and autonomous latent routing without structural hints (text). This progression illuminates how the interplay between a task-invariant recurrent reasoning core and task-specific perceptual interfaces shapes out-of-distribution (OOD) generalization, offering a mechanistic perspective on vertical chain-of-thought that complements the prevailing horizontal token-generation paradigm.",
+  "comment": ""
+ },
+ {
+  "id": "2510.04871v1",
+  "title": "Less is More: Recursive Reasoning with Tiny Networks",
+  "date": "2025-10-06",
+  "authors": [
+   "Alexia Jolicoeur-Martineau"
+  ],
+  "abstract": "Hierarchical Reasoning Model (HRM) is a novel approach using two small neural networks recursing at different frequencies. This biologically inspired method beats Large Language models (LLMs) on hard puzzle tasks such as Sudoku, Maze, and ARC-AGI while trained with small models (27M parameters) on small data (around 1000 examples). HRM holds great promise for solving hard problems with small networks, but it is not yet well understood and may be suboptimal. We propose Tiny Recursive Model (TRM), a much simpler recursive reasoning approach that achieves significantly higher generalization than HRM, while using a single tiny network with only 2 layers. With only 7M parameters, TRM obtains 45% test-accuracy on ARC-AGI-1 and 8% on ARC-AGI-2, higher than most LLMs (e.g., Deepseek R1, o3-mini, Gemini 2.5 Pro) with less than 0.01% of the parameters.",
+  "comment": ""
+ },
+ {
+  "id": "2604.21106v3",
+  "title": "How Much Is One Recurrence Worth? Iso-Depth Scaling Laws for Looped Language Models",
+  "date": "2026-04-22",
+  "authors": [
+   "Kristian Schwethelm",
+   "Daniel Rueckert",
+   "Georgios Kaissis"
+  ],
+  "abstract": "We measure how much one recurrence is worth to a looped (depth-recurrent) transformer, in equivalent unique parameters. From an iso-depth pretraining sweep across recurrence counts $r \\in \\{1, 2, 4, 8\\}$ spanning ${\\sim}50\\times$ in training compute, we fit a joint scaling law $L = E + A\\,(N_\\text{once} + r^{\\varphi} N_\\text{rec})^{-α} + B\\,D^{-β}$ and measure a recurrence-equivalence exponent $\\varphi = 0.46$. Intuitively, $\\varphi$ tells us whether looping a block $r$ times is equivalent in validation loss to $r$ unique blocks of a non-looped model (full equivalence, $\\varphi{=}1$) or to a single block run repeatedly with no capacity gain ($\\varphi{=}0$). Our $\\varphi = 0.46$ sits in between, so replacing unique blocks with shared recurrences increases validation loss at matched training compute. For example, at $r{=}4$ a 410M looped model performs on par with a 580M non-looped model, but incurs the training cost of a 1B non-looped one. We demonstrate the utility of $\\varphi$ as a diagnostic tool on two case studies: commonly used truncated backpropagation lowers $\\varphi$ to $0.38$, indicating that the loop mechanism is poorly trained under truncation, even though validation loss decreases. Conversely, hyperconnections raise $\\varphi$ to $0.65$, a genuine capacity gain. Our method separates true loop improvements from training-side gains, a distinction raw validation loss cannot make.",
+  "comment": "v3: substantially refined framing + minor corrections v2: added case studies on truncated-BPTT and hyperconnections"
+ },
+ {
+  "id": "2602.10520v3",
+  "title": "Prioritize the Process, Not Just the Outcome: Rewarding Latent Thought Trajectories Improves Reasoning in Looped Language Models",
+  "date": "2026-02-11",
+  "authors": [
+   "Jonathan Williams",
+   "Esin Tureci"
+  ],
+  "abstract": "Looped Language Models (LoopLMs) perform multi-step latent reasoning prior to token generation and outperform conventional LLMs on reasoning benchmarks at smaller parameter budgets. However, attempts to further improve LoopLM reasoning with reinforcement learning have failed - standard objectives such as Group Relative Policy Optimization (GRPO) only assign credit to the final latent state, creating a fundamental mismatch with the model's internal computation. To resolve this, we introduce RLTT (Reward Latent Thought Trajectories), a reinforcement learning framework which distributes reward across the full latent reasoning trajectory. RLTT provides dense, trajectory-level credit assignment without relying on external verifiers and can directly replace GRPO with negligible overhead. Across extensive experiments with Ouro-1.4B/2.6B-Thinking under identical training and inference conditions, RLTT yields statistically significant improvements over GRPO on challenging mathematical reasoning benchmarks, improving mean accuracy over MATH-500, AIME24/26, and BeyondAIME by +5.8% on the 1.4B scale, and +10.9% on the 2.6B scale. Despite being trained exclusively on mathematics, RLTT also transfers effectively to non-mathematical reasoning benchmarks, demonstrating the effectiveness of trajectory-level credit assignment for reinforcement learning in LoopLMs. Code is available at https://github.com/jonwill8/RLTT.git.",
+  "comment": "ICML 2026"
+ },
+ {
+  "id": "2605.20670v2",
+  "title": "LT2: Linear-Time Looped Transformers",
+  "date": "2026-05-20",
+  "authors": [
+   "Chunyuan Deng",
+   "Yizhe Zhang",
+   "Rui-Jie Zhu",
+   "Yuanyuan Xu",
+   "Jiarui Liu",
+   "T. S. Eugene Ng",
+   "Hanjie Chen"
+  ],
+  "abstract": "Looped Transformers (LT) have emerged as a powerful architecture by iterating their layers multiple times before decoding the final token. However, pairing them with full attention retains quadratic complexity, making them computationally expensive and slow. We introduce LT2 (Linear-Time Looped Transformers), a family of looped architectures that replace quadratic softmax attention with subquadratic, linear-time attention. We study two variants: LT2-linear with linear attention and LT2-sparse with sparse attention. We find that looping uniquely synergizes with these variants: it enables iterative memory refinement in linear attention and progressively expands the effective receptive field in sparse attention. We formalize these benefits theoretically and demonstrate consistent empirical gains across controlled recall, state-tracking, and language modeling tasks. We then explore LT2-hybrid, which combines different attention variants in a looped setting. Two variants are especially promising: LT2-hybrid (GDN+DSA), which interleaves linear and sparse attention to maximize efficiency and matches the standard looped transformer's quality at fully linear-time cost; and LT2-hybrid (Full+GDN), which interleaves GDN with a small fraction of full attention layers to maximize quality, surpassing the standard looped transformer in both performance and efficiency. We also show how to convert a pre-trained LT into an LT2-hybrid model. With about 1B tokens of training, our converted model, Ouro-hybrid-1.4B, outperforms industry-level 1B models and is competitive with industry-level 4B models while retaining the speed benefits of linear-time attention. Together, these results show a clear path toward making looped transformers more scalable and advancing efficient, capable small language models.",
+  "comment": ""
+ },
+ {
+  "id": "2510.25741v5",
+  "title": "Scaling Latent Reasoning via Looped Language Models",
+  "date": "2025-10-29",
+  "authors": [
+   "Rui-Jie Zhu",
+   "Zixuan Wang",
+   "Kai Hua",
+   "Tianyu Zhang",
+   "Ziniu Li",
+   "Haoran Que",
+   "Boyi Wei",
+   "Zixin Wen",
+   "Fan Yin",
+   "He Xing",
+   "Lu Li",
+   "Jiajun Shi",
+   "Kaijing Ma",
+   "Shanda Li",
+   "Taylor Kergan",
+   "Andrew Smith",
+   "Xingwei Qu",
+   "Mude Hui",
+   "Bohong Wu",
+   "Qiyang Min",
+   "Hongzhi Huang",
+   "Xun Zhou",
+   "Wei Ye",
+   "Jiaheng Liu",
+   "Jian Yang",
+   "Yunfeng Shi",
+   "Chenghua Lin",
+   "Enduo Zhao",
+   "Tianle Cai",
+   "Ge Zhang",
+   "Wenhao Huang",
+   "Yoshua Bengio",
+   "Jason Eshraghian"
+  ],
+  "abstract": "Modern LLMs are trained to \"think\" primarily via explicit text generation, such as chain-of-thought (CoT), which defers reasoning to post-training and under-leverages pre-training data. We present and open-source Ouro, named after the recursive Ouroboros, a family of pre-trained Looped Language Models (LoopLM) that instead build reasoning into the pre-training phase through (i) iterative computation in latent space, (ii) an entropy-regularized objective for learned depth allocation, and (iii) scaling to 7.7T tokens. Ouro 1.4B and 2.6B models enjoy superior performance that match the results of up to 12B SOTA LLMs across a wide range of benchmarks. Through controlled experiments, we show this advantage stems not from increased knowledge capacity, but from superior knowledge manipulation capabilities. We also show that LoopLM yields reasoning traces more aligned with final outputs than explicit CoT. We hope our results show the potential of LoopLM as a novel scaling direction in the reasoning era. Our model is available here: http://ouro-llm.github.io.",
+  "comment": ""
+ },
+ {
+  "id": "2608.18222v1",
+  "title": "Think Shallow, Solve Deep: Controlling Recurrent Dynamics for Reliable Test-Time Depth",
+  "date": "2026-08-18",
+  "authors": [
+   "Ivan Viakhirev",
+   "Kirill Borodin",
+   "Amirah Almutairi",
+   "Serguei Barannikov",
+   "Maxim Abramov",
+   "Grach Mkrtchian"
+  ],
+  "abstract": "Recurrent-depth reasoners aim to solve harder problems by iterating their update longer at test time, but additional iterations can improve, preserve, or degrade an answer. We show that a measurable property of the trained operator, its finite-time dynamical regime (estimated as settling, marginal, or drifting), indicates which of these occurs. We give a sufficient condition for depth-safety: once an operator's per-step displacement is small relative to the decoder margin, the decoded answer cannot change under further iterations. Empirically, on algorithmic tasks trained from $800$ unaugmented examples per difficulty tier, settling operators do not degrade with added depth, and on some tasks convert it into higher accuracy on harder unseen instances (Sudoku, $0.19$ to $0.34$ past the training horizon). A single terminal fixed-point objective moves the regime and the depth behavior together: removing it induces drift and removes the gains, and adding it to a generic recurrence yields depth-safe extrapolation on carry propagation. We give four operational criteria for useful test-time depth, use them to catalogue failure modes, and, as a consistency check, apply the same measurements to Huginn-3.5B, which falls in the non-settling family.",
+  "comment": "Submitted to the Thirty-Ninth AAAI Conference on Artificial Intelligence (AAAI-27)"
+ },
+ {
+  "id": "2608.15062v4",
+  "title": "Gated Recurrent Transformers: Expressive Depth through Recurrent Modulation",
+  "date": "2026-08-15",
+  "authors": [
+   "Amr Hegazy",
+   "Amr Alanwar",
+   "Mostafa Elhoushi"
+  ],
+  "abstract": "Scaling transformer language models creates an inherent tension between expressivity and memory efficiency. While unique weights across layers preserve functional specialization---from input-grounding to abstract refinement---they incur a substantial memory footprint. Conversely, standard depth-sharing enforces uniform transformations that collapse representational diversity and degrade modeling quality. We introduce Gated Recurrent Transformer, a recurrent depth transformer where fixed-depth prelude and coda blocks bracket a single shared core iterated R times. Inspired by gated recurrent neural networks, we employ a lightweight projection and an elementwise update gate---conditioned on the hidden state, the fixed prelude output, and noise resampled at every step---to modulate the recurrent update. This allows the model to specialize the input to the same few layers across recurrences, rather than requiring many unique layers to achieve functional diversity. Under an isoFLOPS constraint, a 3-layer Gated Recurrent Transformer matches the accuracy of a 12-layer GPT-2 Small baseline with similar training and inference FLOPs, and leads MoR and heavy-tail depth sampling in all nine scale-by-budget cells; at medium and large scale it approaches dense quality at the standard token budget and overtakes it at medium scale once that budget is doubled. Under an isoPARAMS constraint, deeper recurrence achieves a 2.76 validation loss versus 2.84 for a non-recurrent counterpart at matched parameter and data budget. Our results demonstrate that adaptive depth reuse is a principled strategy for trading parameters for quality: at large scale, 63% fewer parameters and 59% less peak decoding memory for a 10% increase in compiled generation latency.",
+  "comment": ""
+ },
+ {
+  "id": "2506.21734v3",
+  "title": "Hierarchical Reasoning Model",
+  "date": "2025-06-26",
+  "authors": [
+   "Guan Wang",
+   "Jin Li",
+   "Yuhao Sun",
+   "Xing Chen",
+   "Changling Liu",
+   "Yue Wu",
+   "Meng Lu",
+   "Sen Song",
+   "Yasin Abbasi Yadkori"
+  ],
+  "abstract": "Reasoning, the process of devising and executing complex goal-oriented action sequences, remains a critical challenge in AI. Current large language models (LLMs) primarily employ Chain-of-Thought (CoT) techniques, which suffer from brittle task decomposition, extensive data requirements, and high latency. Inspired by the hierarchical and multi-timescale processing in the human brain, we propose the Hierarchical Reasoning Model (HRM), a novel recurrent architecture that attains significant computational depth while maintaining both training stability and efficiency. HRM executes sequential reasoning tasks in a single forward pass without explicit supervision of the intermediate process, through two interdependent recurrent modules: a high-level module responsible for slow, abstract planning, and a low-level module handling rapid, detailed computations. With only 27 million parameters, HRM achieves exceptional performance on complex reasoning tasks using only 1000 training samples. The model operates without pre-training or CoT data, yet achieves nearly perfect performance on challenging tasks including complex Sudoku puzzles and optimal path finding in large mazes. Furthermore, HRM outperforms much larger models with significantly longer context windows on the Abstraction and Reasoning Corpus (ARC), a key benchmark for measuring artificial general intelligence capabilities. These results underscore HRM's potential as a transformative advancement toward universal computation and general-purpose reasoning systems.",
+  "comment": ""
+ },
+ {
+  "id": "2510.24824v1",
+  "title": "Parallel Loop Transformer for Efficient Test-Time Computation Scaling",
+  "date": "2025-10-28",
+  "authors": [
+   "Bohong Wu",
+   "Mengzhao Chen",
+   "Xiang Luo",
+   "Shen Yan",
+   "Qifan Yu",
+   "Fan Xia",
+   "Tianqi Zhang",
+   "Hongrui Zhan",
+   "Zheng Zhong",
+   "Xun Zhou",
+   "Siyuan Qiao",
+   "Xingyan Bin"
+  ],
+  "abstract": "Large Language Models (LLMs) are powerful but often too slow and costly for real-world use during inference. Looped transformers save on parameters by reusing the same weights for multiple computational steps, or \"loops.\" However, this approach has a major flaw: the loops run one after another, causing inference latency and memory requirements to increase with each added loop. This makes them impractical for fast applications. To solve this problem, we introduce the Parallel Loop Transformer (PLT). PLT is a new architecture that delivers the performance benefits of a deep, looped model but with the low latency of a standard, non-looped model. PLT works using two key techniques. First, Cross-Loop Parallelism (CLP) breaks the sequential dependency by computing different loops for different tokens at the same time, all within a single pass. Second, to prevent memory costs from growing, we use an Efficient Representation Enhancement strategy. This method shares the memory (KV cache) from the first loop with all other loops. It then uses a Gated Sliding-Window Attention (G-SWA) to combine this shared global information with local information, maintaining high accuracy. Our experiments show that PLT achieves the high accuracy of a traditional looped model but with almost no extra latency or memory cost compared to a standard transformer.",
+  "comment": ""
+ },
+ {
+  "id": "2510.14961v1",
+  "title": "Efficient Parallel Samplers for Recurrent-Depth Models and Their Connection to Diffusion Language Models",
+  "date": "2025-10-16",
+  "authors": [
+   "Jonas Geiping",
+   "Xinyu Yang",
+   "Guinan Su"
+  ],
+  "abstract": "Language models with recurrent depth, also referred to as universal or looped when considering transformers, are defined by the capacity to increase their computation through the repetition of layers. Recent efforts in pretraining have demonstrated that these architectures can scale to modern language modeling tasks while exhibiting advantages in reasoning tasks. In this work, we examine the relationship between recurrent-depth models and diffusion language models. Building on their similarities, we develop a new diffusion forcing sampler for these models to accelerate generation. The sampler advances by decoding new tokens at every forward pass of the model, while the latent states of these tokens can be further refined in parallel through recurrence. Theoretically, generation with our sampler is strictly more expressive than the baseline autoregressive generation using the same time budget on modern hardware. Moreover, this sampler, based on principles from diffusion literature, can be directly applied to existing 3.5B recurrent-depth transformers without any tuning, leading to up to a 5x speedup. Consequently, our findings not only provide an efficient mechanism for parallelizing the extra computation in recurrent-depth models at inference, but also suggest that such models can be naturally viewed as strong continuous, though causal, diffusion language models.",
+  "comment": "Code can be found at https://github.com/seal-rg/recurrent-pretraining"
+ },
+ {
+  "id": "2510.10089v3",
+  "title": "What Makes Looped Transformers Perform Better Than Non-Recursive Ones",
+  "date": "2025-10-11",
+  "authors": [
+   "Zixuan Gong",
+   "Yong Liu",
+   "Jiaye Teng"
+  ],
+  "abstract": "While looped transformers (termed as Looped-Attn) often outperform standard transformers (termed as Single-Attn) on complex reasoning tasks, the mechanism for this advantage remains underexplored. In this paper, we explain this phenomenon through the lens of loss landscape geometry, inspired by empirical observations of their distinct dynamics at both sample and Hessian levels. To formalize this, we extend the River-Valley landscape model by distinguishing between U-shaped valleys (flat) and V-shaped valleys (steep). Based on empirical observations, we conjecture that the recursive architecture of Looped-Attn induces a landscape-level inductive bias towards River-V-Valley. This inductive bias suggest a better loss convergence along the river due to valley hopping, and further encourage learning about complex patterns compared to the River-U-Valley induced by Single-Attn. Building on this insight, we propose SHIFT (Staged HIerarchical Framework for Progressive Training), a principled training strategy that accelerates the training process of Looped-Attn while achieving comparable performances.",
+  "comment": ""
+ },
+ {
+  "id": "2405.16039v2",
+  "title": "MoEUT: Mixture-of-Experts Universal Transformers",
+  "date": "2024-05-25",
+  "authors": [
+   "Róbert Csordás",
+   "Kazuki Irie",
+   "Jürgen Schmidhuber",
+   "Christopher Potts",
+   "Christopher D. Manning"
+  ],
+  "abstract": "Previous work on Universal Transformers (UTs) has demonstrated the importance of parameter sharing across layers. By allowing recurrence in depth, UTs have advantages over standard Transformers in learning compositional generalizations, but layer-sharing comes with a practical limitation of parameter-compute ratio: it drastically reduces the parameter count compared to the non-shared model with the same dimensionality. Naively scaling up the layer size to compensate for the loss of parameters makes its computational resource requirements prohibitive. In practice, no previous work has succeeded in proposing a shared-layer Transformer design that is competitive in parameter count-dominated tasks such as language modeling. Here we propose MoEUT (pronounced \"moot\"), an effective mixture-of-experts (MoE)-based shared-layer Transformer architecture, which combines several recent advances in MoEs for both feedforward and attention layers of standard Transformers together with novel layer-normalization and grouping schemes that are specific and crucial to UTs. The resulting UT model, for the first time, slightly outperforms standard Transformers on language modeling tasks such as BLiMP and PIQA, while using significantly less compute and memory.",
+  "comment": "Accepted to NeurIPS 2024"
+ },
+ {
+  "id": "2607.20594v1",
+  "title": "When Does Recurrence Become an Algorithm? Convergence Selection in Weight-Tied Looped Transformers",
+  "date": "2026-07-22",
+  "authors": [
+   "Tong Zhang",
+   "Junhao Hu",
+   "Yun Peng",
+   "Tao Xie"
+  ],
+  "abstract": "When does a weight-tied looped transformer -- one block applied T times -- implement an actual algorithm? We answer with four findings from controlled populations on group word problems. (1) The budget law: free training installs a linear computation frontier, a mechanism that solves v positions per loop, whose speed is priced by the training contract: v ~ n_train/T_train (exponent 0.98 +/- 0.04, R^2=0.99), exactly unity under T=n training. SGD selects a frontier matching the minimum the contract demands; granting more test-time loops than ever trained rescues late positions at fixed input length, yielding a principled halting rule T* = ceil(n / v-hat). (2) Architecture prior, not expressivity, picks the algorithm: standard-depth transformers learn parallel scans on this family; weight tying flips the selection to the serial frontier, even when positional addressing for a log-depth scan is supplied. At matched depth and parameters, untied models extrapolate worst and fail to learn A5 at all. (3) The walls are not where circuit complexity says: NC1-completeness costs nothing (A5 generalizes fully), while group order does (S5's 120x120 operator deadlocks joint learning) -- and an operator-first curriculum dissolves the wall in every seed. (4) Mechanisms are portable, not mandatable: warm-starting across budget contracts transfers the algorithm in every seed, re-pricing its speed, while imposing seriality through the input schedule fails where free training succeeds. These results are invisible to standard instruments, which provably saturate at the fixed points trained loops converge to. We introduce a head instrument, the convergence-time scaling tau(n,i), validate it causally via damage cones whose slope reproduces v, and show in-distribution head measurements predict out-of-distribution fate where tail metrics do not. Results replicate on the public easy-to-hard benchmark.",
+  "comment": ""
+ },
+ {
+  "id": "2607.15456v2",
+  "title": "Looped Latent Attention: Cross-Loop KV Compression for Looped Transformers",
+  "date": "2026-07-16",
+  "authors": [
+   "James O' Neill",
+   "Fergal Reid"
+  ],
+  "abstract": "Looped, weight-tied Transformers reduce parameters by reusing a single block, but decoding still stores a separate K/V cache for every recurrence step. We show that this loop-indexed cache is highly structured. For a fixed token, layer and head, K/V vectors trace a short low-rank trajectory across loops, while the head and layer axes remain much flatter. We introduce Looped Latent Attention (\\lla{}), a post-training cache codec that stores compact K and V latents and reconstructs loop-specific K/V vectors only when attention reads them. The default per-head codec compresses recurrence, while \\lla{}-2D also folds heads into one latent for the extreme-compression regime. The codec is initialized from the SVD of teacher activations and refined with logit and attention-output distillation. At matched cache budget, per-head \\lla{} outperforms head-axis MLA, cross-layer sharing, KV quantization and final-loop reuse, showing that the recurrent cache is low-rank but not safely collapsible to a single state. The same axis advantage holds on Ouro-2.6B-Thinking and transfers to Huginn-3.5B, where an SVD codec remains near-lossless to $32\\times$ compression in decoder-independent evaluation. The cache reduction is exact. On one H200, the latent-store path increases measured Ouro-1.4B batch capacity at 4k context from 32 to 768 sequences at $21.3\\times$ compression. Lastly, for long reasoning rollouts such as in MATH-500, on-policy refinement on student-generated prefixes raises accuracy at $4\\times$ compression from 0.43 to 0.66 and reduces no-answer generations when compared to token-level off-policy distillation.",
+  "comment": ""
+ },
+ {
+  "id": "2602.07845v1",
+  "title": "Recurrent-Depth VLA: Implicit Test-Time Compute Scaling of Vision-Language-Action Models via Latent Iterative Reasoning",
+  "date": "2026-02-08",
+  "authors": [
+   "Yalcin Tur",
+   "Jalal Naghiyev",
+   "Haoquan Fang",
+   "Wei-Chuan Tsai",
+   "Jiafei Duan",
+   "Dieter Fox",
+   "Ranjay Krishna"
+  ],
+  "abstract": "Current Vision-Language-Action (VLA) models rely on fixed computational depth, expending the same amount of compute on simple adjustments and complex multi-step manipulation. While Chain-of-Thought (CoT) prompting enables variable computation, it scales memory linearly and is ill-suited for continuous action spaces. We introduce Recurrent-Depth VLA (RD-VLA), an architecture that achieves computational adaptivity via latent iterative refinement rather than explicit token generation. RD-VLA employs a recurrent, weight-tied action head that supports arbitrary inference depth with a constant memory footprint. The model is trained using truncated backpropagation through time (TBPTT) to efficiently supervise the refinement process. At inference, RD-VLA dynamically allocates compute using an adaptive stopping criterion based on latent convergence. Experiments on challenging manipulation tasks show that recurrent depth is critical: tasks that fail entirely (0 percent success) with single-iteration inference exceed 90 percent success with four iterations, while simpler tasks saturate rapidly. RD-VLA provides a scalable path to test-time compute in robotics, replacing token-based reasoning with latent reasoning to achieve constant memory usage and up to 80x inference speedup over prior reasoning-based VLA models. Project page: https://rd-vla.github.io/",
+  "comment": "11 Pages, Project page:https://rd-vla.github.io/"
+ },
+ {
+  "id": "2602.11451v1",
+  "title": "LoopFormer: Elastic-Depth Looped Transformers for Latent Reasoning via Shortcut Modulation",
+  "date": "2026-02-11",
+  "authors": [
+   "Ahmadreza Jeddi",
+   "Marco Ciccone",
+   "Babak Taati"
+  ],
+  "abstract": "Looped Transformers have emerged as an efficient and powerful class of models for reasoning in the language domain. Recent studies show that these models achieve strong performance on algorithmic and reasoning tasks, suggesting that looped architectures possess an inductive bias toward latent reasoning. However, prior approaches fix the number of loop iterations during training and inference, leaving open the question of whether these models can flexibly adapt their computational depth under variable compute budgets. We introduce LoopFormer, a looped Transformer trained on variable-length trajectories to enable budget-conditioned reasoning. Our core contribution is a shortcut-consistency training scheme that aligns trajectories of different lengths, ensuring that shorter loops yield informative representations while longer loops continue to refine them. LoopFormer conditions each loop on the current time and step size, enabling representations to evolve consistently across trajectories of varying length rather than drifting or stagnating. Empirically, LoopFormer demonstrates robust performance on language modeling and reasoning benchmarks even under aggressive compute constraints, while scaling gracefully with additional budget. These results show that looped Transformers are inherently suited for adaptive language modeling, opening a path toward controllable and budget-aware large language models.",
+  "comment": "ICLR2026"
+ },
+ {
+  "id": "2605.18797v2",
+  "title": "Simply Stabilizing the Loop via Fully Looped Transformer",
+  "date": "2026-05-11",
+  "authors": [
+   "Rao Fu",
+   "Zixuan Yang",
+   "Jiankun Zhang",
+   "Jing Ma",
+   "Hechang Chen",
+   "Yu Li",
+   "Yi Chang"
+  ],
+  "abstract": "Scaling model performance typically requires increasing model size. Looped Transformer offers a compelling alternative by iteratively reusing the same Transformer blocks, trading additional computation for improved performance without increasing parameter count or context length. Because the number of loop iterations can be adjusted at inference, it also provides a natural mechanism for balancing performance and test-time compute. However, Looped Transformer still suffers from training instability when the number of loop iterations increases. Our analysis reveals that this instability stems from two sources: gradient oscillation and residual explosion. To address these two problems, we propose the Fully Looped Transformer, which introduces two parameter-free modifications: (1) Fully Looped Architecture, which distributes inter-loop signals across all layers to mitigate residual explosion; (2) Attention Injection, which reuses the existing attention block to suppress gradient oscillation. These modifications stabilize training dynamics, enabling the Fully Looped Transformer to be trained stably up to 12 loop iterations, whereas other baseline looped models collapse in this regime. In milder settings where Looped Transformer does not collapse, Fully Looped Transformer still improves average downstream-task performance by up to 13.2\\%. Overall, our experiments demonstrate that Fully Looped Transformer improves training stability, enhances downstream performance, and provides preliminary adaptability under different test-time compute budgets by varying loop iterations at inference.",
+  "comment": ""
+ },
+ {
+  "id": "2608.03624v1",
+  "title": "LoopMTP: A looped transformer guided by latent multi-token prediction",
+  "date": "2026-08-04",
+  "authors": [
+   "Behzad Shomali",
+   "Markus Frey",
+   "David Berghaus",
+   "Joachim Koehler",
+   "Mehdi Ali"
+  ],
+  "abstract": "Looped transformers have emerged as a parameter-efficient alternative to scaling depth for strong reasoning. By reusing one stack of layers across $T$ iterations, they attain the effective depth and reasoning capabilities of larger models at a fixed parameter count. Yet existing approaches suffer from latent overthinking and undifferentiated computation, largely because intermediate representations receive no guidance across loops. Multi-token prediction (MTP) supplies exactly the dense, forward-looking supervision the loop is missing. We propose \\textsc{LoopMTP}, which links the two through a structural correspondence in latent space: a model that loops $T$ times can anticipate $T$ future tokens. \\textsc{LoopMTP} realizes this by softly aligning the hidden state of loop $t$ with the embedding of the token $t$ steps ahead, while a lightweight gate preserves useful information across iterations. \\textsc{LoopMTP} improves average accuracy by up to 8.1\\% (relative) over the non-looped baseline, with training remaining stable for up to 15 loops.",
+  "comment": ""
+ },
+ {
+  "id": "2608.18230v1",
+  "title": "Allocating Recurrent Compute in Looped Language Models",
+  "date": "2026-08-18",
+  "authors": [
+   "Ruhai Lin",
+   "Yiyang Guo",
+   "Rui-Jie Zhu",
+   "Hao Ye",
+   "Jason K. Eshraghian"
+  ],
+  "abstract": "Looped language models improve reasoning and knowledge manipulation by applying shared computation repeatedly. Existing systems usually repeat an entire layer stack, although a mixer and a dense feed-forward network (FFN) perform different operations and have different costs. We ask a narrower question: what should loop? We view recurrence as repeated composition of a state update and argue that an application is valuable when it exposes a new cross-position influence direction that remains observable at the task readout. Iterative Transport Rank (ITR) describes the cumulative influence trajectory; marginal ITR describes the nonredundant influence contributed by successive applications. This view motivates MixerLoop, which repeats each Gated DeltaNet mixer while applying its dense FFN once. We compare MixerLoop with no recurrence and full-block recurrence at 15M and 110M parameters under the same data, initialization, and architecture. A finite context-off intervention tests whether later mixer applications produce distinct, non-negligible, and beneficial changes at the final language-model readout. MixerLoop surpasses FullLoop on aggregate CORE at 15M and retains 41.5% of its CORE improvement at 110M while reducing recurrent-backbone projection FLOPs by 45.9%. These results show that the benefits of recurrent depth can be retained without repeatedly executing the dense FFN.",
+  "comment": ""
+ },
+ {
+  "id": "2608.18171v1",
+  "title": "Looped Language Models Improve Compositional Tool Calling",
+  "date": "2026-08-17",
+  "authors": [
+   "Andrei Cristian Popescu",
+   "Haitz Sáez de Ocáriz Borde",
+   "Pietro Liò"
+  ],
+  "abstract": "Looped language models have shown promising results on reasoning benchmarks, yet their potential for agentic tool use remains largely unexplored. We study this question in compositional tool-calling settings, where models must coordinate multiple API calls, maintain intermediate state, and preserve dependencies across tool interactions. We evaluate native and retrofitted looped language models on API-Bank, BFCL, and NESTful, comparing looped and non-looped models trained under matched supervised fine-tuning recipes and varying recurrent depth at inference time. In controlled experiments, recurrent computation generally benefits compositional and dependency-aware tool use, while providing smaller and more model-dependent gains on isolated API invocation. Accuracy on multi-step tool use generally increases with recurrent depth; adaptive inference, however, achieves a more favorable compute-performance trade-off by allocating additional computation only when needed. Our results suggest that looped language models are a promising architecture for agentic systems that require reliable planning, coordination, and execution of compositional tool use workflows.",
+  "comment": ""
+ },
+ {
+  "id": "2511.08577v4",
+  "title": "Think-at-Hard: Dynamic Looped Transformers for Improved Reasoning",
+  "date": "2025-11-11",
+  "authors": [
+   "Tianyu Fu",
+   "Yichen You",
+   "Zekai Chen",
+   "Guohao Dai",
+   "Huazhong Yang",
+   "Yu Wang"
+  ],
+  "abstract": "Improving the reasoning abilities of Large Language Models (LLMs), especially under parameter constraints, is crucial for real-world applications. Looped transformers address this by performing multiple latent iterations to refine each token beyond a single forward pass. However, we identify a latent overthinking phenomenon: most token predictions are already correct after the first pass, but are sometimes revised into errors in later iterations. We ask whether selectively skipping latent iterations can improve accuracy, and reveal significant potential with an oracle iteration policy that boosts performance by up to 7.3%. Motivated by this, we propose Think-at-Hard (TaH), a looped transformer optimized for selective iteration. TaH employs a lightweight neural decider to trigger latent iteration, only at tokens likely to be incorrect after the standard forward pass. During latent iterations, depth-aware Low-Rank Adaptation (LoRA) modules shift the objective from general next-token prediction to focused hard-token refinement. A duo-causal attention mechanism extends attention from the token sequence dimension to an additional iteration depth dimension, enabling cross-iteration information flow with full sequential parallelism. Experiments on nine benchmarks show consistent gains across math, QA, and coding tasks. With identical parameter counts, TaH outperforms always-iterate baselines by 3.8-4.4% while skipping iterations on 93% of tokens, and exceeds single-iteration Qwen3 baselines by 3.0-3.8%. When allowing <3% more parameters from LoRA and decider, the gains further increase to 5.3-6.2% and 6.1-6.8%, respectively. Our code is available at https://github.com/thu-nics/TaH.",
+  "comment": "Accepted by ICML'26"
+ },
+ {
+  "id": "2605.26797v2",
+  "title": "Latent Recurrent Transformer: Architecture Exploration, Training Strategies, and Scaling Behavior",
+  "date": "2026-05-26",
+  "authors": [
+   "Zeyi Huang",
+   "Xuehai He",
+   "LiLiang Ren",
+   "Yiping Wang",
+   "Baolin Peng",
+   "Hao Cheng",
+   "Shuohang Wang",
+   "Pengcheng He",
+   "Jianfeng Gao",
+   "Yong Jae Lee",
+   "Yelong Shen"
+  ],
+  "abstract": "We study Latent Recurrent Transformer (LRT), a lightweight augmentation of autoregressive transformers that reuses a high-level source-layer hidden state from the previous token as recurrent memory for the next token. Because this state is already computed during ordinary decoding, LRT introduces a cross-token, cross-layer latent pathway while preserving the standard attention mechanism, KV-cache interface, and one model forward per generated token. To pretrain this recurrence without sequentially unrolling the full sequence, we introduce interleaved parallel training: one full-sequence initialization forward constructs a shared buffer, followed by sequential refinement of disjoint position subsets with parallel computation within each subset. This provides every token with recurrent-memory-aware supervision at approximately 2x ideal token compute. Across 1.3B- and 2.1B-parameter nanochat-style backbones and a wide range of training budgets, LRT improves both BPB and CORE under matched effective compute. Additionally, LRT outperforms two-forward PonderLM-2 and matches a three-loop Transformer in BPB, while retaining one-forward-per-token decoding with 9% latency overhead over the standard Transformer.",
+  "comment": ""
+ },
+ {
+  "id": "2609.01924v1",
+  "title": "Looped Transformers under the Jacobian Lens: Does the Global Workspace Survive Recurrence?",
+  "date": "2026-09-01",
+  "authors": [
+   "Wenlong Wang",
+   "Fergal Reid"
+  ],
+  "abstract": "Recent work identifies a mid-depth band of verbalisable, causally potent representations in a standard feedforward transformer --- a functional analogue of a global workspace. Whether the same workspace functionality emerges when depth is implemented through recurrence rather than a stack of distinct layers remains unknown. Looped and depth-recurrent transformers provide a direct test of this question because they reuse the same weights across depth. We extend the Jacobian lens to iterated architectures using a virtual-unrolling adapter. We apply the full workspace suite --- lens fitting, readout, and eleven causal experiment families --- to Ouro-2.6B (48 layers looped 4 times, deeply supervised) and Huginn-0125 (a 4-layer core recurred 16 times, trained for latent reasoning), using Qwen3.6-27B (64 untied layers) as the standard baseline. We find that a workspace forms in the iterated part of each architecture, but that recurrence changes how it can be accessed. Ouro reconstructs workspace content in every loop, and linear transport cannot carry that content across loop boundaries; writes and ablations must therefore span every remaining loop. Huginn carries content forward across all sixteen recurrences, while reads, writes, and ablations act only within a sliding window of roughly two recurrences. Whether newly injected content can be verbalised tracks explicit per-iteration supervision; whether existing content can be steered does not.",
+  "comment": ""
+ },
+ {
+  "id": "2609.03379v1",
+  "title": "RecurTrace: Adaptive Latent Reasoning with Loop-Time Memory",
+  "date": "2026-09-03",
+  "authors": [
+   "Yuxiang Wang",
+   "Kunyu Feng",
+   "Yingda Shen",
+   "Haoning Xu",
+   "Junyu Wang",
+   "Zhizheng Wu"
+  ],
+  "abstract": "Repeating a small block of middle layers increases a language model's effective inference depth without adding parameters or generating extra tokens, and recent work shows that this latent recurrence improves reasoning. However, two design choices limit these gains. Each iteration sees only the previous output and cannot directly access earlier computations. Moreover, a fixed loop count wastes depth on easy inputs while leaving hard ones with too little computation. We introduce RecurTrace, which addresses both limitations using the loop's own trajectory. Specifically, Loop Memory Attention lets each looped layer attend to its own states from previous iterations along the loop-time axis, so the model can revisit earlier computations instead of relying on the latest state alone. A halting head then reads the loop state and predicts whether to continue, with supervision from an oracle that identifies when additional depth still reduces loss. In a controlled MathQA comparison on the same looped backbone, RecurTrace achieves 56.9% accuracy with an average of 2.0 loops, exceeding the best fixed loop depth by 2.2 points at matched compute. By comparison, ACT and PonderNet collapse to one loop, and CALM reaches only 54.1% with 5.6 loops, while the stronger LoopUS-Conf and TaH-Mismatch baselines reach 55.3% at 3.2 loops and 55.7% at 2.1 loops. Finally, RecurTrace improves generation accuracy over same-budget fine-tuned baselines at 0.6B, 1.7B, 4B, and 8B, with the gain growing with model size from 0.6 to 3.4 points.",
+  "comment": ""
+ }
+]

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>循环 Transformer 与循环深度 · GPT-6 Astra 背后的 Loop 技术全景（2018–2026）</title>
+<style>
+:root{
+  --field:#0F1C2B; --surface:#16283C; --surface2:#1D3450; --ink:#E6EDF5; --ink2:#A9B8CB;
+  --structure:#4A7BA7; --focus:#4FC9E8; --caution:#E8A54F; --good:#6FD39A; --grid:rgba(74,123,167,.18);
+  --slide-w:1280px; --slide-h:720px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#060B12;color:var(--ink);font-family:"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC","Helvetica Neue",Arial,sans-serif;}
+code,.mono{font-family:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;font-size:.92em}
+#deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.slide{position:absolute;width:var(--slide-w);height:var(--slide-h);overflow:hidden;background:var(--field);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:40px 40px;padding:44px 64px 44px 64px;display:none;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.6);transform-origin:center center}
+.slide.active{display:flex}
+.slide h1{font-size:46px;line-height:1.15;margin:0 0 16px;font-weight:700;letter-spacing:.5px}
+.slide h2{font-size:27px;line-height:1.25;margin:0 0 14px;font-weight:700;color:var(--ink)}
+.slide h2 .k{color:var(--focus)}
+.slide h3{font-size:17px;margin:0 0 6px;color:var(--focus);font-weight:600}
+.slide p,.slide li{font-size:16.5px;line-height:1.45;color:var(--ink)}
+.slide ul{margin:0;padding-left:22px}
+.slide li{margin:4px 0}
+.muted{color:var(--ink2)}
+.small{font-size:13.5px!important;line-height:1.38}
+.tiny{font-size:11.5px!important;color:var(--ink2)}
+.kicker{color:var(--focus);font-size:16px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:600}
+.foot{position:absolute;left:64px;right:64px;bottom:14px;display:flex;justify-content:space-between;font-size:12px;color:var(--ink2)}
+.foot .n{color:var(--structure)}
+.cols{display:grid;gap:16px;flex:1;min-height:0}
+.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}.c21{grid-template-columns:2fr 1fr}.c12{grid-template-columns:1fr 2fr}
+.card{background:var(--surface);border:1px solid rgba(74,123,167,.35);border-radius:10px;padding:13px 15px}
+.card.focus{border-color:var(--focus);box-shadow:inset 0 0 0 1px rgba(79,201,232,.35)}
+.card.warn{border-color:var(--caution)}
+.kpi{display:flex;flex-direction:column;justify-content:center}
+.kpi .v{font-size:34px;font-weight:700;color:var(--focus);line-height:1.05}
+.kpi .v.c{color:var(--caution)}.kpi .v.g{color:var(--good)}
+.kpi .l{font-size:12.5px;color:var(--ink2);margin-top:5px;line-height:1.3}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:5px 8px;border-bottom:1px solid rgba(74,123,167,.35);text-align:left;vertical-align:top;line-height:1.35}
+th{color:var(--focus);font-weight:600;border-bottom:1.5px solid var(--structure)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.hl td{background:rgba(79,201,232,.08)}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--structure);color:var(--ink2);font-size:12px;margin-right:6px}
+.tag.f{border-color:var(--focus);color:var(--focus)}.tag.c{border-color:var(--caution);color:var(--caution)}
+.takeaway{margin-top:auto;padding:9px 14px;border-left:3px solid var(--focus);background:rgba(79,201,232,.07);font-size:15px;line-height:1.4}
+.takeaway b{color:var(--focus)}
+.cover{justify-content:center}
+.cover h1{font-size:54px}
+.cover .sub{font-size:24px;color:var(--ink2);margin:6px 0 30px}
+.cover .meta{font-size:16px;color:var(--ink2);line-height:1.7}
+.divider{justify-content:center;align-items:flex-start}
+.divider .num{font-size:120px;font-weight:700;color:rgba(79,201,232,.18);line-height:1;margin-bottom:-30px}
+.divider h1{font-size:52px}
+svg text{font-family:inherit}
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.box{background:var(--surface2);border:1px solid var(--structure);border-radius:6px;padding:6px 10px;font-size:13.5px}
+.box.f{border-color:var(--focus);color:var(--focus)}
+.arrow{color:var(--structure);font-size:20px}
+.timeline{position:relative;padding-left:0;list-style:none;margin:0}
+.timeline li{display:grid;grid-template-columns:100px 1fr;gap:14px;padding:4px 0;border-bottom:1px dashed rgba(74,123,167,.3);font-size:14px}
+.timeline li .y{color:var(--focus);font-weight:600;font-variant-numeric:tabular-nums}
+.timeline li.core .y{color:var(--caution)}
+.grid10{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;flex:1}
+.grid10 .card{padding:12px 14px}
+.grid10 h3{font-size:16px;margin-bottom:6px}
+.grid10 p{font-size:12px;line-height:1.35;color:var(--ink2);margin:0}
+.grid10 .n{font-size:26px;font-weight:700;color:var(--ink);margin-bottom:2px}
+#hud{position:fixed;right:14px;bottom:10px;font-size:12px;color:#5c7390;z-index:9;user-select:none}
+#help{position:fixed;left:14px;bottom:10px;font-size:12px;color:#5c7390;z-index:9}
+a{color:var(--focus);text-decoration:none}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:#fff}
+  #deck{position:static;display:block;overflow:visible}
+  .slide{display:flex!important;position:relative;transform:none!important;page-break-after:always;box-shadow:none;margin:0}
+  #hud,#help{display:none}
+}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- 1 cover -->
+<section class="slide cover">
+  <div class="kicker">awesome_loop_transformer · 汇总报告</div>
+  <h1>循环 Transformer 与循环深度</h1>
+  <div class="sub">GPT-6 Astra 背后的 Loop 技术全景：五篇核心论文 · 六十篇相关文献 · 十条趋势洞察（2018–2026）</div>
+  <div class="meta">
+    基于微信文章《刚刚，GPT-6 Astra 背后的 Loop 技术全被挖出来了》串起的 5 篇论文，逐篇核对原文；<br>
+    arXiv 全量检索补齐 2018–2026 年约 60 篇相关工作 · 2026-09-06<br>
+    <span class="mono">github.com/asimfish/awesome_loop_transformer</span>
+  </div>
+  <div class="foot"><span>视觉规范：ppt-master · technical-deepdive（blueprint）</span><span class="n">1</span></div>
+</section>
+
+<!-- 2 TLDR -->
+<section class="slide">
+  <div class="kicker">一页结论</div>
+  <h2>三句话说清这个方向在 2026 年的位置</h2>
+  <div class="cols c3">
+    <div class="card focus kpi"><div class="v">首胜</div><div class="l"><b>算力匹配下第一次赢。</b> Loopie-20B-A2B 在与 Qwen3-30B-A3B 复现版相同的每步墙钟时间下训练 800B token，约 600B 后反超；SMELT 在 FLOPs/参数/KV 三重匹配下省 6.8–18% 训练 FLOPs。胜利发生在"两步 · 逐层 · MoE"这个窄配置里。</div></div>
+    <div class="card kpi"><div class="v c">2 vs 32</div><div class="l"><b>"循环几次"分裂成两个 regime。</b> 预训练算力受限 → 2（Loopie、LoopCoder-v2、SMELT、Nanbeige）；推理算力可变 → 越多越好但要自适应（Huginn 到 32–64）。"三次以上回退"是 PLT 并行设计的位置税，不是循环的普适上限。</div></div>
+    <div class="card kpi"><div class="v g">超加</div><div class="l"><b>隐式循环 + 显式 CoT 互补。</b> LoopCoder-v2 在 R=2 上叠加 thinking 模式，LiveCodeBench +26.9，远超两者单独之和；LOTUS 首次在 3B 规模用潜在 CoT 追平显式 CoT，思考延迟降 2.5–6.9×。标准 GRPO 与循环模型错配（RLTT、LoopRPT）。</div></div>
+  </div>
+  <div class="takeaway"><b>给工程团队的一句话：</b>中段循环、两次、layer-loop、MoE 骨干；部署前实测延迟和 KV cache——训练算力匹配的胜利不等于推理成本匹配的胜利。</div>
+  <div class="foot"><span>数字来源：Loop the Loopies (2607.16051) · SMELT (2609.01343) · LoopCoder-v2 (2606.18023) · LOTUS (2606.31779)</span><span class="n">2</span></div>
+</section>
+
+<!-- 3 concept -->
+<section class="slide">
+  <div class="kicker">概念</div>
+  <h2>什么是循环 Transformer：同一组参数在深度上重复使用，<span class="k">深度与参数量解耦</span></h2>
+  <div class="cols c2">
+    <div>
+      <svg viewBox="0 0 560 300" width="560" height="300">
+        <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4A7BA7"/></marker></defs>
+        <text x="0" y="18" fill="#4FC9E8" font-size="14" font-weight="600">model-loop（UT 2018 · Huginn 核心 · Ouro）</text>
+        <g transform="translate(0,30)">
+          <rect x="0" y="0" width="70" height="34" rx="5" fill="#16283C" stroke="#4A7BA7"/><text x="35" y="22" fill="#E6EDF5" font-size="13" text-anchor="middle">L1</text>
+          <rect x="90" y="0" width="70" height="34" rx="5" fill="#16283C" stroke="#4A7BA7"/><text x="125" y="22" fill="#E6EDF5" font-size="13" text-anchor="middle">L2</text>
+          <rect x="180" y="0" width="70" height="34" rx="5" fill="#16283C" stroke="#4A7BA7"/><text x="215" y="22" fill="#E6EDF5" font-size="13" text-anchor="middle">L3</text>
+          <path d="M250,17 C300,17 300,60 215,60 L35,60 C-20,60 -20,17 0,17" fill="none" stroke="#4FC9E8" stroke-width="1.6" marker-end="url(#ar)"/>
+          <text x="125" y="78" fill="#A9B8CB" font-size="12" text-anchor="middle">L1→L2→L3→L1→L2→L3（整栈输出喂回）</text>
+        </g>
+        <text x="0" y="128" fill="#4FC9E8" font-size="14" font-weight="600">block-loop（Huginn 三段式 · Hyperloop · Training-Free · SMELT）</text>
+        <g transform="translate(0,140)">
+          <rect x="0" y="0" width="70" height="34" rx="5" fill="#16283C" stroke="#4A7BA7"/><text x="35" y="22" fill="#A9B8CB" font-size="13" text-anchor="middle">prelude</text>
+          <rect x="90" y="0" width="160" height="34" rx="5" fill="#1D3450" stroke="#4FC9E8"/><text x="170" y="22" fill="#4FC9E8" font-size="13" text-anchor="middle">core ×r</text>
+          <rect x="270" y="0" width="70" height="34" rx="5" fill="#16283C" stroke="#4A7BA7"/><text x="305" y="22" fill="#A9B8CB" font-size="13" text-anchor="middle">coda</text>
+          <path d="M250,10 C290,-20 90,-20 90,8" fill="none" stroke="#4FC9E8" stroke-width="1.6" marker-end="url(#ar)"/>
+          <text x="170" y="56" fill="#A9B8CB" font-size="12" text-anchor="middle">首尾层不循环，中段重复；每步重新注入输入 e</text>
+        </g>
+        <text x="0" y="222" fill="#4FC9E8" font-size="14" font-weight="600">layer-loop（Loopie · Training-Free layer-mode · MixerLoop）</text>
+        <g transform="translate(0,234)">
+          <rect x="0" y="0" width="70" height="34" rx="5" fill="#1D3450" stroke="#4FC9E8"/><text x="35" y="22" fill="#E6EDF5" font-size="13" text-anchor="middle">L1 ×2</text>
+          <rect x="90" y="0" width="70" height="34" rx="5" fill="#1D3450" stroke="#4FC9E8"/><text x="125" y="22" fill="#E6EDF5" font-size="13" text-anchor="middle">L2 ×2</text>
+          <rect x="180" y="0" width="70" height="34" rx="5" fill="#1D3450" stroke="#4FC9E8"/><text x="215" y="22" fill="#E6EDF5" font-size="13" text-anchor="middle">L3 ×2</text>
+          <text x="125" y="56" fill="#A9B8CB" font-size="12" text-anchor="middle">L1→L1→L2→L2→L3→L3（每层先局部迭代再下传）</text>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px"><h3>三条正交设计轴</h3>
+        <ul class="small">
+          <li><b>循环次数</b>：固定（Loopie、LoopCoder-v2）/ 训练随机·推理任选（Huginn）/ 逐 token 自适应停机（ACT、MoR、Think-at-Hard、RecurTrace）</li>
+          <li><b>训练方式</b>：从头预训练（Huginn、Ouro、Loopie）/ 改造已有模型（Relaxed Recursive、Retrofitted Recurrence）/ 免训练（Training-Free、Program-of-Layers）</li>
+          <li><b>目标把循环当什么</b>：截断展开的 LM（Huginn）/ 不动点（DEQ、STARS、Attractor）/ ODE 细化（Training-Free）/ 有监督潜在 CoT（LOTUS）/ 循环步 RL（RLTT、LoopRPT）</li>
+        </ul>
+      </div>
+      <div class="card warn"><h3 style="color:var(--caution)">第四种：潜变量条件化</h3><p class="small">上一轮（或上一 token）的隐状态作为条件注入——Coconut、PLT 的跨循环位置偏移（CLP）、Latent Recurrent Transformer。PLT 的 CLP 正是"两次饱和"的来源。</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>粒度分类沿用微信原文与 Loopie/Training-Free 的术语</span><span class="n">3</span></div>
+</section>
+
+<!-- 4 timeline -->
+<section class="slide">
+  <div class="kicker">时间线</div>
+  <h2>八年：从 bAbI 过拟合的补丁，到前沿架构的候选组件</h2>
+  <ul class="timeline">
+    <li><span class="y">2016</span><span>Neural GPU · Adaptive Computation Time：循环 + 自适应停机的前身</span></li>
+    <li class="core"><span class="y">2018-07</span><span><b>Universal Transformers</b>（Dehghani et al.）：跨时间步共享参数、坐标嵌入、ACT；bAbI 联合训练错误率 22.1 → 0.29</span></li>
+    <li><span class="y">2019–2022</span><span>ALBERT（共享用于压缩）· Deep Equilibrium Models · deep thinking 系列（随机展开 + 输入注入）· 路径独立均衡模型</span></li>
+    <li><span class="y">2023–2024</span><span>Looped Transformers as Programmable Computers · &lt;10% 参数学会 ICL 算法 · MoEUT 首次在 LM 上略胜标准模型 · Relaxed Recursive Transformers · Coconut</span></li>
+    <li class="core"><span class="y">2025-02</span><span><b>Recurrent Depth / Huginn-3.5B</b>（Geiping et al.）：800B token 训成，定名 recurrent depth；Saunshi 证明 k 层循环 L 次 ≈ kL 层</span></li>
+    <li><span class="y">2025-06–11</span><span>HRM · Mixture-of-Recursions · TRM · Ouro（2.6B，7.7T token）· <b>Parallel Loop Transformer</b> · 扩散式并行采样器 · Retrofitted Recurrence · Think-at-Hard</span></li>
+    <li><span class="y">2026-01–04</span><span>LoopFormer（ICLR）· RLTT（ICML）· LoopRPT · Hyperloop · 迭代深度扩展律 φ=0.46 · Loop-Think-Generalize（COLM）</span></li>
+    <li class="core"><span class="y">2026-05</span><span><b>Training-Free Looped Transformers</b>（UT Austin）· MELT · LT2 · LoopQ · STARS（ICML）· Attractor Models</span></li>
+    <li class="core"><span class="y">2026-06</span><span><b>LoopCoder-v2</b>（7B PLT，18T token，"只循环一次"）· 残差缩放 1/N 理论 · LOTUS · Program-of-Layers（ICML）</span></li>
+    <li class="core"><span class="y">2026-07</span><span><b>Loop the Loopies!</b>（Loopie-20B-A2B，算力匹配首胜）· Looped Latent Attention（KV 32×）· Nanbeige4.2-3B（28T token 产品模型）· Hidden Decoding（WeLM 617B 走序列维度）</span></li>
+    <li><span class="y">2026-09</span><span><b>SMELT</b> 扩展律（省 6.8–18% 训练 FLOPs）· RecurTrace · GPT-6 Astra 发布，The Information 报道其使用 recurrent depth</span></li>
+  </ul>
+  <div class="foot"><span>橙色年份 = 微信文章的五篇核心论文</span><span class="n">4</span></div>
+</section>
+
+<!-- 5 five papers table -->
+<section class="slide">
+  <div class="kicker">五篇核心论文</div>
+  <h2>一张表看五篇论文：各自回答一个问题，合起来是一条论证链</h2>
+  <table>
+    <tr><th></th><th>Universal Transformers</th><th>Recurrent Depth (Huginn)</th><th>Training-Free Looped</th><th>LoopCoder-v2</th><th>Loop the Loopies</th></tr>
+    <tr><td class="muted">arXiv / 时间</td><td>1807.03819 · 2018-07</td><td>2502.05171 · 2025-02</td><td>2605.23872 · 2026-05</td><td>2606.18023 · 2026-06</td><td>2607.16051 · 2026-07</td></tr>
+    <tr><td class="muted">回答的问题</td><td>机制是什么</td><td>现代规模能训成吗</td><td>已有模型能白拿吗</td><td>部署时循环几次</td><td>算力匹配下能赢吗</td></tr>
+    <tr><td class="muted">粒度 / 次数</td><td>model-loop · ACT</td><td>block(2,4,2) · r̄=32 任选</td><td>中间 4 层 · K=3 级 RK</td><td>model-loop(PLT) · R=2</td><td>layer-loop · R=2</td></tr>
+    <tr><td class="muted">训练</td><td>从头 ~65M</td><td>从头 3.5B · 800B tok</td><td><b>不训练</b> 0.6B–30B</td><td>从头 7B · 18T tok</td><td>从头 20B-A2B MoE · 3.5T</td></tr>
+    <tr class="hl"><td class="muted">关键数字</td><td>bAbI 22.1→0.29</td><td>r 4→32：ARC-E 49.1→69.9</td><td>45 格 87% 非负 · MMLU-Pro +2.64</td><td>SWE-V 43.0→<b>64.4</b>→27.6</td><td>~600B tok 后反超 Qwen3-30B-A3B</td></tr>
+    <tr><td class="muted">核心贡献</td><td>定义循环深度 + 停机</td><td>首次训成；隐空间轨道</td><td>层 = 欧拉步；子步而非重复</td><td>两步饱和的机制诊断；CoT+loop 超加</td><td>Loopie Recipe；SPT</td></tr>
+    <tr><td class="muted">最常被误读</td><td>—</td><td>"同样 0.8T"基线实为 0.18T</td><td>收益上限约 2–3 点</td><td>非单调是 PLT 特有</td><td>"算力匹配"= 实测步时，非 FLOPs</td></tr>
+  </table>
+  <div class="takeaway"><b>论证链：</b>UT 提出机制 → Huginn 证明可训 → Training-Free 证明可白拿并给出 ODE 解释 → LoopCoder-v2 给出部署时的循环次数与代价 → Loopie 在算力匹配下赢。</div>
+  <div class="foot"><span>详细解读见 reports/zh/01–05</span><span class="n">5</span></div>
+</section>
+
+<!-- 6 UT -->
+<section class="slide">
+  <div class="kicker">论文 01 · 2018</div>
+  <h2>Universal Transformers：把 N 层换成同一层重复 T 次，再让每个位置<span class="k">自己决定想多久</span></h2>
+  <div class="cols c21">
+    <div>
+      <div class="card" style="margin-bottom:14px"><h3>机制</h3>
+        <p class="small">每个时间步 t 对所有位置并行：自注意力交换信息 → 位置无关的转移函数（FFN 或深度可分离卷积）。参数跨时间步共享；坐标嵌入 P<sup>t</sup> = 位置正弦 + 时间步正弦，每步重新加入（今天所有 timestep encoding 的雏形）。ACT 停机：每位置预测停机概率，累计过阈值即冻结状态。</p></div>
+      <table>
+        <tr><th>任务</th><th class="num">Transformer</th><th class="num">UT</th><th class="num">UT + 动态停机</th></tr>
+        <tr><td>bAbI 10K 联合训练（错误率 / 失败任务）</td><td class="num">22.1 (12/20)</td><td class="num">0.47 (0/20)</td><td class="num"><b>0.29 (0/20)</b></td></tr>
+        <tr><td>LAMBADA LM 测试困惑度</td><td class="num">7321</td><td class="num">319</td><td class="num"><b>142</b></td></tr>
+        <tr><td>WMT14 En-De BLEU（base）</td><td class="num">28.0</td><td class="num"><b>28.9</b></td><td class="num">–</td></tr>
+        <tr><td>Copy / Reverse / Addition 字符准确率（训 40 测 400）</td><td class="num">.53 / .13 / .07</td><td class="num"><b>.91 / .96 / .34</b></td><td class="num">–</td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="card kpi" style="margin-bottom:14px"><div class="v">2.3 → 3.8</div><div class="l">bAbI 中需要 1 / 2 / 3 条支撑事实的问题，ACT 平均步数 2.3 / 3.1 / 3.8：模型按需分配计算</div></div>
+      <div class="card"><h3>留下的三个问题</h3><ul class="small"><li>参数—计算比：翻译只 +0.9 BLEU，参数主导任务吃亏（→ MoEUT、Loopie）</li><li>训练不稳定（→ 截断反传、残差缩放理论）</li><li>推理成本无讨论（→ PLT、MELT、LLA）</li></ul></div>
+    </div>
+  </div>
+  <div class="takeaway"><b>为什么重要：</b>定义了此后所有工作的三个要素——参数共享的深度循环、每步重新注入的条件信号、自适应停机。收益集中在难样本（干扰名词越多优势越大），这个模式七年后在 Huginn 上原样重现。</div>
+  <div class="foot"><span>Dehghani, Gouws, Vinyals, Uszkoreit, Kaiser · ICLR 2019</span><span class="n">6</span></div>
+</section>
+
+<!-- 7 Huginn arch -->
+<section class="slide">
+  <div class="kicker">论文 02 · 2025-02</div>
+  <h2>Huginn-3.5B：Prelude → Core ×r → Coda，随机采样循环次数、只对最后 8 步反传</h2>
+  <div class="cols c2">
+    <div>
+      <div class="flow" style="margin-bottom:12px"><span class="box">Prelude P（2 层）</span><span class="arrow">→</span><span class="box f">Core R（4 层）×r · 每步注入 e</span><span class="arrow">→</span><span class="box">Coda C（2 层）</span></div>
+      <p class="small mono" style="color:var(--ink2)">e = P(x); s₀ ~ N(0,σ²I); sᵢ = R(e, sᵢ₋₁); p = C(s_r)</p>
+      <ul class="small">
+        <li><b>输入注入</b>：像梯度下降每步都要用数据 y；只在第一步喂 e 的迭代不可能稳定。随机 s₀ + 注入 → 路径独立。</li>
+        <li><b>训练目标</b>：r ~ 对数正态泊松（均值 32，重尾）；<b>只对最后 k=8 步反传</b>，内存与 r 无关。</li>
+        <li><b>规模</b>：h=5280，(2,4,2)，3.5B 参数；r=32 时有效深度 2+4×32+2 = <b>132 层</b>。800B token，4096 块 AMD MI250X，恒定学习率 4e-5，三明治归一化。</li>
+        <li><b>两次失败</b>：隐状态坍缩（token 间相关度→1）；循环坍缩（r=1 与 r=32 困惑度相同，模型学会忽略状态 s）。</li>
+      </ul>
+    </div>
+    <div>
+      <table>
+        <tr><th>循环 r</th><th class="num">ARC-E</th><th class="num">ARC-C</th><th class="num">HellaSwag</th><th class="num">MMLU</th><th class="num">SciQ</th><th class="num">GSM8K CoT</th></tr>
+        <tr><td>4</td><td class="num">49.07</td><td class="num">27.99</td><td class="num">43.46</td><td class="num">23.39</td><td class="num">80.00</td><td class="num">–</td></tr>
+        <tr><td>8</td><td class="num">65.11</td><td class="num">35.15</td><td class="num">58.54</td><td class="num">25.29</td><td class="num">92.10</td><td class="num">–</td></tr>
+        <tr><td>16</td><td class="num">69.49</td><td class="num">37.71</td><td class="num">64.67</td><td class="num">31.25</td><td class="num">93.90</td><td class="num">–</td></tr>
+        <tr class="hl"><td>32</td><td class="num"><b>69.91</b></td><td class="num"><b>38.23</b></td><td class="num"><b>65.21</b></td><td class="num"><b>31.38</b></td><td class="num">93.50</td><td class="num"><b>34.80 / 42.08</b></td></tr>
+      </table>
+      <p class="tiny" style="margin-top:8px">Table 1–2，lm-eval-harness 零样本；GSM8K CoT 为 flexible/strict，带系统提示。EMA 权重平均后 r=64 时 GSM8K flexible 47.23。</p>
+      <div class="card kpi" style="margin-top:10px"><div class="v">32B / 50B</div><div class="l">"3.5B 打出 50B"是 <b>FLOPs 等效</b>：预训练每 token 原始 FLOPs 接近 32B 稠密模型，测试时可扩到 ~50B 的等效算力；基准分数接近 OLMo-7B、落后 OLMo-2。</div></div>
+    </div>
+  </div>
+  <div class="foot"><span>Geiping, McLeish, Jain, Kirchenbauer, Singh, Bartoldson, Kailkhura, Bhatele, Goldstein · arXiv 2502.05171</span><span class="n">7</span></div>
+</section>
+
+<!-- 8 Huginn fair comparison + latent -->
+<section class="slide">
+  <div class="kicker">论文 02 · 续</div>
+  <h2>公平对照只有 0.18T token；后 620B token 学到的东西<span class="k">全部编码在循环里</span></h2>
+  <div class="cols c2">
+    <div>
+      <table>
+        <tr><th>模型</th><th class="num">Token</th><th class="num">ARC-E</th><th class="num">HellaSwag</th><th class="num">GSM8K CoT</th></tr>
+        <tr><td>固定深度基线（同架构过一次核心）</td><td class="num">0.18T</td><td class="num">46.42</td><td class="num">37.34</td><td class="num">1.82/2.20</td></tr>
+        <tr class="hl"><td>循环模型早期 ckpt，r=32</td><td class="num">0.18T</td><td class="num"><b>53.62</b></td><td class="num"><b>48.80</b></td><td class="num"><b>9.02/10.24</b></td></tr>
+        <tr><td>循环模型早期 ckpt，r=1</td><td class="num">0.18T</td><td class="num">34.01</td><td class="num">29.19</td><td class="num">0.00/0.15</td></tr>
+        <tr><td>循环模型最终，r=32</td><td class="num">0.8T</td><td class="num">69.91</td><td class="num">65.21</td><td class="num">34.80/42.08</td></tr>
+        <tr><td>循环模型最终，r=1</td><td class="num">0.8T</td><td class="num">34.89</td><td class="num">29.34</td><td class="num">0.00/0.00</td></tr>
+      </table>
+      <div class="card warn" style="margin-top:12px"><h3 style="color:var(--caution)">传播误差</h3><p class="small">把 0.8T 的循环模型与 0.18T 的基线并列成"同样 0.8T"夸大了差距；论文没有 0.8T 的非循环基线。正确读法：同为 0.18T，ARC-E +7.2、HellaSwag +11.5、GSM8K ×5。</p></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px"><h3>循环在哪里最有用</h3><ul class="small"><li>难任务（ARC-C）收益大，事实回忆（SciQ）收益小</li><li>上下文越多需要的循环越多：ARC-C 零样本 8–12 次饱和，25–50 shot 需 32 次</li><li>开卷 OBQA +11.0（38.2→49.2）：记的事实少，对上下文推理强</li></ul></div>
+      <div class="card" style="margin-bottom:12px"><h3>零样本免费能力</h3><p class="small">逐 token 自适应停机（KL &lt; 5e-4，MT-Bench 5.63→5.56）· KV cache 共享（预算 4 不掉分）· 连续 CoT（用上一 token 的 s_r 热启动）· 自推测解码</p></div>
+      <div class="card"><h3>隐空间里发生了什么</h3><p class="small">多数 token 收敛到不动点；数值推理 token（GSM8K 的"3"）进入多维<b>轨道</b>；关键 token（"wrong"）表现为单向<b>滑块</b>，可能在计步；换 s₀ 轨迹形状不变（路径独立）。Lu et al. 2025 用 logit lens 只发现有限的可解释潜在 CoT 证据。</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Table 4 · Figure 9–12 · Section 6–7</span><span class="n">8</span></div>
+</section>
+
+<!-- 9 Training-free -->
+<section class="slide">
+  <div class="kicker">论文 03 · 2026-05</div>
+  <h2>Training-Free Looped Transformers：一层是 ODE 的一步欧拉，<span class="k">正确的循环是细分步长而不是走到 t=K</span></h2>
+  <div class="cols c2">
+    <div>
+      <div class="card" style="margin-bottom:12px"><h3>关键洞察</h3>
+        <p class="small mono" style="color:var(--ink2)">pre-norm 层 L(x)=x+F(x) ⇔ ẋ=F(x) 上 h=1 的前向欧拉；post-loop 层是在 x(t=1) 的近似上训练的</p>
+        <ul class="small">
+          <li><b>朴素循环</b> x←g(x) 做 K 次 = 积分到 t=K，后段层没见过 → 掉点。2 维小网络：K=2 时 MSE 0.015→2.88，K=8 时 335。</li>
+          <li><b>子步</b> x←(1−1/K)x+(1/K)g(x)：以 O(1/K) 逼近同一个 x(t=1)。K=8 时 MSE 1.04（约 320× 差距）。</li>
+          <li><b>特殊 RK 表</b>：输出 = β·g(x₀) + (1−β)·F<sup>K</sup>(x₀)，β 是锚点权重（安全阀）。</li>
+          <li>Anderson / heavy-ball / Aitken 都不如 RK 子步 → 预训练中段<b>不是压缩映射</b>，是 ODE 流。</li>
+        </ul>
+      </div>
+      <div class="card"><h3>统一配方（逐格零调参）</h3><p class="small">中间 4 层窗口 · 3 级 RK · 稠密 block-mode / MoE layer-mode（block-mode 下门控每次迭代路由到不同专家 → routing thrash）· ~2 万 H100 小时</p></div>
+    </div>
+    <div>
+      <table>
+        <tr><th>模型</th><th>基准</th><th class="num">基线</th><th class="num">循环</th><th class="num">Δ pp</th></tr>
+        <tr class="hl"><td>Qwen3-4B-Instruct</td><td>MMLU-Pro 5-shot</td><td class="num">57.14</td><td class="num">59.79</td><td class="num"><b>+2.64</b></td></tr>
+        <tr><td></td><td>GPQA-Main 0-shot</td><td class="num">33.71</td><td class="num">35.71</td><td class="num"><b>+2.01</b></td></tr>
+        <tr><td>Llama-3.2-1B-Instruct</td><td>GPQA-Main</td><td class="num">27.90</td><td class="num">29.69</td><td class="num">+1.79</td></tr>
+        <tr class="hl"><td>Qwen1.5-MoE-A2.7B</td><td>ARC-Challenge 25-shot</td><td class="num">48.29</td><td class="num">50.60</td><td class="num"><b>+2.30</b></td></tr>
+        <tr><td>Moonlight-16B-A3B</td><td>OpenBookQA</td><td class="num">31.60</td><td class="num">32.80</td><td class="num">+1.20</td></tr>
+        <tr><td>DeepSeek-V2-Lite-Chat</td><td>ARC-Challenge</td><td class="num">57.94</td><td class="num">58.79</td><td class="num">+0.85</td></tr>
+        <tr><td>Qwen3-30B-A3B（事先锁定配置）</td><td>CSQA / MMLU-flex</td><td class="num">78.71 / 66.67</td><td class="num">79.85 / 67.46</td><td class="num">+1.14 / +0.79</td></tr>
+      </table>
+      <div class="cols c3" style="margin-top:12px;flex:0">
+        <div class="card kpi"><div class="v">87%</div><div class="l">45 个（模型，基准）格子非负；60% 正、27% 中性</div></div>
+        <div class="card kpi"><div class="v c">−27.7</div><div class="l">循环整个模型（28 层）掉 27.73 点；n=4 +0.55，n≥6 悬崖</div></div>
+        <div class="card kpi"><div class="v">0.5</div><div class="l">最优窗口相对深度 0.43–0.71（&gt;1.7B）；小模型前移到 0.25–0.56</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Chen, Li, Liang, Lao, Liu · UT Austin · arXiv 2605.23872 · 收益集中在知识型多选题，小蒸馏模型可能掉分</span><span class="n">9</span></div>
+</section>
+
+<!-- 10 LoopCoder-v2 -->
+<section class="slide">
+  <div class="kicker">论文 04 · 2026-06</div>
+  <h2>LoopCoder-v2：在并行循环 Transformer 里，第二次循环几乎是全部——<span class="k">第三次开始交位置税</span></h2>
+  <div class="cols c2">
+    <div>
+      <div class="card" style="margin-bottom:12px"><h3>PLT 怎样把延迟和 KV 压平</h3>
+        <ul class="small">
+          <li><b>共享 KV + 门控滑窗注意力</b>：第一轮 KV 冻结共享；后续轮 = 全局分支（冻结 KV）与局部滑窗（w=64）的逐头门控混合。KV 从 O(RLSd) 降到 O(LSd)。</li>
+          <li><b>跨循环位置偏移 CLP</b>：B<sup>(r)</sup> = Embed(x) + shift(h<sup>(r−1)</sup>)，上一轮状态<b>右移一位</b>，token i 的第 r 轮可与 token i−1 的第 r+1 轮并行。延迟 ≈ 单次前向。</li>
+          <li><b>代价</b>：token i 拿到的是邻居的状态 → 位置错配，标准循环没有这一项。</li>
+        </ul>
+      </div>
+      <div class="card"><h3>实验协议</h3><p class="small">7B 稠密 PLT，R∈{1,2,3,4} 各自从头训练 18T token（文本:代码 1:1，100+ 语言），同一份 600 万条 SFT，训练即推理循环数；合计 100 万 GPU 小时。</p></div>
+    </div>
+    <div>
+      <table>
+        <tr><th>7B 模型</th><th class="num">HE+</th><th class="num">LCB</th><th class="num">SWE-V</th><th class="num">Multi-SWE</th><th class="num">TB-v2</th><th class="num">BFCL</th><th class="num">均值</th></tr>
+        <tr><td>基线 R=1</td><td class="num">81.1</td><td class="num">27.4</td><td class="num">43.0</td><td class="num">14.0</td><td class="num">11.2</td><td class="num">32.2</td><td class="num">38.0</td></tr>
+        <tr class="hl"><td><b>R=2</b></td><td class="num"><b>84.1</b></td><td class="num"><b>35.4</b></td><td class="num"><b>64.4</b></td><td class="num"><b>31.0</b></td><td class="num"><b>21.0</b></td><td class="num"><b>40.1</b></td><td class="num"><b>46.5</b></td></tr>
+        <tr><td>R=3</td><td class="num">75.0</td><td class="num">28.6</td><td class="num">27.6</td><td class="num">11.0</td><td class="num">12.2</td><td class="num">36.3</td><td class="num">36.9</td></tr>
+        <tr><td>R=4</td><td class="num">76.8</td><td class="num">24.5</td><td class="num">22.4</td><td class="num">9.3</td><td class="num">9.0</td><td class="num">39.5</td><td class="num">34.3</td></tr>
+      </table>
+      <p class="tiny" style="margin-top:6px">Table 2；SWE-V = SWE-bench Verified。R=2 的 64.4 超过 Kimi-Dev-72B（60.4）、Qwen3-235B-A22B（45.2），接近 Qwen3-Coder-480B（67.0）。</p>
+      <div class="cols c3" style="margin-top:10px;flex:0">
+        <div class="card kpi"><div class="v">174.6</div><div class="l">有效秩在第 2 轮达峰（172.5 → 158.2 递减）：后续循环在收窄表示子空间</div></div>
+        <div class="card kpi"><div class="v c">30–45×</div><div class="l">CLP 偏移成本 Ω ≈ 常数，是第 3 轮起边际收益的 30–45 倍</div></div>
+        <div class="card kpi"><div class="v g">+26.9</div><div class="l">R=2 上叠加显式 CoT（Thinking）：LiveCodeBench 35.4→62.3，超加</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="takeaway"><b>适用边界：</b>"两次最优"是 PLT 的性质（每次 R 单独从头训练，CLP 固定税）。顺序循环的 Huginn 到 r=32 单调上升。看有效秩曲线而不是穷举训练来选循环数。</div>
+  <div class="foot"><span>Yang et al. · 北航 / IQuest / 澜舟 / 人大 · arXiv 2606.18023</span><span class="n">10</span></div>
+</section>
+
+<!-- 11 Loopie -->
+<section class="slide">
+  <div class="kicker">论文 05 · 2026-07</div>
+  <h2>Loop the Loopies!：layer-loop + 实测步时匹配 + 两次循环，<span class="k">循环 MoE 第一次在算力匹配下赢</span></h2>
+  <div class="cols c2">
+    <div>
+      <div class="card" style="margin-bottom:12px"><h3>Loopie Recipe（按实测优化器步时匹配）</h3>
+        <ol class="small" style="padding-left:20px;margin:0">
+          <li>参考 Qwen3-like 30B-A3B（D=2048, L=48, R=1）→ 层数减半、循环两次：种子 (2048, 24, 2)。块执行次数不变，<b>激活内存减半</b>（∝ s·b·D·L，随存储深度而非执行深度）。</li>
+          <li>省下的内存换<b>每卡 micro-batch 翻倍</b>（梯度累积减半，每步 token 不变）。</li>
+          <li>把效率增益再投资到宽度/深度，选实测步时最接近参考的候选。</li>
+        </ol>
+      </div>
+      <table>
+        <tr><th>配置</th><th class="num">D</th><th class="num">L</th><th class="num">R</th><th class="num">名义算力</th><th class="num">激活内存</th></tr>
+        <tr><td>Qwen3 30B-A3B（参考）</td><td class="num">2048</td><td class="num">48</td><td class="num">1</td><td class="num">1.00×</td><td class="num">1.00×</td></tr>
+        <tr><td>种子 Loopie</td><td class="num">2048</td><td class="num">24</td><td class="num">2</td><td class="num">1.00×</td><td class="num">0.50×</td></tr>
+        <tr class="hl"><td><b>Loopie-20B-A2B</b></td><td class="num">2304</td><td class="num">27</td><td class="num">2</td><td class="num"><b>1.42×</b></td><td class="num">0.63×</td></tr>
+      </table>
+      <p class="tiny" style="margin-top:6px">名义 FLOPs 高 42%，但 MBS 2 vs 1 使每步墙钟时间持平。作者明确：这是实测训练成本相等，不是 FLOPs 相等；推理成本未报告。</p>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px"><h3>为什么 layer-loop、为什么只两次</h3><ul class="small"><li>6B-A0.6B 上 layer-loop 约 1.2T token 后反超 model-loop；消融去掉 layer-loop 明显更差</li><li>流水线并行友好：一层的所有循环在同一 stage 内完成，无环回依赖</li><li>N× 循环 vs N× 存储层（250B token）：边际收益在 R=2 最大，之后快速衰减</li></ul></div>
+      <div class="cols c3" style="flex:0">
+        <div class="card kpi"><div class="v">~600B</div><div class="l">800B token 算力匹配对照，约 600B 后反超并保持领先；4 级扩展梯全胜且差距不缩小</div></div>
+        <div class="card kpi"><div class="v">81.28</div><div class="l">20B-A2B Thinking MMLU（3.5T token）vs Nemotron 3 Nano 80.52、Cascade 2 81.22（各 25T）</div></div>
+        <div class="card kpi"><div class="v g">80.42</div><div class="l">6B-A0.6B Thinking 的 AIME24（Ouro 2.6B：62.50）；AIME25 70.83</div></div>
+      </div>
+      <div class="card" style="margin-top:12px"><h3>SPT：监督预训练</h3><p class="small">SFT 的损失掩码 + PT 的优化规模（batch ≥1024、序列 ≥128K、2T token、10 epoch）：预训练指标和推理指标同时上升，无过拟合、无遗忘。</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Gao, Chen, Xiao, Yang, Tao, Zhou, Dai · IQuest Research · arXiv 2607.16051</span><span class="n">11</span></div>
+</section>
+
+<!-- 12 divider -->
+<section class="slide divider">
+  <div class="num">02</div>
+  <h1>更广的图谱与十条洞察</h1>
+  <p class="muted">arXiv 全量检索 · 约 60 篇直接相关工作 · 十个主题</p>
+  <div class="foot"><span></span><span class="n">12</span></div>
+</section>
+
+<!-- 13 map -->
+<section class="slide">
+  <div class="kicker">文献图谱</div>
+  <h2>十个主题：2026 年上半年每个方向都有了专门的论文</h2>
+  <div class="grid10">
+    <div class="card"><div class="n">理论</div><h3>表达能力 · ICL · 长度泛化</h3><p>Giannou 2023 可编程计算机；Saunshi 2025 k 层×L 次 ≈ kL 层；Xu&amp;Sato 2025 循环擅长 DAG、CoT 擅长自约化；Zhang 2026 预算律 v≈n/T</p></div>
+    <div class="card"><div class="n">预训练</div><h3>规模化</h3><p>Huginn 3.5B/0.8T · Ouro 2.6B/7.7T · LoopCoder-v2 7B/18T · Loopie 20B-A2B/3.5T · Nanbeige4.2-3B/28T · SMELT 至 54B。循环数 2–4，MoE 成默认</p></div>
+    <div class="card"><div class="n">效率</div><h3>延迟 · KV · 量化</h3><p>PLT 并行；扩散式采样器 5×；MELT 常数 KV；Looped Latent Attention 跨循环 KV 低秩 32×；LT2 线性注意力；LoopQ W4A4</p></div>
+    <div class="card"><div class="n">稳定性</div><h3>训练理论</h3><p>残差缩放需 1/N 而非 1/√L；DeepLoop 指数 1/4→1/2；Fully Looped 稳到 12 次；STARS 谱半径正则；settling/drifting 分类</p></div>
+    <div class="card"><div class="n">停机</div><h3>自适应计算</h3><p>ACT · PonderNet · MoR（NeurIPS 25）· Think-at-Hard（93% token 不循环）· LoopFormer 弹性深度 · RecurTrace 平均 2.0 次达 56.9%</p></div>
+    <div class="card"><div class="n">改造</div><h3>免训练与改造</h3><p>Relaxed Recursive（逐层 LoRA）· Retrofitted Recurrence 课程 · Training-Free RK 子步 · Program-of-Layers 学跳过/重复程序</p></div>
+    <div class="card"><div class="n">后训练</div><h3>RL 与监督</h3><p>RLTT 沿潜在轨迹分配奖励 +10.9% · LoopRPT 强化预训练 · LOTUS 金标 CoT 监督潜在位置追平显式 CoT · LoopMTP · SPT</p></div>
+    <div class="card"><div class="n">可解释</div><h3>动力学</h3><p>轨道/滑块（Huginn）· logit lens 证据有限（Lu 2025）· 两尺度动力学 · Jacobian lens：Ouro 每轮重建工作区、Huginn 跨 16 轮携带</p></div>
+    <div class="card"><div class="n">小模型</div><h3>递归推理器</h3><p>HRM 27M 解数独/ARC · TRM 7M ARC-AGI-1 45% · Attractor Models 隐式微分、均衡内化 · Denoising Recursion 超过 TRM</p></div>
+    <div class="card"><div class="n">应用</div><h3>跨模态与 agent</h3><p>LoopViT 18M ARC 65.8% · RD-VLA 0%→90%、80× 加速 · 组合式工具调用随深度提升 · Nanbeige4.2-3B agentic 产品</p></div>
+  </div>
+  <div class="foot"><span>完整清单与摘要：README · data/papers.csv · data/related_abstracts.json</span><span class="n">13</span></div>
+</section>
+
+<!-- 14 insights 1-3 -->
+<section class="slide">
+  <div class="kicker">洞察 1–3</div>
+  <h2>算力匹配的门已过、但门很窄；循环次数分裂成两个 regime；粒度向中间收敛</h2>
+  <div class="cols c3">
+    <div class="card focus"><h3>1 · 窄门里的首胜</h3><p class="small">Loopie 与 SMELT 第一次在匹配训练成本下赢，但配置极窄：MoE、layer-loop/中段、两次。Schwethelm 的扩展律解释原因——一次循环只值 r<sup>0.46</sup> 份独立参数（截断反传下 0.38），用循环换参数在 FLOPs 匹配下必输；Loopie 是用循环省下的<b>激活内存</b>换 micro-batch 再换宽度，理论 FLOPs 看不见这笔红利。</p></div>
+    <div class="card"><h3>2 · 两个 regime</h3><p class="small">最优循环数：Loopie 2 · LoopCoder-v2 2 · SMELT 2 · Nanbeige 2 · Ouro 4 · Huginn 32（可到 64）· RecurTrace 2.0 · Think-at-Hard 在 93% token 上 1。分裂线是<b>算力约束在哪</b>：预训练受限 → 2；推理可变 → 按需自适应（Huginn ARC-C 随 few-shot 数从 8 次饱和到 32 次）。"三次以上回退"是 PLT 的位置税。</p></div>
+    <div class="card"><h3>3 · 粒度变细、位置居中</h3><p class="small">整模型（UT）→ 三段式（Huginn）→ 逐层/中段（Loopie、Training-Free、SMELT）→ 只循环 mixer（MixerLoop 保留 41.5% 收益、省 45.9% FLOPs）。三条独立证据指向同一位置：深度分数规则 0.43–0.71（众数 0.5）、SMELT 的"中间一半"、Huginn 的首尾层特化。MoE 必须 layer-loop（routing thrash），免训练与从头训练两篇独立一致。</p></div>
+  </div>
+  <div class="foot"><span>Loopie 2607.16051 · SMELT 2609.01343 · Schwethelm 2604.21106 · MixerLoop 2608.18230 · Training-Free 2605.23872</span><span class="n">14</span></div>
+</section>
+
+<!-- 15 insights 4-7 -->
+<section class="slide">
+  <div class="kicker">洞察 4–7</div>
+  <h2>ODE 流还是不动点？稳定性成了定理；推理成本被拆成三件事；循环与 CoT 互补</h2>
+  <div class="cols c2">
+    <div class="card"><h3>4 · 两种哲学分化</h3><p class="small">Training-Free：预训练中段不是压缩映射，不动点加速器都不如 RK 子步——对<b>已训练</b>模型顺着 ODE 流细分步长。另一支把循环<b>训成</b>不动点：STARS（谱半径正则）、Fixed-Point Reasoners、Attractor Models（隐式微分）。Viakhirev：settling 算子加深不变差，一个终端不动点目标就能把 drifting 变 settling；Huginn 属 non-settling，LoopCoder-v2 的 cos θ&lt;0 震荡正是其表现。</p></div>
+    <div class="card"><h3>5 · 稳定性从经验到定理</h3><p class="small">Huginn 的两次失败（2025）到 2026 年成了定理：残差缩放 ε=1/N 而非 1/√L；DeepNorm 指数 1/4→1/2；最优学习率只依赖唯一层数，可跨循环数迁移。Fully Looped 稳到 12 次，LoopMTP 到 15 次。"循环模型难训"这道 2018 年以来的障碍基本被拆除。</p></div>
+    <div class="card"><h3>6 · 推理成本拆成三个子问题</h3><p class="small">延迟：PLT 并行、扩散式并行采样器 5×。KV：共享（Huginn/MoR/MELT）或压缩（LLA：跨循环 KV 低秩，32× 近无损，H200 上批容量 32→768）。量化：LoopQ。三者独立可叠加。<b>口径警告</b>：Loopie 的算力匹配是训练步时；推理时每 token 54 次块计算 vs 48，KV 更大，未报延迟。</p></div>
+    <div class="card focus"><h3>7 · 互补而非替代</h3><p class="small">LoopCoder-v2 R=2 叠加 thinking：LCB +26.9 远超各自之和；LOTUS 用金标 CoT 监督潜在位置，3B 追平显式 CoT，思考延迟降 2.5–6.9×；Xu&amp;Sato 形式化分离两者擅长的问题类。配套发现：<b>标准 RL 与循环模型错配</b>——GRPO 只给最终潜在状态分配 credit；RLTT 沿轨迹分配后 Ouro-2.6B 数学 +10.9%；LoopRPT 在预训练就给潜在步分配强化信号。</p></div>
+  </div>
+  <div class="foot"><span>STARS 2605.26733 · Think Shallow 2608.18222 · 残差缩放 2606.18524 · DeepLoop 2607.13491 · LLA 2607.15456 · RLTT 2602.10520 · LOTUS 2606.31779</span><span class="n">15</span></div>
+</section>
+
+<!-- 16 insights 8-10 -->
+<section class="slide">
+  <div class="kicker">洞察 8–10</div>
+  <h2>循环擅长"操作"知识而非"存储"；应用扩到 agent 与具身；生产化开始、工具链没跟上</h2>
+  <div class="cols c3">
+    <div class="card"><h3>8 · 能力剖面</h3><p class="small">Ouro 的对照把优势归因于知识操作而非容量；Huginn 闭卷弱、开卷 +11.0；Frey：循环帮数学、记忆库帮常识，合并才超 iso-FLOP 基线；Dual-Path 学到的门控让标点/符号/算术 token 走"深"、功能词走"宽"。<b>最佳搭档</b>：检索、长上下文、MoE 专家库——把存储外置。</p></div>
+    <div class="card"><h3>9 · 从谜题到 agent</h3><p class="small">2025 年证据集中在数独/迷宫/ARC/GSM8K；2026 年扩到三类：软件工程 agent（LoopCoder-v2 SWE-V +21.4、Terminal-Bench 大涨）、工具调用（多步有依赖的调用随深度提升；Nanbeige4.2-3B 以 3B 超 Qwen3.5-9B）、机器人（RD-VLA 0%→&gt;90%，比 token 推理 VLA 快 80×）。共同点：一次前向内维护中间状态与依赖。</p></div>
+    <div class="card warn"><h3 style="color:var(--caution)">10 · 工具链缺口</h3><p class="small">五个开源家族：Huginn、Ouro、LoopCoder-v2、Loopie、Nanbeige4.2-3B（28T token，已作为产品发布）。但复现报告显示 Nanbeige 在 HF transformers 上开箱 5 个 bug（静默置零的 RoPE 缓冲、已移除的 cache API），修复后层复用仍使注意力内存翻倍。推理框架、量化、KV 管理都没有循环模型的标准接口；Loopie 的 megatron-loopie / vllm-loopie 分支是往这个方向的信号。</p></div>
+  </div>
+  <div class="foot"><span>Ouro 2510.25741 · Frey 2603.08391 · Dual-Path 2605.30202 · Popescu 2608.18171 · RD-VLA 2602.07845 · Halloran 2608.13987</span><span class="n">16</span></div>
+</section>
+
+<!-- 17 misreadings -->
+<section class="slide">
+  <div class="kicker">核对</div>
+  <h2>五处被二次传播放大的说法，对照原文</h2>
+  <table>
+    <tr><th style="width:38%">常见说法</th><th>原文事实</th></tr>
+    <tr><td>Huginn "同样 0.8T token"下循环模型碾压基线</td><td>非循环基线只训了 0.18T；同为 0.18T 时循环模型 ARC-E 53.62 vs 46.42、GSM8K CoT 10.24 vs 2.20</td></tr>
+    <tr><td>"循环两次就够，三次以上回退"是循环 Transformer 的规律</td><td>是 PLT（跨循环位置偏移）特有的现象；每个 R 单独从头训练；Huginn 到 r=32 单调上升</td></tr>
+    <tr><td>Loopie 与 Qwen3-30B-A3B "相同算力"</td><td>相同<b>实测优化器步时</b>；Loopie 名义 FLOPs 高 42%，推理成本未报告；对照的是 800B token 自复现版而非官方 36T 模型</td></tr>
+    <tr><td>Training-Free 让开源模型"变强"</td><td>收益约 1–2.6 个百分点，集中在知识型多选题；3B 以下蒸馏模型可能掉分；额外约 15–30% 推理延迟</td></tr>
+    <tr><td>Huginn "3.5B 打出 50B 的表现"</td><td>FLOPs 等效，非基准等效；基准上接近 OLMo-7B、落后 OLMo-2-7B</td></tr>
+  </table>
+  <div class="takeaway"><b>方法：</b>每条都回到原论文的表号核对（Huginn Table 4、LoopCoder-v2 Table 2、Loopie Table 1 与 §2.4、Training-Free Table 2–3）。</div>
+  <div class="foot"><span>reports/zh 与 survey 附录 A</span><span class="n">17</span></div>
+</section>
+
+<!-- 18 Astra -->
+<section class="slide">
+  <div class="kicker">推断 · 明确标注</div>
+  <h2>关于 GPT-6 Astra：能核实的与不能核实的</h2>
+  <div class="cols c2">
+    <div class="card warn"><h3 style="color:var(--caution)">不能核实</h3><p class="small">Astra 用了哪种循环、循环几次、如何训练——OpenAI 发布页无架构细节，The Information 报道基于匿名信源，两份原始材料本报告作者均无法访问。以下四条全部是基于公开文献的推断。</p></div>
+    <div class="card"><h3>四条推断</h3>
+      <ol class="small" style="padding-left:20px;margin:0">
+        <li>若 Astra 用 recurrent depth，公开文献中最接近"前沿规模 + 算力匹配"的配方是 Loopie/SMELT 路线：MoE、中段或逐层、循环次数很小。整模型循环 32 次的 Huginn 路线没有前沿预算下的算力匹配证据。</li>
+        <li>"OpenAI 绕过了两次饱和"这一推测前提不成立——两次饱和是 PLT 特有；真正的瓶颈是推理成本，而 KV 32× 压缩、扩散式并行采样 5× 已把它压低一个量级。</li>
+        <li>报道中的"安全担忧"对应文献里的真实问题：潜在推理无可读中间 token，探测结果依赖层与解码方式（Lu 2025、Jacobian Lens 2026），比监督 CoT 更难。</li>
+        <li>Loopie（7 月）、LLA（7 月）、SMELT（9/1）与 Astra（9 月初）密集出现：更合理的解读是多个团队在 2026 上半年同时把这个方向推到可用，而非某篇论文导致某个产品。</li>
+      </ol>
+    </div>
+  </div>
+  <div class="foot"><span>The Information, 2026-09-02（未访问原文）· openai.com/index/gpt-6-astra（无架构细节）</span><span class="n">18</span></div>
+</section>
+
+<!-- 19 open problems -->
+<section class="slide">
+  <div class="kicker">未解问题</div>
+  <h2>七个还没有公开答案的问题</h2>
+  <div class="cols c2">
+    <ul class="small">
+      <li><b>多循环的算力匹配。</b> 所有算力匹配的胜利都在 R=2；R≥4 能否赢没有公开证据。</li>
+      <li><b>推理成本的完整账。</b> 训练步时、推理延迟、KV 峰值内存需同时报告；目前没有一篇三者齐全。</li>
+      <li><b>扩展律的函数形式。</b> SMELT 到 54B、Schwethelm 到 ~1B；Chinchilla + r<sup>φ</sup> 项在 100B+ 是否成立未知。</li>
+      <li><b>自适应停机的预训练规模收益。</b> MoR/TaH/RecurTrace 都在 ≤8B；只有 Ouro 的熵正则深度分配在 7.7T token 验证过。</li>
+    </ul>
+    <ul class="small">
+      <li><b>潜在推理的可监督性。</b> LOTUS 需要金标 CoT；无 CoT 数据时如何让潜在轨迹可读、可审计，是安全层面的开放问题。</li>
+      <li><b>layer-loop 的机制。</b> Loopie 三个理由中只有扩展性有实验；SMELT 的"第二次访问削弱注意力沉降"是唯一机制解释。</li>
+      <li><b>循环 vs 序列长度扩展。</b> Hidden Decoding（WeLM 617B）走序列维度并称更兼容流水线并行；Loopie 的 layer-loop 恰为流水线兼容而设计；100B+ 上无正面对比。</li>
+    </ul>
+  </div>
+  <div class="takeaway"><b>最值得做的两个空白：</b>R≥4 的算力匹配扩展律；循环专用的 RL 目标（把 credit 分到潜在轨迹上）。</div>
+  <div class="foot"><span></span><span class="n">19</span></div>
+</section>
+
+<!-- 20 recipe -->
+<section class="slide">
+  <div class="kicker">给从业者</div>
+  <h2>三种预算下的可执行配方</h2>
+  <div class="cols c3">
+    <div class="card"><h3>零训练：已有模型</h3><ul class="small"><li>中间 4 层窗口，3 级 RK 子步，β 取中间值</li><li>稠密 block-mode，MoE layer-mode（先固定路由）</li><li>先在知识型多选题上验证；预期 +1–2.6 pp，多 15–30% 延迟</li><li>任何"某段层跑两遍"的实验都用阻尼更新 x←(1−1/K)x+(1/K)g(x)</li></ul></div>
+    <div class="card focus"><h3>从头预训练：前沿预算</h3><ul class="small"><li>MoE 骨干，layer-loop，R=2</li><li>层数减半 → 激活内存减半 → micro-batch 翻倍 → 用效率增益买宽度；按<b>实测步时</b>匹配算力</li><li>SmallInit / 三明治归一化 / 残差 1/N 缩放；检查 r=1 与 r=max 的困惑度是否分开</li><li>后训练：SPT（SFT 掩码 + PT 规模）；RL 用轨迹级 credit（RLTT 类）</li></ul></div>
+    <div class="card"><h3>推理时可变算力</h3><ul class="small"><li>顺序循环（Huginn 类）+ 训练时随机 r + 截断反传，推理任选 r</li><li>逐 token 自适应停机（KL 阈值 / 二阶步长差 / 学习式停机头）</li><li>KV：共享预算或 LLA 低秩编码；延迟：扩散式并行采样</li><li>给它检索/长上下文——循环模型的强项是对上下文推理</li></ul></div>
+  </div>
+  <div class="takeaway"><b>部署前必做：</b>实测延迟与 KV 峰值内存；不要把"训练算力匹配"当作"推理成本匹配"。</div>
+  <div class="foot"><span></span><span class="n">20</span></div>
+</section>
+
+<!-- 21 repo -->
+<section class="slide">
+  <div class="kicker">仓库导航</div>
+  <h2>awesome_loop_transformer：这份报告的全部材料</h2>
+  <div class="cols c2">
+    <div class="card"><h3>目录</h3>
+      <ul class="small mono">
+        <li>README.md — awesome 列表（按主题分类，含五篇核心论文标注）</li>
+        <li>papers/original/ — 五篇原文 PDF；papers/zh/ — 保版式中译 + QA 报告</li>
+        <li>papers/src/ — arXiv HTML 全文（Markdown）</li>
+        <li>reports/zh | en/ — 五篇逐篇深度解读</li>
+        <li>reports/pdf/ — 中、英文完整报告 PDF</li>
+        <li>survey/zh | en/ — 趋势综述（Markdown + PDF）</li>
+        <li>slides/html/ — 本 HTML 演示（含 PDF 导出）；slides/beamer/ — Beamer PDF</li>
+        <li>data/ — papers.csv、related_abstracts.json；src/generator.py 生成 README</li>
+      </ul>
+    </div>
+    <div class="card"><h3>方法与工具</h3>
+      <ul class="small">
+        <li>翻译：SuperTranslate 保版式引擎（DeepSeek 后端）+ 对象级 QA，5 篇中 3 篇 0 issue，2 篇为图内刻度/公式行的可解释误报</li>
+        <li>检索：arXiv API，关键词 looped/recurrent-depth/depth-recurrent transformer、latent reasoning ∧ loop，60 篇摘要留档</li>
+        <li>写作：主张先行、必要限定只写一次、数字随处可核对（anti-defensive-writing / 说人话）</li>
+        <li>排版：pandoc + XeLaTeX（报告）、Beamer 16:9（学术幻灯）、本 HTML（ppt-master technical-deepdive 风格）</li>
+      </ul>
+    </div>
+  </div>
+  <div class="takeaway">github.com/asimfish/awesome_loop_transformer · 欢迎 PR 补充新论文（data/papers.csv → src/generator.py）</div>
+  <div class="foot"><span>2026-09-06</span><span class="n">21</span></div>
+</section>
+
+</div>
+<div id="help">← → / 空格 翻页 · Home / End · P 打印</div>
+<div id="hud"></div>
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const hud=document.getElementById('hud');
+  let i=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+  function fit(){const W=innerWidth,H=innerHeight,s=Math.min(W/1280,H/720)*0.98;slides.forEach(el=>el.style.transform=`scale(${s})`);}
+  function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((el,k)=>el.classList.toggle('active',k===i));hud.textContent=(i+1)+' / '+slides.length;history.replaceState(null,'','#'+(i+1));}
+  addEventListener('keydown',e=>{if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();show(i+1);}else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();show(i-1);}else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);else if(e.key==='p'||e.key==='P')print();});
+  document.getElementById('deck').addEventListener('click',e=>{if(e.target.closest('a'))return;show(e.clientX>innerWidth/2?i+1:i-1);});
+  addEventListener('resize',fit);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1));
+  fit();show(i);
+})();
+</script>
+</body>
+</html>

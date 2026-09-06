@@ -1,0 +1,29 @@
+{
+  "issue_count": 4,
+  "issues": [
+    {
+      "page": 1,
+      "code": "text_outside_frame",
+      "severity": "error",
+      "message": "Page 1: text in the box at x=0-136, y=473-528 runs 2.0pt past its bottom edge: '60'"
+    },
+    {
+      "page": 1,
+      "code": "text_outside_frame",
+      "severity": "error",
+      "message": "Page 1: text in the box at x=0-118, y=473-528 runs 2.0pt past its bottom edge: '60'"
+    },
+    {
+      "page": 1,
+      "code": "text_outside_frame",
+      "severity": "error",
+      "message": "Page 1: text in the box at x=0-157, y=477-528 runs 2.0pt past its bottom edge: '60'"
+    },
+    {
+      "page": 10,
+      "code": "text_outside_frame",
+      "severity": "error",
+      "message": "Page 10: text in the box at x=0-221, y=276-397 runs 1.5pt past its bottom edge: '35%'"
+    }
+  ]
+}
