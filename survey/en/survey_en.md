@@ -9,6 +9,18 @@ date: "2026-09-06"
 
 Reusing one set of parameters along the depth axis — an idea introduced by the Universal Transformer in 2018 — became one of the fastest-growing directions in large-model architecture research in 2025–2026, and reached public attention in September 2026 when The Information reported that GPT-6 Astra uses "recurrent depth". This report takes the five papers threaded together by the WeChat article "The Loop technology behind GPT-6 Astra" as its skeleton, re-reads each against the original text to restore the preconditions and numbers that secondary coverage dropped, and then uses an exhaustive arXiv search to place roughly 60 directly related works from 2018–2026 into ten themes and ten trend judgments. Three conclusions stand out. First, recurrent depth has for the first time beaten a vanilla MoE transformer under **measured compute matching** (Loopie, July 2026), but the win sits in a narrow configuration: two steps, per-layer looping, MoE backbone. Second, "how many loops" splits into two regimes — under a fixed pretraining budget the answer is 2; with variable inference compute the answer is "more, adaptively" — and LoopCoder-v2's "three or more regress" is the price of a parallel-loop design, not a universal ceiling on recurrent depth. Third, latent looping and explicit chain-of-thought are complementary axes of test-time compute, and stacking them yields more than the sum of their parts.
 
+# How to read this report
+
+Three reading paths, by available time:
+
+| Time | Read | You get |
+|---|---|---|
+| 5 minutes | Abstract → the headings and bold sentences of §6 → Appendix A | Where the field stands and which popular claims are inaccurate |
+| 30 minutes | §2–4 (concepts, timeline, five-paper table) → all of §6 → §8 open problems | A complete map; you can place a new paper in its cell |
+| 2 hours | Everything + the five reports in `reports/en/01–05` | Every key number traceable to a table in the original paper |
+
+Unfamiliar terms are defined in **Appendix C**. Diagram labels are in Chinese; each caption carries the full meaning. Everything about GPT-6 Astra is labeled as inference.
+
 # 1. Why now
 
 On 2 September 2026 The Information reported that OpenAI's newly released GPT-6 Astra uses an architectural technique called recurrent depth. Researcher @nrehiew_ then traced the lineage on X through five papers, and the WeChat account PaperAgent turned that thread into a Chinese long-form article. This report's direct goal is to read those five papers closely and put them back into the larger literature.
@@ -29,6 +41,10 @@ In a standard transformer forward pass each layer's parameters are used once; de
 | Block-loop | Only a contiguous middle segment loops; first and last layers do not | Huginn's prelude–core–coda, Hyperloop, Training-Free Looped, SMELT |
 | Layer-loop | Each layer repeats K times before passing to the next | Loopie, Training-Free layer-mode, MixerLoop (mixer only) |
 | Latent conditioning | The previous loop's (or previous token's) hidden state is injected as a condition | Coconut, PLT's CLP, Latent Recurrent Transformer |
+
+![](../../assets/figures/diagrams/loop_granularity.png)
+
+*Figure 1 (labels in Chinese): model-loop repeats the whole stack; block-loop repeats only the middle segment with input injection; layer-loop repeats each layer before the next. Effective depth = stored layers × loops, parameters unchanged.*
 
 These are not exclusive. Loopie is layer-loop; Huginn is block-loop at the three-stage level and model-loop inside its core; PLT is model-loop plus latent conditioning (the previous round's state shifted by one position).
 
@@ -205,6 +221,10 @@ The reported optima side by side: Loopie 2, LoopCoder-v2 2, SMELT 2, Nanbeige4.2
 
 The dividing line is **where the compute constraint binds**. Under a fixed pretraining budget, each extra loop multiplies training FLOPs and the marginal return decays fastest after R=2 (Loopie Figure 6): the answer is 2. With variable inference compute, one model can loop more on hard inputs and less on easy ones (Huginn's ARC-C saturates at 8 loops zero-shot and 32 loops with 25–50 shots): the answer is "as needed, adaptively".
 
+![](../../assets/figures/diagrams/two_regimes.png)
+
+*Figure 2 (labels in Chinese): left, fixed pretraining budget → two loops (Loopie, LoopCoder-v2, SMELT, Nanbeige); right, variable inference compute → adaptive and deep (Huginn 8 → 32 loops with more context; Ouro 4; RecurTrace 2.0 avg; Think-at-Hard loops only 7% of tokens).*
+
 LoopCoder-v2's "three or more regress" is often quoted as a universal ceiling. The paper's own explanation is that PLT's cross-loop position offset charges a fixed positional tax per loop, 30–45× the marginal gain after loop 2; sequential looping has no such term. It is the **price of parallelization**, not a property of looping.
 
 ## Insight 3: Loop granularity is getting finer and converging on the middle
@@ -290,3 +310,21 @@ In eight years recurrent depth went from an encoder–decoder trick for bAbI ove
 - Chinese translations: SuperTranslate layout-preserving translation with object-level QA (`papers/zh/`; QA record in `QA_SUMMARY.md`).
 - Related literature: arXiv API searches on 2026-09-06 combining looped/recurrent-depth/depth-recurrent transformer, latent reasoning ∧ (loop|recurrence|recursive), and named models; 60 deduplicated abstracts kept in `data/related_abstracts.json`.
 - Writing rules: lead with the claim, state necessary limits once, make every number checkable; cite no primary source we could not access.
+
+# Appendix C: Glossary
+
+| Term | One-line meaning |
+|---|---|
+| Recurrent depth / looped transformer | The same parameters applied repeatedly along depth; effective depth = stored layers × loop count |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next (Figure 1) |
+| Input injection | Re-feed the input embedding at every loop; otherwise the iteration is unstable |
+| Truncated backprop | Gradients through only the last k loops so memory is independent of loop count |
+| Adaptive halting (ACT) | Each token decides how many loops it needs |
+| Path independence | Different random initial states converge to the same behavior |
+| KV cache | Cached attention keys/values; one extra copy per loop, the main memory bottleneck |
+| MoE | Mixture of experts; "20B-A2B" = 20B total, 2B active parameters |
+| FLOP-matched vs measured-compute-matched | Aligning theoretical compute vs measured training step time; looping's activation-memory savings only appear in the latter |
+| Latent reasoning vs explicit CoT | Extra computation in hidden space vs intermediate steps written as tokens |
+| Fixed point | A state another loop leaves unchanged; one line of work trains loops to converge to fixed points |
+| PLT / CLP | Parallel Loop Transformer / cross-loop position offset |
+| φ in the iso-depth scaling law | How many unique parameters one recurrence is worth: 1 = full equivalence, 0 = no capacity gain; measured 0.46 |

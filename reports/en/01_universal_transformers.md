@@ -8,6 +8,18 @@
 | Code | [tensor2tensor](https://github.com/tensorflow/tensor2tensor) |
 | In this repo | Original `papers/original/1807.03819.pdf` · Chinese `papers/zh/1807.03819.zh.pdf` |
 
+## At a glance
+
+> **Problem** · Transformers have fixed depth and lack the RNN bias toward re-applying one transformation; they overfit on multi-hop reasoning (bAbI) and fail on algorithmic tasks.  
+> **Method** · Replace N distinct layers with one layer applied T times, add position+timestep coordinate embeddings; ACT lets each position decide when to stop.  
+> **Result** · bAbI joint-training error 22.1 → 0.29, LAMBADA perplexity 7321 → 142, WMT14 +0.9 BLEU.  
+> **Limits** · Poor parameter-to-compute ratio, unstable training, inference cost undiscussed — the research agenda of the next eight years.  
+> **Plain words** · Run the same circuit several times: hard tokens get more rounds, easy ones stop early.  
+
+![](../../assets/figures/diagrams/ut_act.png)
+
+*Figure (labels in Chinese): one shared block repeated over time steps; positions halt at different steps.*
+
 ## One sentence
 
 Replace the Transformer's N distinct layers with one set of parameters applied T times, add a per-position halting mechanism (ACT) that decides how long each symbol "thinks", and you get a parallel-in-time, recurrent-in-depth, Turing-complete sequence model that beats a same-size Transformer on bAbI, LAMBADA, algorithmic tasks, and WMT14 translation.
@@ -93,3 +105,20 @@ It also left three problems open that define the following seven years of resear
 - LAMBADA test perplexity: 7321 → 142.
 - WMT14 En–De: 28.0 → 28.9 BLEU.
 - ACT mean steps vs. required facts: 2.3 / 3.1 / 3.8 (1 / 2 / 3 facts).
+
+## Glossary
+
+| Term | One-line meaning |
+|---|---|
+| Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
+| Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
+| Adaptive halting (ACT) | Let each token decide how many loops it needs |
+| Path independence | Different random initial states converge to the same behavior |
+| KV cache | Cached attention keys/values; looped models add one copy per loop, the main memory bottleneck |
+| MoE | Mixture of experts: each token activates a small subset of parameters; "20B-A2B" = 20B total, 2B active |
+| FLOP-matched vs measured-compute-matched | Aligning theoretical compute vs aligning measured training step time — the activation memory looping saves only shows up in the latter |
+| Latent reasoning vs explicit CoT | Extra computation in hidden space vs intermediate steps written as text tokens |
+| Fixed point | A state that another loop leaves unchanged; one line of work trains loops to converge to fixed points for stability |
+| PLT / CLP | Parallel Loop Transformer / cross-loop position offset — shift the previous round's states by one token so rounds run in parallel |

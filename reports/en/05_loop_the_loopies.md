@@ -8,6 +8,18 @@
 | Models | Loopie-20B-A2B, Loopie-6B-A0.6B (Base / Thinking) |
 | In this repo | Original `papers/original/2607.16051.pdf` · Chinese `papers/zh/2607.16051.zh.pdf` |
 
+## At a glance
+
+> **Problem** · Given the same pretraining compute, can a looped transformer beat a vanilla MoE that simply has more parameters?  
+> **Method** · Loop each layer twice, halve stored depth → activation memory halves → double the per-device micro-batch → spend the speed-up on width; match by measured step time; SPT + RL post-training.  
+> **Result** · At equal budget over 800B tokens it overtakes a reproduced Qwen3-30B-A3B after ~600B; the 20B-A2B Thinking model reaches MMLU 81.28 and AIME24 92.09 with one-seventh of the peers' tokens.  
+> **Limits** · Matched on training step time, not FLOPs (nominal +42%); inference cost unreported; the reference is an 800B-token reproduction.  
+> **Plain words** · The win does not come from loops replacing parameters; it comes from the memory loops save, spent on a wider model that wins within the same training time.  
+
+![](../../assets/figures/diagrams/loopie_recipe.png)
+
+*Figure (labels in Chinese): the three-step Loopie Recipe and the layer-loop execution order.*
+
 ## One sentence
 
 Looped transformers have lived under one objection: given $N\times$ the pretraining compute, scaling parameters by $N$ usually beats looping $N$ times. Loopie answers with three moves — (1) replace whole-model looping with per-layer looping (layer-loop), (2) match compute by **measured optimizer-step wall-clock time** rather than theoretical FLOPs (the Loopie Recipe), (3) loop only twice. Loopie-20B-A2B, trained for 800B tokens at **the same per-step wall-clock time** as a reproduced Qwen3-30B-A3B, overtakes it after ~600B tokens and stays ahead; with 3.5T pretraining tokens, 2T tokens of "supervised pre-training" (SPT), and math/code RL, the 20B-A2B Thinking model reaches MMLU 81.28 and AIME24 92.09, matching or beating Nemotron 3 Nano (25T tokens) with less than one-seventh of its pretraining tokens.
@@ -148,3 +160,20 @@ Loopie-6B-A0.6B: MMLU 78.36, **AIME24 80.42, AIME25 70.83** (Ouro 2.6B Thinking:
 - Pretraining 3.5T (2.28T = 4 epochs of HQ + 1.26T annealing); SPT 2T, 10 epochs; RL GSPO+DAPO, 32K→64K.
 - 20B-A2B Thinking: MMLU 81.28, ARC-C 93.52, BBH 82.28, IFEval 84.72, AIME24 92.09, AMC 94.21.
 - 6B-A0.6B Thinking: AIME24 80.42, AIME25 70.83, MATH-500 93.80.
+
+## Glossary
+
+| Term | One-line meaning |
+|---|---|
+| Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
+| Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
+| Adaptive halting (ACT) | Let each token decide how many loops it needs |
+| Path independence | Different random initial states converge to the same behavior |
+| KV cache | Cached attention keys/values; looped models add one copy per loop, the main memory bottleneck |
+| MoE | Mixture of experts: each token activates a small subset of parameters; "20B-A2B" = 20B total, 2B active |
+| FLOP-matched vs measured-compute-matched | Aligning theoretical compute vs aligning measured training step time — the activation memory looping saves only shows up in the latter |
+| Latent reasoning vs explicit CoT | Extra computation in hidden space vs intermediate steps written as text tokens |
+| Fixed point | A state that another loop leaves unchanged; one line of work trains loops to converge to fixed points for stability |
+| PLT / CLP | Parallel Loop Transformer / cross-loop position offset — shift the previous round's states by one token so rounds run in parallel |

@@ -58,8 +58,10 @@ build() {  # lang out title subtitle files...
   # pandoc -> standalone TeX; drop the "\noalign{}" tokens pandoc emits inside longtable
   # (they trigger "Infinite glue shrinkage" with longtable >= 4.24), then 2x XeLaTeX for the TOC.
   local texname="report_$lang"
-  pandoc "${inputs[@]}" "${common[@]}" "${langopts[@]}" -s -t latex -o "$tmpdir/$texname.tex"
+  pandoc "${inputs[@]}" "${common[@]}" "${langopts[@]}" --resource-path="$ROOT/reports/$lang:$ROOT/survey/$lang:$ROOT" -s -t latex -o "$tmpdir/$texname.tex"
   sed -i '' 's/\\noalign{}//g' "$tmpdir/$texname.tex"
+  # image links are relative to the markdown files; make them absolute for the temp build dir
+  sed -i '' "s#{\.\./\.\./assets/#{$ROOT/assets/#g" "$tmpdir/$texname.tex"
   # Run in non-stop mode: MiKTeX's longtable 4.24 raises a recoverable "Infinite glue shrinkage"
   # error whenever a table spans a page (TeX itself reports it is safe to proceed). Any other
   # LaTeX error ("!" lines not about that glue) is treated as fatal.

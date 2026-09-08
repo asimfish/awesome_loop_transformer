@@ -29,6 +29,15 @@ Online slides: [asimfish.github.io/awesome_loop_transformer/slides/html/](https:
   <a href="slides/html/index.html"><img src="assets/figures/slide_10.png" width="49%" alt="LoopCoder-v2 slide"></a>
 </p>
 
+## Where to start
+
+| You have | Read |
+|---|---|
+| 5 minutes | the ten insights below, then Appendix A of the survey (five popular claims the papers do not support) |
+| 30 minutes | the [survey](survey/en/survey_en.md) §2–4 and §6, or the 21-slide [HTML deck](https://asimfish.github.io/awesome_loop_transformer/slides/html/) |
+| 2 hours | the five [paper reports](reports/en/) — each opens with an at-a-glance box, a diagram, and closes with a glossary |
+| a talk to give | the [Beamer deck](slides/beamer/loop_transformer_slides.pdf) (English) or the editable [PPTX](slides/pptx/awesome_loop_transformer_slides_zh.pptx) (Chinese) |
+
 ## Ten trend insights (short form)
 
 1. **Recurrent depth passed the compute-matching gate in 2026, through a narrow door.** Loopie (matched measured step time) and SMELT (matched FLOPs/params/KV) beat vanilla MoE transformers; the win needs MoE + layer/mid-stack looping + two loops, and comes from converting saved activation memory into width rather than from loops replacing parameters (one recurrence is worth $r^{0.46}$ unique parameters).

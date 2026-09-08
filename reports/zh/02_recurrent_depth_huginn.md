@@ -8,6 +8,18 @@
 | 模型 / 代码 | [huginn-0125](https://huggingface.co/tomg-group-umd/huginn-0125) · [recurrent-pretraining](https://github.com/seal-rg/recurrent-pretraining) |
 | 本仓库 | 原文 `papers/original/2502.05171.pdf` · 中译 `papers/zh/2502.05171.zh.pdf` |
 
+## 读前速览
+
+> **问题** · 2018 年就有的"循环深度"想法，能不能在现代 LLM 规模上训成，并且真的随推理时循环次数提升？  
+> **做法** · 2 层序幕 + 4 层循环核心 + 2 层尾声；训练时每条样本随机采样循环次数（均值 32），只对最后 8 步反传；800B token、4096 块 GPU。  
+> **结果** · 循环次数从 4 提到 32：ARC-E 49.1 → 69.9，GSM8K CoT 近 0 → 42.1；同为 0.18T token 的公平对照 ARC-E +7.2、GSM8K 约 5 倍。  
+> **局限** · 每多一次循环多一次核心块前向；事实记忆弱（MMLU 31）；只有一次大规模训练、学习率没冷却。  
+> **大白话** · 参数不多，但可以在"脑子里"多想几遍再开口；题越难，多想越有用。  
+
+![](../../assets/figures/diagrams/huginn_architecture.png)
+
+*图：三段式架构与训练要点；右下为 ARC-E 随循环次数上升，以及公平对照的正确读法。*
+
 ## 一句话
 
 在 4096 块 AMD MI250X 上用 800B token 从头预训练一个 3.5B 参数、"2 层序幕 + 4 层循环核心 + 2 层尾声"的 decoder-only 模型（Huginn-0125），训练时随机采样循环次数、只对最后 8 步反传；推理时把循环次数从 4 提到 32，ARC-E 从 49.1 涨到 69.9、GSM8K CoT 从近 0 涨到 42.1，且不需要任何思维链数据。这篇论文给"recurrent depth"这个词定了名，并首次证明它能在现代语言模型规模上训练成功。
@@ -149,3 +161,20 @@ GSM8K CoT 34.80/42.08（带系统提示，flexible/strict）、Minerva MATH 12.5
 - $r$: 4→32 时 ARC-E 49.07→69.91，HellaSwag 43.46→65.21，GSM8K CoT（strict）→42.08。
 - 同 180B token 公平对照：ARC-E 46.42 vs 53.62；GSM8K CoT 2.20 vs 10.24。
 - 自适应停机阈值 KL $<5\times10^{-4}$；KV 共享预算 4 时 MT-Bench 不掉分。
+
+## 术语小词典
+
+| 术语 | 一句话解释 |
+|---|---|
+| 循环深度（recurrent depth）/ 循环 Transformer | 同一组参数在深度方向上重复使用；有效深度 = 存储层数 × 循环次数，参数量不变 |
+| model-loop / block-loop / layer-loop | 整个层栈循环 / 只循环中间一段 / 每层各自重复几次再下传；见 `assets/figures/diagrams/loop_granularity.png` |
+| 输入注入（input injection） | 每一次循环都把原始输入的嵌入重新喂给循环块，否则迭代不稳定 |
+| 截断反传（truncated backprop） | 只对最后 k 步循环计算梯度，让显存与循环次数无关 |
+| 自适应停机（ACT / adaptive halting） | 让每个 token 自己决定循环几次，难的多算、简单的早停 |
+| 路径独立（path independence） | 从不同的随机初始状态出发，循环最终收敛到相同的行为 |
+| KV cache | 注意力缓存的键值；循环模型每循环一次都会多一份，是显存瓶颈 |
+| MoE（混合专家） | 每个 token 只激活一小部分参数（专家）；"20B-A2B" = 总参数 20B、激活 2B |
+| FLOPs 匹配 vs 实测算力匹配 | 前者按理论计算量对齐，后者按实测训练步时对齐——循环模型省下的激活显存只在后者里体现 |
+| 潜在推理 vs 显式 CoT | 在隐空间里多算几步 vs 把中间步骤写成文字 token |
+| 不动点（fixed point） | 再循环一次输出也不变的状态；一派工作把循环训成朝不动点收敛以保证稳定 |
+| PLT / CLP | 并行循环 Transformer / 跨循环位置偏移——把上一轮状态右移一位，使不同轮次能并行执行 |

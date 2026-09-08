@@ -8,6 +8,18 @@
 | 模型 | Loopie-20B-A2B、Loopie-6B-A0.6B（Base / Thinking） |
 | 本仓库 | 原文 `papers/original/2607.16051.pdf` · 中译 `papers/zh/2607.16051.zh.pdf` |
 
+## 读前速览
+
+> **问题** · 给同样的预训练算力，循环 Transformer 能不能赢过把参数直接做大的普通 MoE？  
+> **做法** · 逐层循环两次、层数减半 → 激活显存减半 → 每卡 micro-batch 翻倍 → 用省下的时间买更宽的模型；按实测训练步时匹配；SPT + RL 后训练。  
+> **结果** · 同预算训练 800B token，约 600B 后反超 Qwen3-30B-A3B 复现版；20B-A2B Thinking MMLU 81.28、AIME24 92.09，预训练 token 只有对手的 1/7。  
+> **局限** · 匹配的是训练步时而非 FLOPs（名义高 42%）；推理成本没报；对照是 800B token 的自复现版。  
+> **大白话** · 不是靠多循环省参数，而是靠循环省下的显存换来更宽的模型，最后在同样的训练时间里赢。  
+
+![](../../assets/figures/diagrams/loopie_recipe.png)
+
+*图：Loopie Recipe 三步，以及 layer-loop 的执行顺序。*
+
 ## 一句话
 
 循环 Transformer 长期被一个质疑压着：给 $N$ 倍预训练算力，把参数扩大 $N$ 倍通常比循环 $N$ 次更划算。Loopie 用三件事回应它：（1）把"整模型循环"换成"逐层循环"（layer-loop），（2）一套按**实测训练步时**而非理论 FLOPs 匹配算力的配方（Loopie Recipe），（3）只循环两次。结果是 Loopie-20B-A2B 在与 Qwen3-30B-A3B 复现版**相同的每步墙钟时间**下训练 800B token，在约 600B token 后反超并保持领先；配合 3.5T 预训练 + 2T "监督预训练"（SPT）+ 数学/代码 RL，20B-A2B 的 Thinking 版本 MMLU 81.28、AIME24 92.09，用不到 Nemotron 3 Nano（25T token）七分之一的预训练 token 达到相当或更好的成绩。
@@ -148,3 +160,20 @@ Loopie-6B-A0.6B：MMLU 78.36、**AIME24 80.42、AIME25 70.83**（Ouro 2.6B Think
 - 预训练 3.5T（2.28T × 4 epoch HQ + 1.26T 退火）；SPT 2T、10 epoch；RL GSPO+DAPO，32K→64K。
 - 20B-A2B Thinking：MMLU 81.28、ARC-C 93.52、BBH 82.28、IFEval 84.72、AIME24 92.09、AMC 94.21。
 - 6B-A0.6B Thinking：AIME24 80.42、AIME25 70.83、MATH-500 93.80。
+
+## 术语小词典
+
+| 术语 | 一句话解释 |
+|---|---|
+| 循环深度（recurrent depth）/ 循环 Transformer | 同一组参数在深度方向上重复使用；有效深度 = 存储层数 × 循环次数，参数量不变 |
+| model-loop / block-loop / layer-loop | 整个层栈循环 / 只循环中间一段 / 每层各自重复几次再下传；见 `assets/figures/diagrams/loop_granularity.png` |
+| 输入注入（input injection） | 每一次循环都把原始输入的嵌入重新喂给循环块，否则迭代不稳定 |
+| 截断反传（truncated backprop） | 只对最后 k 步循环计算梯度，让显存与循环次数无关 |
+| 自适应停机（ACT / adaptive halting） | 让每个 token 自己决定循环几次，难的多算、简单的早停 |
+| 路径独立（path independence） | 从不同的随机初始状态出发，循环最终收敛到相同的行为 |
+| KV cache | 注意力缓存的键值；循环模型每循环一次都会多一份，是显存瓶颈 |
+| MoE（混合专家） | 每个 token 只激活一小部分参数（专家）；"20B-A2B" = 总参数 20B、激活 2B |
+| FLOPs 匹配 vs 实测算力匹配 | 前者按理论计算量对齐，后者按实测训练步时对齐——循环模型省下的激活显存只在后者里体现 |
+| 潜在推理 vs 显式 CoT | 在隐空间里多算几步 vs 把中间步骤写成文字 token |
+| 不动点（fixed point） | 再循环一次输出也不变的状态；一派工作把循环训成朝不动点收敛以保证稳定 |
+| PLT / CLP | 并行循环 Transformer / 跨循环位置偏移——把上一轮状态右移一位，使不同轮次能并行执行 |

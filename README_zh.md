@@ -20,6 +20,15 @@
 | Beamer 学术幻灯（英文，16:9，含备用页） | [`slides/beamer/loop_transformer_slides.pdf`](slides/beamer/loop_transformer_slides.pdf)（[源码](slides/beamer/loop_transformer_slides.tex)） |
 | 机器可读论文表与摘要 | [`data/papers.csv`](data/papers.csv)、[`data/related_abstracts.json`](data/related_abstracts.json) |
 
+## 从哪里开始读
+
+| 你有 | 读什么 |
+|---|---|
+| 5 分钟 | 下面的十条洞察，再看综述附录 A（五处被二次传播放大的说法与原文对照） |
+| 30 分钟 | [综述](survey/zh/survey_zh.md)第 2–4 节和第 6 节，或 21 页的 [HTML 演示](https://asimfish.github.io/awesome_loop_transformer/slides/html/) |
+| 2 小时 | 五篇[逐篇解读](reports/zh/)——每篇开头有"读前速览"和一张示意图，结尾有术语小词典 |
+| 要做汇报 | [可编辑 PPTX](slides/pptx/awesome_loop_transformer_slides_zh.pptx)（中文）或 [Beamer](slides/beamer/loop_transformer_slides.pdf)（英文） |
+
 ## 五篇核心论文一句话
 
 | 论文 | 一句话 | 解读 |

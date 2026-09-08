@@ -7,6 +7,18 @@
 | Authors | Lizhang Chen\*, Jonathan Li\*, Chen Liang, Ni Lao, Qiang Liu (UT Austin) |
 | In this repo | Original `papers/original/2605.23872.pdf` · Chinese `papers/zh/2605.23872.zh.pdf` |
 
+## At a glance
+
+> **Problem** · Can a released, frozen checkpoint get stronger by looping at inference alone — no weight change, no training?  
+> **Method** · Treat the middle 4 layers as one ODE segment: do not run it K times, split it into K damped sub-steps (Runge–Kutta style with an anchor β); use layer-mode on MoE to pin routing.  
+> **Result** · 7 model families, 45 (model, benchmark) cells, 87% non-negative; Qwen3-4B MMLU-Pro +2.64, GPQA +2.01, Qwen1.5-MoE ARC-C +2.30.  
+> **Limits** · Gains cap at ~2–3 points and concentrate on knowledge MC; sub-3B distilled models can lose; 15–30% extra latency.  
+> **Plain words** · Walk the same stretch in smaller steps and you land more precisely — but do not keep walking past the destination, which is exactly what naive looping does.  
+
+![](../../assets/figures/diagrams/training_free_ode.png)
+
+*Figure (labels in Chinese): naive looping pushes the state to t=3, a region later layers never saw; sub-stepping reaches the same t=1 more accurately.*
+
 ## One sentence
 
 Without touching a single weight or adding a parameter, treat four contiguous mid-stack layers of a released model as the vector field of an ODE and re-integrate it to the *same* endpoint with $K$ damped Euler (Runge–Kutta-style) sub-steps at inference; across seven model families (Qwen3, Llama-3.2, Qwen1.5-MoE, Moonlight, DeepSeek-V2-Lite) and 45 (model, benchmark) cells, 87% are non-negative and knowledge-heavy multiple-choice benchmarks such as MMLU-Pro and GPQA gain about 2 points.
@@ -148,3 +160,20 @@ Configuration $[22,24]$ fixed in advance from the depth-fraction rule, committed
 - Qwen3-4B-Instruct MMLU-Pro +2.64, GPQA +2.01; Qwen1.5-MoE ARC-C +2.30.
 - Window $n=4$ +0.55, $n=6$ −0.82, whole model −27.73; naive loop $K=6$ −17.71.
 - Optimal window fractional depth: 0.43–0.71 (>1.7B), 0.25–0.56 (<1B).
+
+## Glossary
+
+| Term | One-line meaning |
+|---|---|
+| Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
+| Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
+| Adaptive halting (ACT) | Let each token decide how many loops it needs |
+| Path independence | Different random initial states converge to the same behavior |
+| KV cache | Cached attention keys/values; looped models add one copy per loop, the main memory bottleneck |
+| MoE | Mixture of experts: each token activates a small subset of parameters; "20B-A2B" = 20B total, 2B active |
+| FLOP-matched vs measured-compute-matched | Aligning theoretical compute vs aligning measured training step time — the activation memory looping saves only shows up in the latter |
+| Latent reasoning vs explicit CoT | Extra computation in hidden space vs intermediate steps written as text tokens |
+| Fixed point | A state that another loop leaves unchanged; one line of work trains loops to converge to fixed points for stability |
+| PLT / CLP | Parallel Loop Transformer / cross-loop position offset — shift the previous round's states by one token so rounds run in parallel |

@@ -8,6 +8,18 @@
 | Model | [Multilingual-Multimodal-NLP/LoopCoder-V2](https://huggingface.co/Multilingual-Multimodal-NLP/LoopCoder-V2) |
 | In this repo | Original `papers/original/2606.18023.pdf` · Chinese `papers/zh/2606.18023.zh.pdf` |
 
+## At a glance
+
+> **Problem** · The Parallel Loop Transformer flattens the latency and memory of looping — so how many loops should be used at deployment, and why?  
+> **Method** · Train four 7B coders with R=1/2/3/4 from scratch on 18T tokens under one recipe, same SFT, then diagnose hidden states, attention and output shift per loop.  
+> **Result** · R=2 lifts SWE-bench Verified from 43.0 to 64.4; R=3 falls to 27.6, R=4 to 22.4. Effective rank peaks at loop 2; the fixed offset cost is 30–45× the marginal gain from loop 3 on.  
+> **Limits** · PLT-specific (sequential looping has no such tax); one run per R, single seed; no ablation without the offset.  
+> **Plain words** · One extra round of thinking pays; but this parallel kind of thinking charges a fixed tax per round, and from the third round the tax exceeds the gain.  
+
+![](../../assets/figures/diagrams/plt_gain_cost.png)
+
+*Figure (labels in Chinese): sequential looping vs PLT parallel execution (left) and the diminishing-gain / constant-cost picture (right).*
+
 ## One sentence
 
 Train four 7B Parallel Loop Transformer (PLT) coders with loop counts $R\in\{1,2,3,4\}$ from scratch on 18T tokens under one recipe, then instruction-tune them identically: $R=2$ lifts SWE-bench Verified from 43.0 to 64.4 and Multi-SWE from 14.0 to 31.0, while $R=3$ falls to 27.6 and $R=4$ to 22.4. Per-loop diagnostics show that the second loop carries nearly all productive refinement; after it, marginal gains collapse while the cross-loop position offset (CLP) that PLT introduces for parallelism charges a fixed "positional tax" 30–45× larger than the gain from loop 3 onward.
@@ -134,3 +146,20 @@ LiveCodeBench +26.9 far exceeds the sum of the two ingredients: explicit CoT alo
 - PLT4 effective rank: 174.6 / 172.5 / 158.2 ($r=2/3/4$); $\cos\theta$: −0.72 / −0.46 / 0.04.
 - Offset cost $\Omega$ ≈ constant, 30–45× the marginal gain from loop 3 onward.
 - Thinking vs. Instruct at $R=2$: LCB +26.9, CRUX +6.6.
+
+## Glossary
+
+| Term | One-line meaning |
+|---|---|
+| Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
+| Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
+| Adaptive halting (ACT) | Let each token decide how many loops it needs |
+| Path independence | Different random initial states converge to the same behavior |
+| KV cache | Cached attention keys/values; looped models add one copy per loop, the main memory bottleneck |
+| MoE | Mixture of experts: each token activates a small subset of parameters; "20B-A2B" = 20B total, 2B active |
+| FLOP-matched vs measured-compute-matched | Aligning theoretical compute vs aligning measured training step time — the activation memory looping saves only shows up in the latter |
+| Latent reasoning vs explicit CoT | Extra computation in hidden space vs intermediate steps written as text tokens |
+| Fixed point | A state that another loop leaves unchanged; one line of work trains loops to converge to fixed points for stability |
+| PLT / CLP | Parallel Loop Transformer / cross-loop position offset — shift the previous round's states by one token so rounds run in parallel |

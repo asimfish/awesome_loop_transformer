@@ -8,6 +8,18 @@
 | Model / code | [huginn-0125](https://huggingface.co/tomg-group-umd/huginn-0125) · [recurrent-pretraining](https://github.com/seal-rg/recurrent-pretraining) |
 | In this repo | Original `papers/original/2502.05171.pdf` · Chinese `papers/zh/2502.05171.zh.pdf` |
 
+## At a glance
+
+> **Problem** · Can the 2018 recurrent-depth idea be trained at modern LLM scale, and does it really improve with more test-time loops?  
+> **Method** · 2-layer prelude + 4-layer looped core + 2-layer coda; loop count sampled per sequence at training (mean 32), backprop through the last 8 steps only; 800B tokens on 4096 GPUs.  
+> **Result** · Loops 4 → 32: ARC-E 49.1 → 69.9, GSM8K CoT ≈0 → 42.1; at equal 0.18T tokens the fair baseline comparison gives ARC-E +7.2 and ~5× on GSM8K.  
+> **Limits** · Every extra loop is another core forward; weak factual memory (MMLU 31); a single large run whose LR was never cooled.  
+> **Plain words** · Few parameters, but the model can think several rounds before speaking; the harder the question, the more the rounds help.  
+
+![](../../assets/figures/diagrams/huginn_architecture.png)
+
+*Figure (labels in Chinese): the three-stage architecture and training recipe; bottom-right, ARC-E rising with loop count and the correct reading of the fair comparison.*
+
 ## One sentence
 
 Pretrain a 3.5B-parameter decoder-only model with a 2-layer prelude, a 4-layer recurrent core, and a 2-layer coda (Huginn-0125) on 800B tokens across 4096 AMD MI250X GPUs, sampling the number of loops randomly during training and backpropagating through only the last 8; at inference, raising the loop count from 4 to 32 lifts ARC-E from 49.1 to 69.9 and GSM8K-CoT from near zero to 42.1, with no chain-of-thought data at all. This paper coined "recurrent depth" and is the first to make it train at modern language-model scale.
@@ -149,3 +161,20 @@ None of this geometry is in the training objective; it emerges from scale. The a
 - $r$: 4→32 gives ARC-E 49.07→69.91, HellaSwag 43.46→65.21, GSM8K CoT (strict) →42.08.
 - Fair 180B comparison: ARC-E 46.42 vs 53.62; GSM8K CoT 2.20 vs 10.24.
 - Adaptive exit threshold KL $<5\times10^{-4}$; KV budget 4 keeps MT-Bench intact.
+
+## Glossary
+
+| Term | One-line meaning |
+|---|---|
+| Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
+| Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
+| Adaptive halting (ACT) | Let each token decide how many loops it needs |
+| Path independence | Different random initial states converge to the same behavior |
+| KV cache | Cached attention keys/values; looped models add one copy per loop, the main memory bottleneck |
+| MoE | Mixture of experts: each token activates a small subset of parameters; "20B-A2B" = 20B total, 2B active |
+| FLOP-matched vs measured-compute-matched | Aligning theoretical compute vs aligning measured training step time — the activation memory looping saves only shows up in the latter |
+| Latent reasoning vs explicit CoT | Extra computation in hidden space vs intermediate steps written as text tokens |
+| Fixed point | A state that another loop leaves unchanged; one line of work trains loops to converge to fixed points for stability |
+| PLT / CLP | Parallel Loop Transformer / cross-loop position offset — shift the previous round's states by one token so rounds run in parallel |
