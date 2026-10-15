@@ -1,6 +1,6 @@
 # Awesome Loop Transformer: Looped Transformers, Recurrent Depth & Latent Reasoning
 
-[![Awesome](https://awesome.re/badge.svg)](https://awesome.re) [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE) ![Papers](https://img.shields.io/badge/papers-122-blue) ![Last update](https://img.shields.io/badge/updated-2026--09--06-green)
+[![Awesome](https://awesome.re/badge.svg)](https://awesome.re) [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE) ![Papers](https://img.shields.io/badge/papers-123-blue) ![Last update](https://img.shields.io/badge/updated-2026--09--06-green)
 
 A curated, annotated list of papers on **looped / recurrent-depth / weight-tied transformers** and the latent-reasoning ideas around them, from Universal Transformers (2018) to the compute-matched looped MoE models of 2026 — the technique reported to sit behind GPT-6 Astra.
 

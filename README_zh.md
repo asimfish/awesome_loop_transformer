@@ -1,6 +1,6 @@
 # Awesome Loop Transformer：循环 Transformer、循环深度与潜在推理
 
-[English README](README.md) · 论文列表（122 篇、14 个主题）以英文维护在 README.md，本文件是中文导读。
+[English README](README.md) · 论文列表（123 篇、14 个主题）以英文维护在 README.md，本文件是中文导读。
 
 这是一个围绕 **循环 Transformer（looped / recurrent-depth / weight-tied transformer）** 及其周边潜在推理工作的资料库，覆盖 2018 年的 Universal Transformer 到 2026 年在算力匹配下首次战胜普通 MoE 的循环模型——也就是 The Information 报道中 GPT-6 Astra 所用的 "recurrent depth" 技术路线。
 
