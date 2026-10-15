@@ -1,6 +1,6 @@
 # Awesome Loop Transformer: Looped Transformers, Recurrent Depth & Latent Reasoning
 
-[![Awesome](https://awesome.re/badge.svg)](https://awesome.re) [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE) ![Papers](https://img.shields.io/badge/papers-122-blue) ![Last update](https://img.shields.io/badge/updated-2026--09--06-green)
+[![Awesome](https://awesome.re/badge.svg)](https://awesome.re) [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE) ![Papers](https://img.shields.io/badge/papers-123-blue) ![Last update](https://img.shields.io/badge/updated-2026--09--06-green)
 
 A curated, annotated list of papers on **looped / recurrent-depth / weight-tied transformers** and the latent-reasoning ideas around them, from Universal Transformers (2018) to the compute-matched looped MoE models of 2026 — the technique reported to sit behind GPT-6 Astra.
 
@@ -66,7 +66,7 @@ Full text with sources: [`survey/en/survey_en.md`](survey/en/survey_en.md) · [`
 </tr>
 <tr>
 	<td>&emsp;<a href=#scaled-pretraining>5. Scaled Pretraining (17)</a></td>
-	<td>&emsp;<a href=#efficiency-latency-kv-cache-quantization>6. Efficiency: Latency, KV Cache & Quantization (10)</a></td>
+	<td>&emsp;<a href=#efficiency-latency-kv-cache-quantization>6. Efficiency: Latency, KV Cache & Quantization (11)</a></td>
 </tr>
 <tr>
 	<td>&emsp;<a href=#stability-training-theory>7. Stability & Training Theory (10)</a></td>
@@ -322,6 +322,9 @@ The five papers threaded together by the WeChat article / @nrehiew_ thread, in r
 10. **Nanbeige4.2-3B on Apple Silicon: Fixing Deployment Bugs and Decreasing Looped Transformer Memory Overhead.** arXiv, 2026. [paper](https://arxiv.org/abs/2608.13987), [code](https://github.com/johnhalloran321/Nanbeige4.2-3B-mps-fix)
 
     *John T. Halloran*
+11. **FlashLoop: Fast and Memory-Efficient Looped Transformers via Lazy Updates.** arXiv, 2026. [paper](https://arxiv.org/abs/2609.29812), [code](https://github.com/Superone77/FlashLoop) — *Training-free cross-loop token-sparse updates, sparse attention, and KV-residual quantization.*
+
+    *Wanqi Yang, Shiwei Liu*
 
 ## [Stability & Training Theory](#content)
 
