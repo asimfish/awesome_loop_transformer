@@ -20,7 +20,7 @@ The repository started from the WeChat article [《刚刚，GPT-6 Astra 背后�
 
 ## News
 
-- **{{UPDATED}}** — Added {{N_NEW}} papers from September–November 2026 (marked 🆕) and a [what changed since September](#what-changed-since-september-2026) section; README redesigned (scope line per category, compact entries, venue tags).
+- **{{UPDATED}}** — Added {{N_NEW}} papers (marked 🆕): 167 from September–November 2026 and 44 June–August papers the first search missed. Also a [what changed since September](#what-changed-since-september-2026) section. README redesigned (scope line per category, compact entries, venue tags).
 - **2026-09-08** — Every report now opens with an at-a-glance box and a diagram and closes with a glossary; reading guides for 5-minute, 30-minute and 2-hour readers.
 - **2026-09-06** — Editable PPTX deck (ppt-master) and Chinese README.
 - **2026-09-06** — First release: 122 papers, five core-paper reports (ZH/EN), translated PDFs, a survey with ten trend insights, HTML and Beamer slides.

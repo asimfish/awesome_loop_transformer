@@ -20,7 +20,7 @@ The repository started from the WeChat article [《刚刚，GPT-6 Astra 背后�
 
 ## News
 
-- **2026-11-06** — Added 211 papers from September–November 2026 (marked 🆕) and a [what changed since September](#what-changed-since-september-2026) section; README redesigned (scope line per category, compact entries, venue tags).
+- **2026-11-06** — Added 211 papers (marked 🆕): 167 from September–November 2026 and 44 June–August papers the first search missed. Also a [what changed since September](#what-changed-since-september-2026) section. README redesigned (scope line per category, compact entries, venue tags).
 - **2026-09-08** — Every report now opens with an at-a-glance box and a diagram and closes with a glossary; reading guides for 5-minute, 30-minute and 2-hour readers.
 - **2026-09-06** — Editable PPTX deck (ppt-master) and Chinese README.
 - **2026-09-06** — First release: 122 papers, five core-paper reports (ZH/EN), translated PDFs, a survey with ten trend insights, HTML and Beamer slides.
@@ -652,8 +652,8 @@ Latent-reasoning methods that add computation without looping weights: pause tok
 | Nanbeige4.2-3B | 3B | 28T | 2 | see paper [2607.22083](https://arxiv.org/abs/2607.22083) |
 | Mimir v1 / v1.5 🆕 | 1.78B HRM-Text (L/H stacks) | 70.5B / 103B per epoch, multi-epoch | interleaved L/H schedule | see paper [2608.13517](https://arxiv.org/abs/2608.13517) |
 | Metis-1.6 Praxis / Logos 🆕 | 2.94B-A0.46B / 10.23B-A1.18B hybrid Mamba-2/attention MoE | 1.02T | 2 (whole stack) | [HF](https://huggingface.co/Lernex) · paper [2610.37903](https://arxiv.org/abs/2610.37903) |
-| Dory1.0-4B 🆕 | 4B dense nGPT, elastic depth | 6T | variable; KV cached from the last loop only | BF16 / MXFP8 / NVFP4 / GGUF checkpoints, see paper [2611.03998](https://arxiv.org/abs/2611.03998) |
-| ARLoop 0.6B / 1.2B 🆕 | dense, attention residuals over depth | 0.5T (1.2B) | 3 | fully open, see paper [2611.05234](https://arxiv.org/abs/2611.05234) |
+| Dory1.0-4B 🆕 | 4B nGPT, elastic depth | 6T | variable; KV cached from the last loop only | BF16 / MXFP8 / NVFP4 / GGUF checkpoints, see paper [2611.03998](https://arxiv.org/abs/2611.03998) |
+| ARLoop 0.6B / 1.2B 🆕 | attention residuals over depth | 0.5T (1.2B) | 3 | fully open, see paper [2611.05234](https://arxiv.org/abs/2611.05234) |
 
 ## Reproducing the artifacts
 

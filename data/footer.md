@@ -17,8 +17,8 @@
 | Nanbeige4.2-3B | 3B | 28T | 2 | see paper [2607.22083](https://arxiv.org/abs/2607.22083) |
 | Mimir v1 / v1.5 🆕 | 1.78B HRM-Text (L/H stacks) | 70.5B / 103B per epoch, multi-epoch | interleaved L/H schedule | see paper [2608.13517](https://arxiv.org/abs/2608.13517) |
 | Metis-1.6 Praxis / Logos 🆕 | 2.94B-A0.46B / 10.23B-A1.18B hybrid Mamba-2/attention MoE | 1.02T | 2 (whole stack) | [HF](https://huggingface.co/Lernex) · paper [2610.37903](https://arxiv.org/abs/2610.37903) |
-| Dory1.0-4B 🆕 | 4B dense nGPT, elastic depth | 6T | variable; KV cached from the last loop only | BF16 / MXFP8 / NVFP4 / GGUF checkpoints, see paper [2611.03998](https://arxiv.org/abs/2611.03998) |
-| ARLoop 0.6B / 1.2B 🆕 | dense, attention residuals over depth | 0.5T (1.2B) | 3 | fully open, see paper [2611.05234](https://arxiv.org/abs/2611.05234) |
+| Dory1.0-4B 🆕 | 4B nGPT, elastic depth | 6T | variable; KV cached from the last loop only | BF16 / MXFP8 / NVFP4 / GGUF checkpoints, see paper [2611.03998](https://arxiv.org/abs/2611.03998) |
+| ARLoop 0.6B / 1.2B 🆕 | attention residuals over depth | 0.5T (1.2B) | 3 | fully open, see paper [2611.05234](https://arxiv.org/abs/2611.05234) |
 
 ## Reproducing the artifacts
 
