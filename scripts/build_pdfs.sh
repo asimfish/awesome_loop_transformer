@@ -18,6 +18,11 @@ common=(--toc --toc-depth=2 -H "$HDR"
         -V colorlinks=true --syntax-highlighting=tango -f markdown+tex_math_dollars+pipe_tables+yaml_metadata_block)
 
 pagebreak="$ROOT/scripts/_pagebreak.md"
+
+# in-place sed that works with both GNU (Linux) and BSD (macOS) sed
+sedi() { if sed --version >/dev/null 2>&1; then sed -i "$@"; else sed -i '' "$@"; fi; }
+
+EDITION_DATE="${EDITION_DATE:-2026-11-06}"   # cover date; first edition 2026-09-06
 printf '\n\\newpage\n\n' > "$pagebreak"
 
 strip_yaml() {  # copy a markdown file without its leading YAML block
@@ -38,7 +43,7 @@ build() {  # lang out title subtitle files...
   local title="$1"; shift
   local subtitle="$1"; shift
   local meta="$ROOT/scripts/_meta_$lang.md"
-  printf -- '---\ntitle: "%s"\nsubtitle: "%s"\nauthor: "awesome_loop_transformer · https://github.com/asimfish/awesome_loop_transformer"\ndate: "2026-09-06"\n---\n\n' "$title" "$subtitle" > "$meta"
+  printf -- '---\ntitle: "%s"\nsubtitle: "%s"\nauthor: "awesome_loop_transformer · https://github.com/asimfish/awesome_loop_transformer"\ndate: "%s"\n---\n\n' "$title" "$subtitle" "$EDITION_DATE" > "$meta"
   local tmpdir; tmpdir="$(mktemp -d)"
   local inputs=("$meta")
   local first=1
@@ -50,7 +55,10 @@ build() {  # lang out title subtitle files...
   done
   local langopts=()
   if [ "$lang" = "zh" ]; then
-    langopts=(-V CJKmainfont="$CJK_FONT" -V CJKsansfont="$CJK_SANS" -V lang=zh-CN)
+    langopts=(-V CJKmainfont="$CJK_FONT" -V CJKsansfont="$CJK_SANS" -V toc-title=目录)
+    # babel's zh-CN setup needs ICU line-break data that tectonic's static build lacks;
+    # set ZH_BABEL=0 there (xeCJK still handles Chinese line breaking).
+    if [ "${ZH_BABEL:-1}" = "1" ]; then langopts+=(-V lang=zh-CN); fi
   else
     langopts=(-V lang=en-US)
   fi
@@ -59,9 +67,9 @@ build() {  # lang out title subtitle files...
   # (they trigger "Infinite glue shrinkage" with longtable >= 4.24), then 2x XeLaTeX for the TOC.
   local texname="report_$lang"
   pandoc "${inputs[@]}" "${common[@]}" "${langopts[@]}" --resource-path="$ROOT/reports/$lang:$ROOT/survey/$lang:$ROOT" -s -t latex -o "$tmpdir/$texname.tex"
-  sed -i '' 's/\\noalign{}//g' "$tmpdir/$texname.tex"
+  sedi 's/\\noalign{}//g' "$tmpdir/$texname.tex"
   # image links are relative to the markdown files; make them absolute for the temp build dir
-  sed -i '' "s#{\.\./\.\./assets/#{$ROOT/assets/#g" "$tmpdir/$texname.tex"
+  sedi "s#{\.\./\.\./assets/#{$ROOT/assets/#g" "$tmpdir/$texname.tex"
   # Run in non-stop mode: MiKTeX's longtable 4.24 raises a recoverable "Infinite glue shrinkage"
   # error whenever a table spans a page (TeX itself reports it is safe to proceed). Any other
   # LaTeX error ("!" lines not about that glue) is treated as fatal.
