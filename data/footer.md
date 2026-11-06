@@ -15,8 +15,15 @@
 | LoopCoder-V2 | 7B dense PLT | 18T | 2 | [HF](https://huggingface.co/Multilingual-Multimodal-NLP/LoopCoder-V2) |
 | Loopie-20B-A2B / 6B-A0.6B | MoE | 3.5T | 2 (layer-loop) | see paper [2607.16051](https://arxiv.org/abs/2607.16051) (megatron-loopie, vllm-loopie) |
 | Nanbeige4.2-3B | 3B | 28T | 2 | see paper [2607.22083](https://arxiv.org/abs/2607.22083) |
+| Mimir v1 / v1.5 🆕 | 1.78B HRM-Text (L/H stacks) | 70.5B / 103B per epoch, multi-epoch | interleaved L/H schedule | see paper [2608.13517](https://arxiv.org/abs/2608.13517) |
+| Metis-1.6 Praxis / Logos 🆕 | 2.94B-A0.46B / 10.23B-A1.18B hybrid Mamba-2/attention MoE | 1.02T | 2 (whole stack) | [HF](https://huggingface.co/Lernex) · paper [2610.37903](https://arxiv.org/abs/2610.37903) |
+| Dory1.0-4B 🆕 | 4B dense nGPT, elastic depth | 6T | variable; KV cached from the last loop only | BF16 / MXFP8 / NVFP4 / GGUF checkpoints, see paper [2611.03998](https://arxiv.org/abs/2611.03998) |
+| ARLoop 0.6B / 1.2B 🆕 | dense, attention residuals over depth | 0.5T (1.2B) | 3 | fully open, see paper [2611.05234](https://arxiv.org/abs/2611.05234) |
 
 ## Reproducing the artifacts
+
+<details>
+<summary>Build commands for the list, translations, report PDFs, and slides</summary>
 
 ```bash
 # 1. Paper list -> README
@@ -41,19 +48,26 @@ export PPT_MASTER_HOME=/path/to/ppt-master
 bash scripts/build_pptx.sh                # page SVGs -> quality gate -> SVG-to-DrawingML export -> slides/pptx/
 ```
 
+</details>
+
 ## How this was made
+
+<details>
+<summary>Reading, translation, literature search, writing style, layout</summary>
 
 - **Reading.** Each core paper was read in full from the arXiv PDF and HTML text; every number in the reports carries its table or section reference, and an appendix in the survey lists five claims from secondary coverage that the papers do not support.
 - **Translation.** [SuperTranslate](https://github.com/asimfish/super_translate) native engine (layout-preserving, formulas and figures frozen, DeepSeek backend) followed by its object-level `inspect` QA. Three of five PDFs pass with zero issues; the remaining flags are documented in [`papers/zh/QA_SUMMARY.md`](papers/zh/QA_SUMMARY.md).
-- **Literature search.** arXiv API queries on 2026-09-06 for looped / recurrent-depth / depth-recurrent transformers, latent reasoning with loops or recursion, and named model families; abstracts of the 60 most relevant works are kept in [`data/related_abstracts.json`](data/related_abstracts.json).
+- **Literature search.** arXiv API queries on 2026-09-06 (updated {{UPDATED}}) for looped / recurrent-depth / depth-recurrent transformers, latent reasoning with loops or recursion, and named model families; every entry's title, authors and date come from the arXiv API through `src/fetch_metadata.py`; abstracts of the 60 most relevant works are kept in [`data/related_abstracts.json`](data/related_abstracts.json).
 - **Writing style.** Claims first, necessary limits stated once, numbers checkable in place — following [anti-defensive-writing](https://github.com/Kiterlin/anti-defensive-writing) and [说人话 shuorenhua](https://github.com/MrGeDiao/shuorenhua).
 - **Layout.** Report PDFs via pandoc + XeLaTeX with a shared header (`scripts/pandoc_header.tex`); the Beamer deck follows the [beamer-skill](https://github.com/Noi1r/beamer-skill) rules (16:9, 10pt, no overlays, semantic color-blind-safe palette, references and backup slides); the HTML deck and the PPTX follow the `technical-deepdive` style contract of [ppt-master](https://github.com/hugohe3/ppt-master) (problem → mechanism → trade-off → implication, blueprint palette, every number with its conditions); the PPTX itself is produced by ppt-master's Quick Generate route — `scripts/build_pptx_svgs.py` emits contract-conforming page SVGs (root bounds per module, one text frame per paragraph block, NBSP frame slack so renderers that ignore `wrap="none"` do not re-wrap), which pass its final quality gate and are exported to native DrawingML shapes. Paper-writing conventions were checked against [PaperOrchestra](https://github.com/Ar9av/PaperOrchestra).
 - **Readability.** Each report opens with an at-a-glance box (problem / method / result / limits / plain words) and one explanatory diagram, and closes with a glossary; the survey has a reading guide for 5-minute, 30-minute and 2-hour readers. Diagrams are authored in `scripts/build_diagrams.py` (SVG) and rendered to PNG by `scripts/render_diagrams.sh`.
 - **List format.** Follows [awesome-ml4co](https://github.com/Thinklab-SJTU/awesome-ml4co): `data/papers.csv` is the source of truth and `src/generator.py` renders the README.
 
+</details>
+
 ## Contributing
 
-Add a row to [`data/papers.csv`](data/papers.csv) (or an entry to `CURATED` in [`src/fetch_metadata.py`](src/fetch_metadata.py) and re-run it), then run `python3 src/generator.py` and open a pull request. Use `;` to list a paper under several categories. Please keep the venue field to the accepted venue or `arXiv`, and add a code link when one exists.
+Missing a paper or found a wrong venue? Open an issue or a pull request — see [CONTRIBUTING.md](CONTRIBUTING.md). In short: add the arXiv ID to `CURATED` in [`src/fetch_metadata.py`](src/fetch_metadata.py) (or a row to [`data/papers.csv`](data/papers.csv)), run `python3 src/generator.py`, and never edit `README.md` by hand.
 
 ## Citation
 
@@ -69,3 +83,12 @@ Add a row to [`data/papers.csv`](data/papers.csv) (or an entry to `CURATED` in [
 ## License
 
 Text, reports, and slides in this repository are released under [CC BY 4.0](LICENSE); code under `src/` and `scripts/` under MIT. Original papers remain under their authors' licenses; PDFs in `papers/original/` are redistributed from arXiv, and the Chinese translations in `papers/zh/` are derived works provided for study.
+
+## Star History
+
+<a href="https://star-history.com/#asimfish/awesome_loop_transformer&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=asimfish/awesome_loop_transformer&type=Date&theme=dark">
+    <img alt="Star history chart" src="https://api.star-history.com/svg?repos=asimfish/awesome_loop_transformer&type=Date" width="600">
+  </picture>
+</a>
