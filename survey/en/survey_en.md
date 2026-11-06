@@ -2,7 +2,7 @@
 title: "Looped Transformers and Recurrent Depth: Eight Years from Universal Transformers to GPT-6 Astra (2018–2026)"
 subtitle: "Five core papers in depth · a map of sixty related works · ten trend insights"
 author: "awesome_loop_transformer project"
-date: "2026-09-06"
+date: "2026-11-06 (first edition 2026-09-06)"
 ---
 
 # Abstract
@@ -15,7 +15,7 @@ Three reading paths, by available time:
 
 | Time | Read | You get |
 |---|---|---|
-| 5 minutes | Abstract → the headings and bold sentences of §6 → Appendix A | Where the field stands and which popular claims are inaccurate |
+| 5 minutes | Abstract → the headings and bold sentences of §6 → §10 (November update) → Appendix A | Where the field stands and which popular claims are inaccurate |
 | 30 minutes | §2–4 (concepts, timeline, five-paper table) → all of §6 → §8 open problems | A complete map; you can place a new paper in its cell |
 | 2 hours | Everything + the five reports in `reports/en/01–05` | Every key number traceable to a table in the original paper |
 
@@ -269,6 +269,8 @@ Evidence in 2025 concentrated on Sudoku, mazes, ARC, GSM8K; 2026 adds three aren
 
 ## Insight 10: Productization has started; the toolchain has not caught up
 
+*Update 2026-11-06: the toolchain half of this insight no longer holds — see §10, item 3.*
+
 Five open looped-model families exist — Huginn, Ouro, LoopCoder-v2, Loopie, Nanbeige4.2-3B — and Nanbeige4.2-3B was trained on 28T tokens and shipped as a product. Yet Halloran's replication report finds five out-of-the-box bugs running it in Hugging Face transformers (including a silently zeroed RoPE buffer and calls to removed cache APIs), and even after fixes, layer reuse doubles attention memory. Inference frameworks, quantization tools, and KV management have no standard interface for looped models. Loopie shipping megatron-loopie and vllm-loopie branches alongside the paper is a step in that direction.
 
 # 7. Inferences about GPT-6 Astra (explicitly labeled as inference)
@@ -282,7 +284,7 @@ The following rest on the public literature surveyed here and on **no** first-ha
 
 # 8. Open problems
 
-1. **Compute-matched multi-loop.** Every compute-matched win is at R=2. Whether R≥4 can win under matched pretraining compute has no public evidence.
+1. **Compute-matched multi-loop.** Every compute-matched win is at R=2. Whether R≥4 can win under matched pretraining compute has no public evidence. *(Update: see §10 for a small-scale data point.)*
 2. **The full inference bill.** Training step time, inference latency, and peak KV memory need to be reported together; no paper yet does all three.
 3. **Scaling laws for looped models.** SMELT fits to 54B non-embedding parameters, Schwethelm to ~1B. Whether the functional form (Chinchilla plus an $r^{\varphi}$ term) holds at 100B+ is unknown.
 4. **Adaptive halting at pretraining scale.** MoR, TaH, and RecurTrace results are all ≤8B; Ouro's entropy-regularized depth allocation is the only one validated at 7.7T tokens.
@@ -293,6 +295,29 @@ The following rest on the public literature surveyed here and on **no** first-ha
 # 9. Conclusion
 
 In eight years recurrent depth went from an encoder–decoder trick for bAbI overfitting to a candidate component of frontier architectures. Three turns in the first half of 2026 — training-free looping giving existing models 2 free points, PLT keeping latency flat as loops grow, and Loopie/SMELT winning at matched compute for the first time — pushed it past the engineering-feasibility threshold. What remains is a full accounting of inference cost, compute-matched evidence for more than two loops, and supervisability of latent reasoning. For researchers the most valuable gaps are compute-matched scaling laws at R≥4 and loop-specific RL objectives; for engineering teams the practical conclusion is: loop the middle, twice, per layer, on an MoE backbone — and measure latency and KV before shipping.
+
+# 10. Update (2026-11-06): what September–November 2026 changed
+
+§1–9 describe the field as of 2026-09-06. On 2026-11-06 the paper list grew from 122 to 333 entries: 167 papers first submitted between 2026-09-01 and 2026-11-06, plus 44 June–August papers the first search missed (all are flagged as new in the [README](../../README.md)). This section records which of the ten insights the new papers support, refine, or revise. The earlier sections are left as written so the original argument can still be checked. Every number below appears in the abstract of the cited paper; arXiv IDs link to the source.
+
+| Insight | Status after the update |
+|---|---|
+| 1 — compute-matching gate | refined: wins without MoE when trained from scratch; retrofitting a pretrained model is mixed (item 1) |
+| 2 — two regimes for loop count | revised: two loops is the optimum of current designs, not a rule; halting savings overstated (item 2) |
+| 6 — inference cost | refined: last-loop-only KV caching ships in open checkpoints; some KV-sharing schemes fail (item 3) |
+| 7 — post-training | extended: post-training must cover every depth a model runs at (item 4) |
+| 8 — loops manipulate knowledge | supported, now with explicit memory and state channels (item 5) |
+| 9 — applications | extended to generative and scientific foundation models (item 6) |
+| 10 — toolchain | revised: looped models now run in SGLang and vLLM (item 3) |
+
+1. **Looped models trained from scratch now beat matched baselines without MoE; looping an already-pretrained model is a mixed bet** (refines insight 1). Loopback reaches lower loss than standard Transformers with 40–75% of their Transformer parameters at matched tokens and executed depth ([2611.07226](https://arxiv.org/abs/2611.07226)). A scaling law fitted on about 600 runs finds that two fully trained loops beat the compute-optimal non-looped model with 27% fewer non-embedding parameters for 8% more compute ([2610.26030](https://arxiv.org/abs/2610.26030)). Looping pretrained Qwen3/Qwen3.5 models after the fact beats equal-parameter and equal-FLOPs baselines only at 0.8B ([2610.42030](https://arxiv.org/abs/2610.42030)), while RELOAD, which fine-tunes a damped middle-block loop, gains up to 23 points for encoders on longer reasoning chains ([2611.07736](https://arxiv.org/abs/2611.07736)).
+2. **Two loops is the optimum of current designs, not a rule, and adaptive-halting savings are overstated** (revises insight 2). With bounded residual variance and per-loop routers, LOOM scales looped MoE to 9–12 loops, and its 700M model is best at 5 loops at near-iso-FLOPs ([2610.01153](https://arxiv.org/abs/2610.01153)); gated layer-wise looping of Qwen3-4B is best at three ([2610.25004](https://arxiv.org/abs/2610.25004)). Halting heads trained on mixed iterations run almost every iteration under the standard stopping rule, and batched generation removes most of the reported saving ([2610.32246](https://arxiv.org/abs/2610.32246)).
+3. **Serving became the largest technical cluster, and looped models now run in production engines** (revises the toolchain half of insight 10, refines insight 6). Efficiency is the primary category of 26 of the 167 new papers. LoopVQ reaches up to 6.1× Ouro serving throughput in SGLang ([2611.05304](https://arxiv.org/abs/2611.05304)); LoopKV's fused vLLM kernel gets 1.7–2.2× the goodput of KIVI-4 on Ouro-1.4B ([2611.04137](https://arxiv.org/abs/2611.04137)). Caching only the last loop's keys and values ships in open checkpoints such as Dory1.0-4B ([2611.03998](https://arxiv.org/abs/2611.03998)), but recent-window KV sharing fails on Ouro-1.4B because its cost depends on how far late loops have converged ([2610.34436](https://arxiv.org/abs/2610.34436)).
+4. **Loop depth changes safety behaviour, a dimension none of the ten insights covers.** At half depth, Ouro-1.4B-Thinking keeps 89% of its GSM8K accuracy while its rate of helping with harmful requests rises 5.3×; training at random depths restores refusal at every depth ([2610.15218](https://arxiv.org/abs/2610.15218)). Jailbreak success varies across recurrent depths and transfers between them ([2610.10625](https://arxiv.org/abs/2610.10625)). Post-training (insight 7) has to cover every depth a model may run at.
+5. **"Loops manipulate knowledge, they do not store it" is turning into architecture: explicit memory and state channels inside the loop** (supports insight 8). Recurrence past the training horizon improves reasoning but degrades knowledge ([2609.36636](https://arxiv.org/abs/2609.36636)). In a synthetic edit study, factual edits propagate with addressable memory (0.71–0.96) but only weakly with loops alone (0.04–0.30) ([2606.20737](https://arxiv.org/abs/2606.20737)). A bounded gated cell lets LSTM-UT keep 99.7% exact-row accuracy at depth 60 after training to depth 12 ([2609.19521](https://arxiv.org/abs/2609.19521)).
+6. **Applications spread to generative and scientific foundation models** (extends insight 9). A 260M Looped-DiT surpasses a 6.5× larger text-to-image model at 4.9× lower inference compute ([2609.40305](https://arxiv.org/abs/2609.40305)); Eco-RNA at four iterations surpasses Evo 2 40B on RNAGym fitness with 500× fewer parameters ([2610.13106](https://arxiv.org/abs/2610.13106)).
+
+Two open problems in §8 have new evidence. Open problem 1 (compute-matched multi-loop): LOOM's 700M looped MoE is best at 5 loops at near-iso-FLOPs (item 2), a data point beyond R=2, though at small scale. Open problem 4 (adaptive halting at pretraining scale): the halting-head result in item 2 suggests reported savings need to be re-measured under batched generation.
 
 # Appendix A: Circulation errors corrected in this report
 

@@ -23,7 +23,7 @@
 
 ## 最近更新
 
-- **{{UPDATED}}**：新增 {{N_NEW}} 篇论文（🆕），其中 167 篇是 2026 年 9–11 月的新论文，44 篇是首轮检索漏掉的 6–8 月论文；新增[九月以来的变化](#九月以来的变化)一节；英文 README 重排（每个主题加一句范围说明、条目压缩为一行并标注会议）。
+- **{{UPDATED}}**：新增 {{N_NEW}} 篇论文（🆕），其中 167 篇是 2026 年 9–11 月的新论文，44 篇是首轮检索漏掉的 6–8 月论文；新增[九月以来的变化](#九月以来的变化)一节；英文 README 重排（每个主题加一句范围说明、条目压缩为一行并标注会议）；综述第 10 节、报告 PDF 和 HTML / Beamer / PPTX 幻灯片同步更新（新增一页"九月以来的六个变化"）。
 - **2026-09-08**：每篇解读开头加"读前速览"和示意图、结尾加术语小词典；新增 5 分钟 / 30 分钟 / 2 小时阅读路线。
 - **2026-09-06**：可编辑 PPTX（ppt-master）与中文 README。
 - **2026-09-06**：首版：122 篇论文、五篇核心论文中英文解读、保版式中译、含十条洞察的综述、HTML 与 Beamer 幻灯。
@@ -36,8 +36,8 @@
 | 保版式中译 PDF + 对象级 QA 报告（SuperTranslate） | [`papers/zh/`](papers/zh/)（[QA 记录](papers/zh/QA_SUMMARY.md)） |
 | 逐篇深度解读（中、英） | [`reports/zh/`](reports/zh/)、[`reports/en/`](reports/en/) |
 | 完整报告 PDF（综述 + 五篇解读，中、英） | [`reports/pdf/awesome_loop_transformer_report_zh.pdf`](reports/pdf/awesome_loop_transformer_report_zh.pdf)、[`…_en.pdf`](reports/pdf/awesome_loop_transformer_report_en.pdf) |
-| 趋势综述：分类、八年时间线、约 60 篇文献图谱、十条洞察、未解问题 | [`survey/zh/survey_zh.md`](survey/zh/survey_zh.md)（[PDF](survey/zh/survey_zh.pdf)）、[`survey/en/`](survey/en/) |
-| HTML 演示（21 页，中文）+ PDF 导出 · [在线查看](https://asimfish.github.io/awesome_loop_transformer/slides/html/) | [`slides/html/index.html`](slides/html/index.html)、[`slides/html/awesome_loop_transformer_slides_zh.pdf`](slides/html/awesome_loop_transformer_slides_zh.pdf) |
+| 趋势综述：分类、八年时间线、约 60 篇文献图谱、十条洞察、未解问题、2026 年 11 月更新（第 10 节） | [`survey/zh/survey_zh.md`](survey/zh/survey_zh.md)（[PDF](survey/zh/survey_zh.pdf)）、[`survey/en/`](survey/en/) |
+| HTML 演示（22 页，中文）+ PDF 导出 · [在线查看](https://asimfish.github.io/awesome_loop_transformer/slides/html/) | [`slides/html/index.html`](slides/html/index.html)、[`slides/html/awesome_loop_transformer_slides_zh.pdf`](slides/html/awesome_loop_transformer_slides_zh.pdf) |
 | 可编辑 PPTX（中文，ppt-master 原生形状导出）+ 预览 PDF | [`slides/pptx/awesome_loop_transformer_slides_zh.pptx`](slides/pptx/awesome_loop_transformer_slides_zh.pptx)（[预览](slides/pptx/awesome_loop_transformer_slides_zh.preview.pdf)） |
 | Beamer 学术幻灯（英文，16:9，含备用页） | [`slides/beamer/loop_transformer_slides.pdf`](slides/beamer/loop_transformer_slides.pdf)（[源码](slides/beamer/loop_transformer_slides.tex)） |
 | 机器可读论文表与摘要 | [`data/papers.csv`](data/papers.csv)、[`data/related_abstracts.json`](data/related_abstracts.json) |
@@ -47,7 +47,7 @@
 | 你有 | 读什么 |
 |---|---|
 | 5 分钟 | 下面的十条洞察，再看综述附录 A（五处被二次传播放大的说法与原文对照） |
-| 30 分钟 | [综述](survey/zh/survey_zh.md)第 2–4 节和第 6 节，或 21 页的 [HTML 演示](https://asimfish.github.io/awesome_loop_transformer/slides/html/) |
+| 30 分钟 | [综述](survey/zh/survey_zh.md)第 2–4 节和第 6 节，或 22 页的 [HTML 演示](https://asimfish.github.io/awesome_loop_transformer/slides/html/) |
 | 2 小时 | 五篇[逐篇解读](reports/zh/)——每篇开头有"读前速览"和一张示意图，结尾有术语小词典 |
 | 要做汇报 | [可编辑 PPTX](slides/pptx/awesome_loop_transformer_slides_zh.pptx)（中文）或 [Beamer](slides/beamer/loop_transformer_slides.pdf)（英文） |
 

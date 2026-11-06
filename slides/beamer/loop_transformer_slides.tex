@@ -33,7 +33,7 @@
 \subtitle{Eight years from Universal Transformers to GPT-6 Astra (2018--2026): five core papers and ten trend insights}
 \author{Presenter: awesome\_loop\_transformer project}
 \institute{github.com/asimfish/awesome\_loop\_transformer}
-\date{2026-09-06}
+\date[2026-11-06]{First built 2026-09-06 $\cdot$ paper list updated 2026-11-06: 333 papers (211 added)}
 
 \begin{document}
 
@@ -401,7 +401,7 @@
 \end{frame}
 
 % =====================================================================
-\section{The wider map and ten insights}
+\section{The wider map, ten insights, and what changed since September}
 
 \begin{frame}{The 2026 literature: ten themes, roughly sixty papers}
   \vspace{4pt}
@@ -449,6 +449,26 @@
     \item \textbf{From puzzles to agents and embodiment.} SWE-bench Verified $+21.4$ (LoopCoder-v2); compositional tool calling improves with depth; Nanbeige4.2-3B beats Qwen3.5-9B on agentic benchmarks; RD-VLA $0\% \to 90\%$ with four iterations, $80\times$ faster than token-reasoning VLAs.
     \item \textbf{Productization started; tooling lags.} Five open families (Huginn, Ouro, LoopCoder-v2, Loopie, Nanbeige4.2-3B). Nanbeige4.2-3B ships with five out-of-the-box bugs in HF transformers and $2\times$ attention memory from layer reuse. No standard interface yet for looped inference, KV, or quantization.
   \end{enumerate}
+\end{frame}
+
+\begin{frame}{What changed since September 2026}
+  \noindent{\footnotesize 211 papers added on 2026-11-06: 167 first submitted 2026-09-01 to 2026-11-06, plus 44 June--August papers the first search missed.\par}
+  \begin{center}
+  \footnotesize\setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}r>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}p{0.37\textwidth}l>{\raggedright\arraybackslash}p{0.10\textwidth}@{}}
+    \toprule
+    \# & Change & Key number (conditions) & arXiv & Insight \\
+    \midrule
+    1 & \textbf{From-scratch loops beat matched baselines without MoE}; retrofitting is a mixed bet & Loopback: lower loss with \textbf{40--75\%} of the Transformer parameters (matched tokens, executed depth) & 2611.07226 & \pos{refines 1} \\
+    2 & \textbf{Two loops is the optimum of current designs, not a rule} & LOOM 700M: best at \textbf{5 loops}, near-iso-FLOPs & 2610.01153 & \con{revises 2} \\
+    3 & \textbf{Serving is the largest cluster}; looped models run in production engines & LoopVQ in SGLang: up to \textbf{6.1$\times$} Ouro serving throughput & 2611.05304 & \con{revises 10}; \pos{refines 6} \\
+    4 & \textbf{Loop depth changes safety behaviour} & Ouro-1.4B-Thinking, half depth: harmful-help rate up \textbf{5.3$\times$}, 89\% of GSM8K accuracy kept & 2610.15218 & \HL{new}; cf.\ 7 \\
+    5 & \textbf{``Manipulate, not store'' becomes architecture} & Fact edits propagate \textbf{0.71--0.96} with memory vs.\ 0.04--0.30 with loops alone (synthetic) & 2606.20737 & \pos{supports 8} \\
+    6 & \textbf{Applications reach generative and scientific models} & 260M Looped-DiT beats a 6.5$\times$ larger text-to-image model at \textbf{4.9$\times$} lower inference compute & 2609.40305 & \pos{extends 9} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \textit{Takeaway: insight 2 and the toolchain half of 10 are revised; post-training must cover every depth.}
 \end{frame}
 
 \begin{frame}{Five circulation errors, checked against the papers}

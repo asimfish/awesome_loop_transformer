@@ -92,7 +92,8 @@ a{color:var(--focus);text-decoration:none}
   <div class="sub">GPT-6 Astra 背后的 Loop 技术全景：五篇核心论文 · 六十篇相关文献 · 十条趋势洞察（2018–2026）</div>
   <div class="meta">
     基于微信文章《刚刚，GPT-6 Astra 背后的 Loop 技术全被挖出来了》串起的 5 篇论文，逐篇核对原文；<br>
-    arXiv 全量检索补齐 2018–2026 年约 60 篇相关工作 · 2026-09-06<br>
+    arXiv 全量检索补齐 2018–2026 年约 60 篇相关工作（综述文献图谱）· 首版 2026-09-06<br>
+    论文列表现收录 333 篇 · 2026-11-06 更新（新增 211 篇，见“九月以来的六个变化”）<br>
     <span class="mono">github.com/asimfish/awesome_loop_transformer</span>
   </div>
   <div class="foot"><span>视觉规范：ppt-master · technical-deepdive（blueprint）</span><span class="n">1</span></div>
@@ -447,7 +448,29 @@ a{color:var(--focus);text-decoration:none}
   <div class="foot"><span>Ouro 2510.25741 · Frey 2603.08391 · Dual-Path 2605.30202 · Popescu 2608.18171 · RD-VLA 2602.07845 · Halloran 2608.13987</span><span class="n">16</span></div>
 </section>
 
-<!-- 17 misreadings -->
+<!-- 17 what changed since September 2026 -->
+<section class="slide">
+  <div class="kicker">九月以来的变化 · 2026-11-06 更新</div>
+  <h2>九月以来的六个变化（2026-09 – 11）：<span class="k">两次循环不是规律，安全成了新维度</span></h2>
+  <table>
+    <tr><th class="num" style="width:3%">#</th><th style="width:37%">变化</th><th style="width:33%">关键数字（条件）</th><th style="width:10%">来源 arXiv</th><th>对应洞察</th></tr>
+    <tr><td class="num">1</td><td><b>从头训练不靠 MoE 也胜过匹配基线；事后加循环收益不稳定</b></td><td>Loopback 用标准 Transformer <b>40–75%</b> 的 Transformer 参数达到更低 loss（token 数与执行深度相同）</td><td class="mono">2611.07226</td><td><span class="tag f">细化洞察 1</span></td></tr>
+    <tr class="hl"><td class="num">2</td><td><b>"两次"是现有设计的最优点而非规律；自适应停机节省被高估</b></td><td>LOOM 700M 在近似等 FLOPs 下 <b>5 次</b>循环最好</td><td class="mono">2610.01153</td><td><span class="tag c">修正洞察 2</span></td></tr>
+    <tr class="hl"><td class="num">3</td><td><b>推理部署成为最大技术方向，循环模型进入生产推理引擎</b></td><td>LoopVQ 在 SGLang 中把 Ouro 的服务吞吐最多提高到 <b>6.1 倍</b></td><td class="mono">2611.05304</td><td><span class="tag c">修正洞察 10 工具链</span><span class="tag f">细化洞察 6</span></td></tr>
+    <tr><td class="num">4</td><td><b>循环深度会改变安全行为——十条洞察都没有覆盖的维度</b></td><td>Ouro-1.4B-Thinking 半深度下保留 89% 的 GSM8K 准确率，协助有害请求的比例升到 <b>5.3 倍</b></td><td class="mono">2610.15218</td><td><span class="tag c">新维度</span><span class="tag">牵涉洞察 7</span></td></tr>
+    <tr><td class="num">5</td><td><b>"操作知识、不存储知识"落到架构：循环内加记忆或状态通道</b></td><td>合成编辑实验的事实编辑传播率：有可寻址记忆 <b>0.71–0.96</b>，只靠循环 0.04–0.30</td><td class="mono">2606.20737</td><td><span class="tag f">支持洞察 8</span></td></tr>
+    <tr><td class="num">6</td><td><b>应用扩展到生成式和科学基础模型</b></td><td>260M 的 Looped-DiT 以 <b>1/4.9</b> 的推理算力超过大 6.5 倍的文生图模型</td><td class="mono">2609.40305</td><td><span class="tag f">扩展洞察 9</span></td></tr>
+  </table>
+  <div class="cols c3" style="margin-top:12px;flex:0">
+    <div class="card kpi"><div class="v">211</div><div class="l">2026-11-06 新增：167 篇首版提交于 2026-09-01 至 11-06；44 篇是首轮检索漏掉的 6–8 月论文</div></div>
+    <div class="card kpi"><div class="v">26 / 167</div><div class="l">167 篇新论文中 26 篇以效率为主类：推理部署是最大的技术方向（变化 3）</div></div>
+    <div class="card kpi"><div class="v c">0.8B</div><div class="l">事后给已训练的 Qwen3/Qwen3.5 加循环，只在 0.8B 上胜过等参数和等 FLOPs 基线（2610.42030）</div></div>
+  </div>
+  <div class="takeaway"><b>怎么读：</b>洞察 2 和洞察 10 的工具链部分被修正，洞察 1、6 被细化，洞察 8、9 得到支持和扩展；后训练（洞察 7）需要覆盖模型可能运行的每个深度。</div>
+  <div class="foot"><span>数字均出自所引论文的摘要 · 全文：README_zh「九月以来的变化」· README "What changed since September 2026"</span><span class="n">17</span></div>
+</section>
+
+<!-- 18 misreadings -->
 <section class="slide">
   <div class="kicker">核对</div>
   <h2>五处被二次传播放大的说法，对照原文</h2>
@@ -460,10 +483,10 @@ a{color:var(--focus);text-decoration:none}
     <tr><td>Huginn "3.5B 打出 50B 的表现"</td><td>FLOPs 等效，非基准等效；基准上接近 OLMo-7B、落后 OLMo-2-7B</td></tr>
   </table>
   <div class="takeaway"><b>方法：</b>每条都回到原论文的表号核对（Huginn Table 4、LoopCoder-v2 Table 2、Loopie Table 1 与 §2.4、Training-Free Table 2–3）。</div>
-  <div class="foot"><span>reports/zh 与 survey 附录 A</span><span class="n">17</span></div>
+  <div class="foot"><span>reports/zh 与 survey 附录 A</span><span class="n">18</span></div>
 </section>
 
-<!-- 18 Astra -->
+<!-- 19 Astra -->
 <section class="slide">
   <div class="kicker">推断 · 明确标注</div>
   <h2>关于 GPT-6 Astra：能核实的与不能核实的</h2>
@@ -478,10 +501,10 @@ a{color:var(--focus);text-decoration:none}
       </ol>
     </div>
   </div>
-  <div class="foot"><span>The Information, 2026-09-02（未访问原文）· openai.com/index/gpt-6-astra（无架构细节）</span><span class="n">18</span></div>
+  <div class="foot"><span>The Information, 2026-09-02（未访问原文）· openai.com/index/gpt-6-astra（无架构细节）</span><span class="n">19</span></div>
 </section>
 
-<!-- 19 open problems -->
+<!-- 20 open problems -->
 <section class="slide">
   <div class="kicker">未解问题</div>
   <h2>七个还没有公开答案的问题</h2>
@@ -499,10 +522,10 @@ a{color:var(--focus);text-decoration:none}
     </ul>
   </div>
   <div class="takeaway"><b>最值得做的两个空白：</b>R≥4 的算力匹配扩展律；循环专用的 RL 目标（把 credit 分到潜在轨迹上）。</div>
-  <div class="foot"><span></span><span class="n">19</span></div>
+  <div class="foot"><span></span><span class="n">20</span></div>
 </section>
 
-<!-- 20 recipe -->
+<!-- 21 recipe -->
 <section class="slide">
   <div class="kicker">给从业者</div>
   <h2>三种预算下的可执行配方</h2>
@@ -512,10 +535,10 @@ a{color:var(--focus);text-decoration:none}
     <div class="card"><h3>推理时可变算力</h3><ul class="small"><li>顺序循环（Huginn 类）+ 训练时随机 r + 截断反传，推理任选 r</li><li>逐 token 自适应停机（KL 阈值 / 二阶步长差 / 学习式停机头）</li><li>KV：共享预算或 LLA 低秩编码；延迟：扩散式并行采样</li><li>给它检索/长上下文——循环模型的强项是对上下文推理</li></ul></div>
   </div>
   <div class="takeaway"><b>部署前必做：</b>实测延迟与 KV 峰值内存；不要把"训练算力匹配"当作"推理成本匹配"。</div>
-  <div class="foot"><span></span><span class="n">20</span></div>
+  <div class="foot"><span></span><span class="n">21</span></div>
 </section>
 
-<!-- 21 repo -->
+<!-- 22 repo -->
 <section class="slide">
   <div class="kicker">仓库导航</div>
   <h2>awesome_loop_transformer：这份报告的全部材料</h2>
@@ -542,7 +565,7 @@ a{color:var(--focus);text-decoration:none}
     </div>
   </div>
   <div class="takeaway">github.com/asimfish/awesome_loop_transformer · 欢迎 PR 补充新论文（data/papers.csv → src/generator.py）</div>
-  <div class="foot"><span>2026-09-06</span><span class="n">21</span></div>
+  <div class="foot"><span>首版 2026-09-06 · 2026-11-06 更新</span><span class="n">22</span></div>
 </section>
 
 </div>

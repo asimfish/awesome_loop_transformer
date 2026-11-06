@@ -2,20 +2,20 @@
   "schema": "ppt-master.pptx-postflight-report.v1",
   "status": "passed",
   "output": {
-    "path": "/Users/liyufeng/Desktop/research/awesome_loop_transformer/slides/pptx/awesome_loop_transformer_slides_zh.pptx",
-    "bytes": 85653
+    "path": "/root/lyf/github/awesome_loop_transformer/slides/pptx/awesome_loop_transformer_slides_zh.pptx",
+    "bytes": 91819
   },
   "source": {
-    "svg_slide_count": 21,
+    "svg_slide_count": 22,
     "layout_definition_count": 0,
     "fingerprint": {
       "algorithm": "sha256",
-      "digest": "5b9609c29edef4e3f3a9c11fcc1cbb57696cff67cc02170f6b520eb90a9f5935",
-      "file_count": 21,
+      "digest": "6e8aef8493d8e61535b6111038d615b737578ae2689622391bb6b43fa7a437ce",
+      "file_count": 22,
       "files": [
         {
           "file": "page_01.svg",
-          "sha256": "4f24badd431060efa69e3e7451fd78a96df6363934a1aa9bc6d0f8ee6d081795"
+          "sha256": "0da28d013e486398aa92145f31fa11bfa5867995341701c3a5c489b483563a03"
         },
         {
           "file": "page_02.svg",
@@ -79,23 +79,27 @@
         },
         {
           "file": "page_17.svg",
-          "sha256": "8c70e3e6ea0c621bb6a3ab67c9941c215488abb328f78f4e1f05331f0662ca3e"
+          "sha256": "f0e13bdcc7cad834f8a86a3150fe7c569d42fcf016ced2c429edb136e16f9ff8"
         },
         {
           "file": "page_18.svg",
-          "sha256": "16d2324af64965740acb1a6d417d5ed3fe1ed2060b8fb58a2d24d29ef69e7289"
+          "sha256": "97fadc53685559336bd4366e09029052e1db146a5f4caf1c9f19a9a9367db0cc"
         },
         {
           "file": "page_19.svg",
-          "sha256": "7d3385d73331234832644516ebadbb314419791d4466ff0af137966c5cee8f78"
+          "sha256": "2c7e8c26e5b25b5d0a0d5ed7a25714f8aac4fe9cbebd832f66e9be5f670355ab"
         },
         {
           "file": "page_20.svg",
-          "sha256": "69cac9e1e785c0808569a4c80b6ae44157d231117e68d3ec5a32302106504661"
+          "sha256": "e7a6d8174cc6449cfe958ffea58224024472564a7a1ea3170e2f401ff1c6d41f"
         },
         {
           "file": "page_21.svg",
-          "sha256": "894aa63611e93ec2fbaf674d11820450db416d327fdfe627f587dc854b27afd6"
+          "sha256": "8514043f6fa9020416e37d2aa0f1e15e20db07d4038996f3ab1e4b4ea848b9d7"
+        },
+        {
+          "file": "page_22.svg",
+          "sha256": "c0db37d0890e37e73c977d78843b690a2d109be144b6f8b902ee01750f16f671"
         }
       ]
     },
@@ -104,7 +108,7 @@
   "package": {
     "zip_integrity": "passed",
     "corrupt_member": null,
-    "slides": 21,
+    "slides": 22,
     "notes": 0,
     "masters": 1,
     "layouts": 1
@@ -127,18 +131,18 @@
   },
   "quality": {
     "status": "loaded",
-    "path": "/tmp/skills/ppt-master/projects/loop_transformer_ppt169_20260906/validation/svg_quality_report.json",
+    "path": "/tmp/claude-0/-root-lyf-github/6ae0677b-6024-4385-b393-3f26b9d0eeee/scratchpad/ppt-master/projects/loop_transformer_ppt169_20261106/validation/svg_quality_report.json",
     "schema": "ppt-master.svg-quality-report.v1",
     "stage": "final",
     "source_match": "passed",
     "source_fingerprint": {
       "algorithm": "sha256",
-      "digest": "5b9609c29edef4e3f3a9c11fcc1cbb57696cff67cc02170f6b520eb90a9f5935",
-      "file_count": 21,
+      "digest": "6e8aef8493d8e61535b6111038d615b737578ae2689622391bb6b43fa7a437ce",
+      "file_count": 22,
       "files": [
         {
           "file": "page_01.svg",
-          "sha256": "4f24badd431060efa69e3e7451fd78a96df6363934a1aa9bc6d0f8ee6d081795"
+          "sha256": "0da28d013e486398aa92145f31fa11bfa5867995341701c3a5c489b483563a03"
         },
         {
           "file": "page_02.svg",
@@ -202,29 +206,33 @@
         },
         {
           "file": "page_17.svg",
-          "sha256": "8c70e3e6ea0c621bb6a3ab67c9941c215488abb328f78f4e1f05331f0662ca3e"
+          "sha256": "f0e13bdcc7cad834f8a86a3150fe7c569d42fcf016ced2c429edb136e16f9ff8"
         },
         {
           "file": "page_18.svg",
-          "sha256": "16d2324af64965740acb1a6d417d5ed3fe1ed2060b8fb58a2d24d29ef69e7289"
+          "sha256": "97fadc53685559336bd4366e09029052e1db146a5f4caf1c9f19a9a9367db0cc"
         },
         {
           "file": "page_19.svg",
-          "sha256": "7d3385d73331234832644516ebadbb314419791d4466ff0af137966c5cee8f78"
+          "sha256": "2c7e8c26e5b25b5d0a0d5ed7a25714f8aac4fe9cbebd832f66e9be5f670355ab"
         },
         {
           "file": "page_20.svg",
-          "sha256": "69cac9e1e785c0808569a4c80b6ae44157d231117e68d3ec5a32302106504661"
+          "sha256": "e7a6d8174cc6449cfe958ffea58224024472564a7a1ea3170e2f401ff1c6d41f"
         },
         {
           "file": "page_21.svg",
-          "sha256": "894aa63611e93ec2fbaf674d11820450db416d327fdfe627f587dc854b27afd6"
+          "sha256": "8514043f6fa9020416e37d2aa0f1e15e20db07d4038996f3ab1e4b4ea848b9d7"
+        },
+        {
+          "file": "page_22.svg",
+          "sha256": "c0db37d0890e37e73c977d78843b690a2d109be144b6f8b902ee01750f16f671"
         }
       ]
     },
     "summary": {
-      "total": 21,
-      "passed": 21,
+      "total": 22,
+      "passed": 22,
       "warnings": 0,
       "errors": 0
     },

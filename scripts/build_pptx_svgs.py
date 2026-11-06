@@ -116,9 +116,10 @@ class Page:
         self.role = role; self.parts = []; self.n = 0
     def g(self, gid, x, y, w, h, inner):
         self.parts.append(f'<g id="{gid}" data-pptx-bounds="{x:.0f} {y:.0f} {w:.0f} {h:.0f}">{inner}</g>')
-    def render(self):
+    def render(self, lang=None):
         bg = f'<rect id="bg" data-pptx-role="background" x="0" y="0" width="{W}" height="{H}" fill="{P["field"]}"/>'
-        return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" data-pptx-page-role="{self.role}" '
+        lang_attr = f' lang="{lang}"' if lang else ''  # ppt-master reads the deck language from page 1
+        return (f'<svg xmlns="http://www.w3.org/2000/svg"{lang_attr} viewBox="0 0 {W} {H}" data-pptx-page-role="{self.role}" '
                 f'font-family="{FONT}">{bg}{"".join(self.parts)}</svg>')
 
 def rect(x, y, w, h, fill, stroke=None, rx=10, sw=1, opacity=None):
@@ -200,8 +201,10 @@ def kpi(page, gid, x, y, w, h, value, label, color=None):
     l, _ = fit_text(x + 16, y + 12 + vh + 2, w - 32, h - vh - 40, label, 12.5, P["ink2"], leading=1.3, min_fs=10)
     page.g(gid, x, y, w, h, inner + v + l)
 
-def table(page, gid, x, y, w, cols, rows, fs=13, hl=None, row_h=None):
-    """cols: list of (header, frac, align); rows: list of lists; hl: set of row indices to highlight."""
+def table(page, gid, x, y, w, cols, rows, fs=13, hl=None, row_h=None, colors=None, center_lines=False):
+    """cols: list of (header, frac, align); rows: list of lists; hl: set of row indices to highlight;
+    colors: {(row, col): fill} overrides; center_lines: centre each cell's wrapped lines in the row
+    (default keeps the single-line offset used by the original pages)."""
     rh = row_h or (fs * 2.0)
     inner = ""
     cx, xs = x, []
@@ -220,9 +223,15 @@ def table(page, gid, x, y, w, cols, rows, fs=13, hl=None, row_h=None):
     for i, row in enumerate(rows):
         if hl and i in hl:
             inner += rect(x, yy + 1, w, rh - 2, P["focus"], rx=3, opacity=0.10)
-        for (cxx, cww, al), txt in zip(xs, row):
+        for j, ((cxx, cww, al), txt) in enumerate(zip(xs, row)):
             bold = txt.startswith("**") and txt.endswith("**")
-            inner += cell(cxx, cww, al, txt.strip("*"), yy + (rh - fs) / 2 - 2, P["ink"], bold)
+            body = txt.strip("*")
+            bh = fs
+            if center_lines:
+                n = len(wrap(body, fs, (cww - 12) * 0.80))
+                bh = fs * (1 + 1.2 * (n - 1))
+            color = (colors or {}).get((i, j), P["ink"])
+            inner += cell(cxx, cww, al, body, yy + (rh - bh) / 2 - 2, color, bold)
         yy += rh
         inner += hline(x, x + w, yy, P["structure"], 0.5)
     page.g(gid, x, y, w, yy - y + 10, inner)
@@ -241,12 +250,13 @@ pages = []
 # 1 cover
 pg = Page("cover")
 inner = ""
-t, _ = text_el(MX, 200, 1100, "awesome_loop_transformer · 汇总报告", 14, P["focus"], "bold"); inner += t
-t, _ = text_el(MX, 236, 1100, "循环 Transformer 与循环深度", 54, P["ink"], "bold", 1.1); inner += t
-t, _ = text_el(MX, 318, 1100, "GPT-6 Astra 背后的 Loop 技术全景：五篇核心论文 · 六十篇相关文献 · 十条趋势洞察（2018–2026）", 22, P["ink2"], leading=1.35); inner += t
-t, _ = text_el(MX, 400, 1100, "基于微信文章《刚刚，GPT-6 Astra 背后的 Loop 技术全被挖出来了》串起的 5 篇论文，逐篇核对原文；arXiv 全量检索补齐 2018–2026 年约 60 篇相关工作 · 2026-09-06", 15, P["ink2"], leading=1.5); inner += t
-t, _ = text_el(MX, 470, 1100, "github.com/asimfish/awesome_loop_transformer", 15, P["focus"]); inner += t
-pg.g("cover_text", MX, 190, W - 2 * MX, 310, inner)
+t, _ = text_el(MX, 186, 1100, "awesome_loop_transformer · 汇总报告", 14, P["focus"], "bold"); inner += t
+t, _ = text_el(MX, 222, 1100, "循环 Transformer 与循环深度", 54, P["ink"], "bold", 1.1); inner += t
+t, _ = text_el(MX, 304, 1100, "GPT-6 Astra 背后的 Loop 技术全景：五篇核心论文 · 六十篇相关文献 · 十条趋势洞察（2018–2026）", 22, P["ink2"], leading=1.35); inner += t
+t, _ = text_el(MX, 386, 1100, "基于微信文章《刚刚，GPT-6 Astra 背后的 Loop 技术全被挖出来了》串起的 5 篇论文，逐篇核对原文；arXiv 全量检索补齐 2018–2026 年约 60 篇相关工作（综述文献图谱）· 首版 2026-09-06", 15, P["ink2"], leading=1.5); inner += t
+t, _ = text_el(MX, 440, 1100, "论文列表现收录 333 篇 · 2026-11-06 更新（新增 211 篇，见「九月以来的六个变化」）", 15, P["ink2"], leading=1.5); inner += t
+t, _ = text_el(MX, 476, 1100, "github.com/asimfish/awesome_loop_transformer", 15, P["focus"]); inner += t
+pg.g("cover_text", MX, 176, W - 2 * MX, 330, inner)
 footer(pg, "视觉规范：ppt-master · technical-deepdive（blueprint）", 1)
 pages.append(pg)
 
@@ -469,7 +479,26 @@ insights_page(16, "洞察 8–10", "循环擅长「操作」知识而非「存�
     ("10 · 工具链缺口", "五个开源家族：Huginn、Ouro、LoopCoder-v2、Loopie、Nanbeige4.2-3B（28T token，已作为产品发布）。但复现报告显示 Nanbeige 在 HF transformers 上开箱 5 个 bug，修复后层复用仍使注意力内存翻倍。推理框架、量化、KV 管理都没有循环模型的标准接口；Loopie 的 megatron-loopie / vllm-loopie 分支是往这个方向的信号。", "warn")],
     "Ouro 2510.25741 · Frey 2603.08391 · Dual-Path 2605.30202 · Popescu 2608.18171 · RD-VLA 2602.07845 · Halloran 2608.13987")
 
-# 17 misreadings
+# 17 what changed since September 2026
+pg = Page(); yb = title_block(pg, "九月以来的变化 · 2026-11-06 更新", "九月以来的六个变化（2026-09 – 11）：两次循环不是规律，安全成了新维度")
+rows = [["1", "**从头训练不靠 MoE 也胜过匹配基线；事后加循环收益不稳定**", "Loopback 用标准 Transformer **40–75%** 的 Transformer 参数达到更低 loss（token 数与执行深度相同）", "2611.07226", "细化洞察 1"],
+        ["2", "**「两次」是现有设计的最优点而非规律；自适应停机节省被高估**", "LOOM 700M 在近似等 FLOPs 下 **5 次**循环最好", "2610.01153", "修正洞察 2"],
+        ["3", "**推理部署成为最大技术方向，循环模型进入生产推理引擎**", "LoopVQ 在 SGLang 中把 Ouro 的服务吞吐最多提高到 **6.1 倍**", "2611.05304", "修正洞察 10 工具链；细化洞察 6"],
+        ["4", "**循环深度会改变安全行为——十条洞察都没有覆盖的维度**", "Ouro-1.4B-Thinking 半深度下保留 89% 的 GSM8K 准确率，协助有害请求的比例升到 **5.3 倍**", "2610.15218", "新维度；牵涉洞察 7"],
+        ["5", "**「操作知识、不存储知识」落到架构：循环内加记忆或状态通道**", "合成编辑实验的事实编辑传播率：有可寻址记忆 **0.71–0.96**，只靠循环 0.04–0.30", "2606.20737", "支持洞察 8"],
+        ["6", "**应用扩展到生成式和科学基础模型**", "260M 的 Looped-DiT 以 **1/4.9** 的推理算力超过大 6.5 倍的文生图模型", "2609.40305", "扩展洞察 9"]]
+tag = {(i, 4): (P["caution"] if i in (1, 2, 3) else P["focus"]) for i in range(6)}
+th = table(pg, "changes", MX, yb, W - 2 * MX, [("#", 0.04, "l"), ("变化", 0.38, "l"), ("关键数字（条件）", 0.32, "l"), ("来源 arXiv", 0.10, "l"), ("对应洞察", 0.16, "l")],
+           rows, fs=12.5, hl={1, 2}, row_h=48, colors=tag, center_lines=True)
+ky = yb + th + 6; kw = (W - 2 * MX - 32) / 3
+kpi(pg, "k1", MX, ky, kw, 104, "211", "2026-11-06 新增：167 篇首版提交于 2026-09-01 至 11-06；44 篇是首轮检索漏掉的 6–8 月论文")
+kpi(pg, "k2", MX + kw + 16, ky, kw, 104, "26 / 167", "167 篇新论文中 26 篇以效率为主类：推理部署是最大的技术方向（变化 3）")
+kpi(pg, "k3", MX + 2 * (kw + 16), ky, kw, 104, "0.8B", "事后给已训练的 Qwen3/Qwen3.5 加循环，只在 0.8B 上胜过等参数和等 FLOPs 基线（2610.42030）", P["caution"])
+takeaway(pg, "**怎么读：**洞察 2 和洞察 10 的工具链部分被修正，洞察 1、6 被细化，洞察 8、9 得到支持和扩展；后训练（洞察 7）需要覆盖模型可能运行的每个深度。", ky + 116)
+footer(pg, "数字均出自所引论文的摘要 · 全文：README_zh「九月以来的变化」· README「What changed since September 2026」", 17)
+pages.append(pg)
+
+# 18 misreadings
 pg = Page(); yb = title_block(pg, "核对", "五处被二次传播放大的说法，对照原文")
 rows = [["Huginn「同样 0.8T token」下循环模型碾压基线", "非循环基线只训了 0.18T；同为 0.18T 时循环模型 ARC-E 53.62 vs 46.42、GSM8K CoT 10.24 vs 2.20"],
         ["「循环两次就够，三次以上回退」是循环 Transformer 的规律", "是 PLT（跨循环位置偏移）特有的现象；每个 R 单独从头训练；Huginn 到 r=32 单调上升"],
@@ -478,10 +507,10 @@ rows = [["Huginn「同样 0.8T token」下循环模型碾压基线", "非循环�
         ["Huginn「3.5B 打出 50B 的表现」", "FLOPs 等效，非基准等效；基准上接近 OLMo-7B、落后 OLMo-2-7B"]]
 th = table(pg, "misread", MX, yb, W - 2 * MX, [("常见说法", 0.40, "l"), ("原文事实", 0.60, "l")], rows, fs=13.5, row_h=58)
 takeaway(pg, "**方法：**每条都回到原论文的表号核对（Huginn Table 4、LoopCoder-v2 Table 2、Loopie Table 1 与 §2.4、Training-Free Table 2–3）。", yb + th + 18)
-footer(pg, "reports/zh 与 survey 附录 A", 17)
+footer(pg, "reports/zh 与 survey 附录 A", 18)
 pages.append(pg)
 
-# 18 Astra
+# 19 Astra
 pg = Page(); yb = title_block(pg, "推断 · 明确标注", "关于 GPT-6 Astra：能核实的与不能核实的")
 (x1, y1, w1, h1), (x2, y2, w2, h2) = cols2(yb, 440, split=0.36)
 card(pg, "unverifiable", x1, y1, w1, h1, "不能核实", ["Astra 用了哪种循环、循环几次、如何训练——OpenAI 发布页无架构细节，The Information 报道基于匿名信源，两份原始材料本报告作者均无法访问。", "以下四条全部是基于公开文献的推断。"], accent="warn", fs=14)
@@ -490,10 +519,10 @@ card(pg, "inferences", x2, y2, w2, h2, "四条推断", [
     "2. 「OpenAI 绕过了两次饱和」这一推测前提不成立——两次饱和是 PLT 特有；真正的瓶颈是推理成本，而 KV 32× 压缩、扩散式并行采样 5× 已把它压低一个量级。",
     "3. 报道中的「安全担忧」对应文献里的真实问题：潜在推理无可读中间 token，探测结果依赖层与解码方式（Lu 2025、Jacobian Lens 2026），比监督 CoT 更难。",
     "4. Loopie（7 月）、LLA（7 月）、SMELT（9/1）与 Astra（9 月初）密集出现：更合理的解读是多个团队在 2026 上半年同时把这个方向推到可用，而非某篇论文导致某个产品。"], fs=13.5)
-footer(pg, "The Information, 2026-09-02（未访问原文）· openai.com/index/gpt-6-astra（无架构细节）", 18)
+footer(pg, "The Information, 2026-09-02（未访问原文）· openai.com/index/gpt-6-astra（无架构细节）", 19)
 pages.append(pg)
 
-# 19 open problems
+# 20 open problems
 pg = Page(); yb = title_block(pg, "未解问题", "七个还没有公开答案的问题")
 (x1, y1, w1, h1), (x2, y2, w2, h2) = cols2(yb, 360)
 card(pg, "op_left", x1, y1, w1, h1, None, [
@@ -506,10 +535,10 @@ card(pg, "op_right", x2, y2, w2, h2, None, [
     "- **layer-loop 的机制。** Loopie 三个理由中只有扩展性有实验；SMELT 的「第二次访问削弱注意力沉降」是唯一机制解释",
     "- **循环 vs 序列长度扩展。** Hidden Decoding（WeLM 617B）走序列维度并称更兼容流水线并行；Loopie 的 layer-loop 恰为流水线兼容而设计；100B+ 上无正面对比"], fs=14)
 takeaway(pg, "**最值得做的两个空白：**R≥4 的算力匹配扩展律；循环专用的 RL 目标（把 credit 分到潜在轨迹上）。", yb + 376)
-footer(pg, "", 19)
+footer(pg, "", 20)
 pages.append(pg)
 
-# 20 recipes
+# 21 recipes
 pg = Page(); yb = title_block(pg, "给从业者", "三种预算下的可执行配方")
 for i, (x, y, w, h) in enumerate(cols3(yb, 400)):
     c = [("零训练：已有模型", ["- 中间 4 层窗口，3 级 RK 子步，β 取中间值", "- 稠密 block-mode，MoE layer-mode（先固定路由）", "- 先在知识型多选题上验证；预期 +1–2.6 pp，多 15–30% 延迟", "- 任何「某段层跑两遍」的实验都用阻尼更新 x←(1−1/K)x+(1/K)g(x)"], None),
@@ -517,14 +546,14 @@ for i, (x, y, w, h) in enumerate(cols3(yb, 400)):
          ("推理时可变算力", ["- 顺序循环（Huginn 类）+ 训练时随机 r + 截断反传，推理任选 r", "- 逐 token 自适应停机（KL 阈值 / 二阶步长差 / 学习式停机头）", "- KV：共享预算或 LLA 低秩编码；延迟：扩散式并行采样", "- 给它检索 / 长上下文——循环模型的强项是对上下文推理"], None)][i]
     card(pg, f"rec{i+1}", x, y, w, h, c[0], c[1], accent=c[2], fs=14)
 takeaway(pg, "**部署前必做：**实测延迟与 KV 峰值内存；不要把「训练算力匹配」当作「推理成本匹配」。", yb + 416)
-footer(pg, "", 20)
+footer(pg, "", 21)
 pages.append(pg)
 
-# 21 repo
+# 22 repo
 pg = Page("ending"); yb = title_block(pg, "仓库导航", "awesome_loop_transformer：这份报告的全部材料")
 (x1, y1, w1, h1), (x2, y2, w2, h2) = cols2(yb, 400)
 card(pg, "dirs", x1, y1, w1, h1, "目录", [
-    "- README.md — awesome 列表（14 个主题、122 篇，五篇核心论文加星）",
+    "- README.md — awesome 列表（14 个主题、333 篇，五篇核心论文加星）",
     "- papers/original/ — 五篇原文 PDF；papers/zh/ — 保版式中译 + QA 报告；papers/src/ — arXiv 全文",
     "- reports/zh | en/ — 五篇逐篇深度解读；reports/pdf/ — 中、英文完整报告 PDF",
     "- survey/zh | en/ — 趋势综述（Markdown + PDF）",
@@ -536,7 +565,7 @@ card(pg, "methods", x2, y2, w2, h2, "方法与工具", [
     "- 写作：主张先行、必要限定只写一次、数字随处可核对（anti-defensive-writing / 说人话）",
     "- 排版：pandoc + XeLaTeX（报告）、Beamer 16:9（学术幻灯）、HTML 与本 PPTX（ppt-master technical-deepdive 风格，SVG → 原生 DrawingML）"], fs=13.5)
 takeaway(pg, "github.com/asimfish/awesome_loop_transformer · 欢迎 PR 补充新论文（data/papers.csv → src/generator.py）", yb + 416)
-footer(pg, "2026-09-06", 21)
+footer(pg, "首版 2026-09-06 · 2026-11-06 更新", 22)
 pages.append(pg)
 
 def main():
@@ -545,7 +574,7 @@ def main():
     out = pathlib.Path(a.out); out.mkdir(parents=True, exist_ok=True)
     for f in out.glob("*.svg"): f.unlink()
     for i, pg in enumerate(pages, 1):
-        (out / f"page_{i:02d}.svg").write_text(pg.render(), encoding="utf-8")
+        (out / f"page_{i:02d}.svg").write_text(pg.render("zh-CN" if i == 1 else None), encoding="utf-8")
     print(f"wrote {len(pages)} pages to {out}")
 
 if __name__ == "__main__":

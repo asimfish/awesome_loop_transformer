@@ -20,7 +20,7 @@ The repository started from the WeChat article [《刚刚，GPT-6 Astra 背后�
 
 ## News
 
-- **{{UPDATED}}** — Added {{N_NEW}} papers (marked 🆕): 167 from September–November 2026 and 44 June–August papers the first search missed. Also a [what changed since September](#what-changed-since-september-2026) section. README redesigned (scope line per category, compact entries, venue tags).
+- **{{UPDATED}}** — Added {{N_NEW}} papers (marked 🆕): 167 from September–November 2026 and 44 June–August papers the first search missed. Also a [what changed since September](#what-changed-since-september-2026) section. README redesigned (scope line per category, compact entries, venue tags). Survey §10, report PDFs, HTML / Beamer / PPTX slides updated (one new slide on what changed).
 - **2026-09-08** — Every report now opens with an at-a-glance box and a diagram and closes with a glossary; reading guides for 5-minute, 30-minute and 2-hour readers.
 - **2026-09-06** — Editable PPTX deck (ppt-master) and Chinese README.
 - **2026-09-06** — First release: 122 papers, five core-paper reports (ZH/EN), translated PDFs, a survey with ten trend insights, HTML and Beamer slides.
@@ -33,8 +33,8 @@ The repository started from the WeChat article [《刚刚，GPT-6 Astra 背后�
 | 🈶 Layout-preserving Chinese translations with object-level QA reports | [`papers/zh/`](papers/zh/) ([QA record](papers/zh/QA_SUMMARY.md)) |
 | 🔬 Per-paper deep-dive reports, English and Chinese | [`reports/en/`](reports/en/), [`reports/zh/`](reports/zh/) |
 | 📚 Full report PDFs (survey + five reports) | [English](reports/pdf/awesome_loop_transformer_report_en.pdf) · [中文](reports/pdf/awesome_loop_transformer_report_zh.pdf) |
-| 🧭 Survey: taxonomy, timeline, ~60-paper map, ten trend insights, open problems | [`survey/en/survey_en.md`](survey/en/survey_en.md) ([PDF](survey/en/survey_en.pdf)) · [`survey/zh/survey_zh.md`](survey/zh/survey_zh.md) ([PDF](survey/zh/survey_zh.pdf)) |
-| 🖥️ HTML slide deck (21 slides, Chinese) + PDF export | [online](https://asimfish.github.io/awesome_loop_transformer/slides/html/) · [`slides/html/`](slides/html/index.html) · [PDF](slides/html/awesome_loop_transformer_slides_zh.pdf) |
+| 🧭 Survey: taxonomy, timeline, ~60-paper map, ten trend insights, open problems, November 2026 update (§10) | [`survey/en/survey_en.md`](survey/en/survey_en.md) ([PDF](survey/en/survey_en.pdf)) · [`survey/zh/survey_zh.md`](survey/zh/survey_zh.md) ([PDF](survey/zh/survey_zh.pdf)) |
+| 🖥️ HTML slide deck (22 slides, Chinese) + PDF export | [online](https://asimfish.github.io/awesome_loop_transformer/slides/html/) · [`slides/html/`](slides/html/index.html) · [PDF](slides/html/awesome_loop_transformer_slides_zh.pdf) |
 | 🎓 Beamer slide deck (English, 16:9, with backup slides) | [PDF](slides/beamer/loop_transformer_slides.pdf) ([source](slides/beamer/loop_transformer_slides.tex)) |
 | ✏️ Editable PowerPoint deck (Chinese, native shapes via ppt-master) | [PPTX](slides/pptx/awesome_loop_transformer_slides_zh.pptx) ([preview PDF](slides/pptx/awesome_loop_transformer_slides_zh.preview.pdf), [page SVGs](slides/pptx/svg_output/)) |
 | 🗂️ Machine-readable paper list and abstracts | [`data/papers.csv`](data/papers.csv), [`data/related_abstracts.json`](data/related_abstracts.json) |
@@ -49,7 +49,7 @@ The repository started from the WeChat article [《刚刚，GPT-6 Astra 背后�
 | You have | Read |
 |---|---|
 | 5 minutes | the ten insights below, then Appendix A of the survey (five popular claims the papers do not support) |
-| 30 minutes | the [survey](survey/en/survey_en.md) §2–4 and §6, or the 21-slide [HTML deck](https://asimfish.github.io/awesome_loop_transformer/slides/html/) |
+| 30 minutes | the [survey](survey/en/survey_en.md) §2–4 and §6, or the 22-slide [HTML deck](https://asimfish.github.io/awesome_loop_transformer/slides/html/) |
 | 2 hours | the five [paper reports](reports/en/) — each opens with an at-a-glance box and a diagram, and closes with a glossary |
 | a talk to give | the [Beamer deck](slides/beamer/loop_transformer_slides.pdf) (English) or the editable [PPTX](slides/pptx/awesome_loop_transformer_slides_zh.pptx) (Chinese) |
 
