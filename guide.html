@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Looped transformers, recurrent depth, and latent reasoning.">
+<meta name="color-scheme" content="light">
+<title>Reading guide · Loop Transformer</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/library.css">
+</head>
+<body style="--accent: #17675d">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="header-inner">
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">↻</span>Loop Transformer</a>
+<nav aria-label="Main navigation"><a href="index.html#library">Library</a><a href="guide.html">Reading guide</a><a href="https://github.com/asimfish/awesome_loop_transformer">GitHub <span aria-hidden="true">↗</span></a></nav>
+</div></header>
+<main id="main" class="guide"><p class="eyebrow">A practical reading route</p><h1>Start with the questions.</h1><p class="lead">Looped transformers, recurrent depth, and latent reasoning.</p><ol class="guide-sections"><li id="start-with-the-mechanism"><h2>Start with the mechanism</h2><p>A looped transformer applies a shared transformation repeatedly to a hidden state. Keep three choices separate: which layers repeat, how many times they repeat, and whether the loop count changes at inference.</p><div class="paper-links"><a href="https://arxiv.org/abs/1807.03819">Universal Transformers<span aria-hidden="true"> ↗</span></a><a href="https://github.com/asimfish/awesome_loop_transformer/blob/main/reports/en/01_universal_transformers.md">English report<span aria-hidden="true"> ↗</span></a></div></li><li id="choose-a-reading-path"><h2>Choose a reading path</h2><p>Read Universal Transformers for the architecture, Huginn for recurrent-depth pretraining, Training-Free Looped Transformers for retrofitting, LoopCoder-v2 for parallel looping, and Loop the Loopies for compute-matched pretraining.</p><div class="paper-links"><a href="index.html?core=1#library">Five core papers<span aria-hidden="true"> ↗</span></a><a href="https://github.com/asimfish/awesome_loop_transformer/blob/main/survey/en/survey_en.md">Detailed survey<span aria-hidden="true"> ↗</span></a></div></li><li id="separate-the-compute-budgets"><h2>Separate the compute budgets</h2><p>A fixed pretraining budget and a variable inference budget answer different questions. Compare parameter count, training compute, inference latency, and KV-cache use separately. A result at one loop count does not establish a universal optimum.</p><div class="paper-links"><a href="index.html?category=Inference+%26+efficiency#library">Inference &amp; efficiency<span aria-hidden="true"> ↗</span></a></div></li><li id="understand-the-taxonomy"><h2>Understand the taxonomy</h2><p>The collection has six broad reading areas. Original fine-grained topics remain searchable on every record, and a paper can belong to more than one area. Core papers are a reading route rather than a separate research category.</p><div class="paper-links"><a href="index.html?category=Training+%26+adaptation#library">Training &amp; adaptation<span aria-hidden="true"> ↗</span></a><a href="index.html?category=Architectures+%26+pretraining#library">Architectures &amp; pretraining<span aria-hidden="true"> ↗</span></a></div></li><li id="read-claims-with-their-conditions"><h2>Read claims with their conditions</h2><p>Check the baseline, data budget, model size, and evaluation setting before comparing results. The collection&#x27;s listed year follows the existing catalog and may be a venue year rather than the first preprint date. External articles are context, not evidence of a proprietary model&#x27;s architecture.</p><div class="paper-links"><a href="data/papers.csv">Complete paper catalog<span aria-hidden="true"> ↗</span></a><a href="https://github.com/asimfish/awesome_loop_transformer/tree/main/papers/original">Original core PDFs<span aria-hidden="true"> ↗</span></a></div></li></ol><a class="primary-link" href="index.html#library">Explore the collection →</a></main>
+<footer class="site-footer"><span>Awesome Loop Transformer<br><small>Collection snapshot: 2026-11-06 · <a href="LICENSE">CC BY 4.0</a></small></span><a href="#main">Back to top ↑</a></footer>
+
+</body>
+</html>

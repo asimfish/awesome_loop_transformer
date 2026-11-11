@@ -15,9 +15,9 @@
 > **Limits** · Gains cap at ~2–3 points and concentrate on knowledge MC; sub-3B distilled models can lose; 15–30% extra latency.  
 > **Plain words** · Walk the same stretch in smaller steps and you land more precisely — but do not keep walking past the destination, which is exactly what naive looping does.  
 
-![](../../assets/figures/diagrams/training_free_ode.png)
+![Training free ode](../../assets/figures/en/training_free_ode.svg)
 
-*Figure (labels in Chinese): naive looping pushes the state to t=3, a region later layers never saw; sub-stepping reaches the same t=1 more accurately.*
+*Figure: naive looping pushes the state to t=3, a region later layers never saw; sub-stepping reaches the same t=1 more accurately.*
 
 ## One sentence
 
@@ -166,7 +166,7 @@ Configuration $[22,24]$ fixed in advance from the depth-fraction rule, committed
 | Term | One-line meaning |
 |---|---|
 | Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
-| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/en/loop_granularity.svg` |
 | Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
 | Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
 | Adaptive halting (ACT) | Let each token decide how many loops it needs |

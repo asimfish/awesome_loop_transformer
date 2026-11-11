@@ -42,9 +42,9 @@ In a standard transformer forward pass each layer's parameters are used once; de
 | Layer-loop | Each layer repeats K times before passing to the next | Loopie, Training-Free layer-mode, MixerLoop (mixer only) |
 | Latent conditioning | The previous loop's (or previous token's) hidden state is injected as a condition | Coconut, PLT's CLP, Latent Recurrent Transformer |
 
-![](../../assets/figures/diagrams/loop_granularity.png)
+![Loop granularity](../../assets/figures/en/loop_granularity.svg)
 
-*Figure 1 (labels in Chinese): model-loop repeats the whole stack; block-loop repeats only the middle segment with input injection; layer-loop repeats each layer before the next. Effective depth = stored layers × loops, parameters unchanged.*
+*Figure 1 (English schematic): model-loop repeats the whole stack; block-loop repeats only the middle segment with input injection; layer-loop repeats each layer before the next. Effective depth = stored layers × loops, parameters unchanged.*
 
 These are not exclusive. Loopie is layer-loop; Huginn is block-loop at the three-stage level and model-loop inside its core; PLT is model-loop plus latent conditioning (the previous round's state shifted by one position).
 
@@ -221,9 +221,9 @@ The reported optima side by side: Loopie 2, LoopCoder-v2 2, SMELT 2, Nanbeige4.2
 
 The dividing line is **where the compute constraint binds**. Under a fixed pretraining budget, each extra loop multiplies training FLOPs and the marginal return decays fastest after R=2 (Loopie Figure 6): the answer is 2. With variable inference compute, one model can loop more on hard inputs and less on easy ones (Huginn's ARC-C saturates at 8 loops zero-shot and 32 loops with 25–50 shots): the answer is "as needed, adaptively".
 
-![](../../assets/figures/diagrams/two_regimes.png)
+![Two regimes](../../assets/figures/en/two_regimes.svg)
 
-*Figure 2 (labels in Chinese): left, fixed pretraining budget → two loops (Loopie, LoopCoder-v2, SMELT, Nanbeige); right, variable inference compute → adaptive and deep (Huginn 8 → 32 loops with more context; Ouro 4; RecurTrace 2.0 avg; Think-at-Hard loops only 7% of tokens).*
+*Figure 2 (English schematic): left, fixed pretraining budget → two loops (Loopie, LoopCoder-v2, SMELT, Nanbeige); right, variable inference compute → adaptive and deep (Huginn 8 → 32 loops with more context; Ouro 4; RecurTrace 2.0 avg; Think-at-Hard loops only 7% of tokens).*
 
 LoopCoder-v2's "three or more regress" is often quoted as a universal ceiling. The paper's own explanation is that PLT's cross-loop position offset charges a fixed positional tax per loop, 30–45× the marginal gain after loop 2; sequential looping has no such term. It is the **price of parallelization**, not a property of looping.
 

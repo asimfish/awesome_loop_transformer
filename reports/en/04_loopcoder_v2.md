@@ -16,9 +16,9 @@
 > **Limits** · PLT-specific (sequential looping has no such tax); one run per R, single seed; no ablation without the offset.  
 > **Plain words** · One extra round of thinking pays; but this parallel kind of thinking charges a fixed tax per round, and from the third round the tax exceeds the gain.  
 
-![](../../assets/figures/diagrams/plt_gain_cost.png)
+![Plt gain cost](../../assets/figures/en/plt_gain_cost.svg)
 
-*Figure (labels in Chinese): sequential looping vs PLT parallel execution (left) and the diminishing-gain / constant-cost picture (right).*
+*Figure: sequential looping vs PLT parallel execution (left) and the diminishing-gain / constant-cost picture (right).*
 
 ## One sentence
 
@@ -152,7 +152,7 @@ LiveCodeBench +26.9 far exceeds the sum of the two ingredients: explicit CoT alo
 | Term | One-line meaning |
 |---|---|
 | Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
-| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/en/loop_granularity.svg` |
 | Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
 | Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
 | Adaptive halting (ACT) | Let each token decide how many loops it needs |

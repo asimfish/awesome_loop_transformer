@@ -1,42 +1,54 @@
 # Contributing
 
-Thanks for helping keep this list complete and correct. 中文贡献者同样欢迎，issue 和 PR 可用中文书写。
+Contributions should help readers find, understand, and compare relevant research.
 
-## Suggest a paper without touching code
+## Add or correct a reference
 
-Open an issue with the [paper suggestion template](https://github.com/asimfish/awesome_loop_transformer/issues/new?template=paper-suggestion.md) and give the arXiv ID, the category, and a code link if one exists.
+1. Edit [data/papers.csv](data/papers.csv); keep titles, authors, and source links accurate.
+2. Select the closest existing topic. Use a short English summary that describes the method and its scope.
+3. Include the original paper or project link. Add code and a local original-language PDF when available.
+4. Preserve existing IDs. Distinguish publication years from first-preprint dates.
+5. Support quantitative claims with the original source and its evaluation conditions.
 
-## Add a paper by pull request
+Add new references to `CURATED` in `src/fetch_metadata.py` as well, so refreshing arXiv metadata preserves them. Run `python3 src/fetch_metadata.py` only when intentionally updating source metadata.
 
-`README.md` is generated. Do not edit it by hand; edit the sources and regenerate.
+The CSV retains the original fine-grained categories, separated by semicolons. Their six broader browsing areas are mapped in `scripts/build_site.py`. The `core` note identifies the five introductory readings.
 
-1. Add a tuple to `CURATED` in [`src/fetch_metadata.py`](src/fetch_metadata.py):
+## Keep the public entry pages in English
 
-   ```python
-   ("YYMM.NNNNN", "Scaled Pretraining;Efficiency: Latency, KV Cache & Quantization", "arXiv", 2026, "https://github.com/org/repo", "", "YYYY-MM-DD"),
-   #  arXiv ID     categories, primary first, ';'-separated                          venue    year  code URL or ""          note added (today)
-   ```
+Use English for README text, reading guides, interface labels, catalog summaries, alt text, and new diagrams. Keep archival research materials separate from the entry pages. Do not link readers to a translated document under an English-resource label.
 
-   - **Categories** must be names from `CATEGORY_ORDER` in [`src/generator.py`](src/generator.py). Use at most two.
-   - **Venue** is the accepted venue (`ICLR`, `NeurIPS`, `ICML Workshop`, …) or `arXiv`. Update it when a preprint is accepted.
-   - **Note** is optional and shows in italics after the links (for example `contrast: sequence-length scaling`). Leave `core` to the five core papers.
-   - **Added** is today's date. Entries carrying the latest date get a 🆕 marker.
+## Rebuild
 
-2. Refresh metadata and regenerate:
+```bash
+python3 src/generator.py
+```
 
-   ```bash
-   python3 src/fetch_metadata.py   # pulls exact titles, authors and dates from the arXiv API into data/papers.csv
-   python3 src/generator.py        # renders README.md; fails on an unknown category
-   ```
+The build uses only the Python standard library. It validates IDs, categories, English catalog text, and local source links before producing the README and browser.
 
-   If you cannot reach the arXiv API, append the row to [`data/papers.csv`](data/papers.csv) by hand with the exact arXiv title and author list.
+- Edit `data/site.json` for the introduction, topic descriptions, and reading guide.
+- Edit `assets/library.css` and `assets/library.js` for the browser.
+- Edit `scripts/build_site.py` for generated page markup and overview diagrams.
+- Edit `scripts/build_english_figures.py` for the English report diagrams.
 
-3. Commit `src/fetch_metadata.py`, `data/papers.csv` and `README.md` together and open a pull request.
+Do not hand-edit generated README, HTML, or `data/library.json` files.
 
-## What belongs here
+## Review before submitting
 
-A paper fits when looping or recurrence **in depth** is its method or its object of analysis: weight-tied or looped transformers, recurrent-depth language models, Universal Transformer descendants, mixture-of-recursions, tiny recursive reasoners, and their theory, training, inference, and applications. Latent-reasoning methods that add computation without looping weights go under *Related: Latent Reasoning Beyond Looping*. Recurrence over time (RNNs, state-space models used only as sequence mixers) and agent "loops" are out of scope.
+- Rebuild twice and confirm that the second build produces no further changes.
+- Open `index.html` directly and test search, topic/year filters, sorting, saving, and reset.
+- Check both desktop and mobile widths and keyboard navigation.
+- Test a query with no matches and unavailable browser storage.
+- Confirm that local links resolve and diagrams have readable English labels.
+- Use the original collection date unless a new literature search was actually performed.
 
-## Editing text
+The browser has no external scripts, fonts, or runtime dependencies. Saved readings stay in the current browser; they are not included in shared links.
 
-`data/header.md` and `data/footer.md` hold the prose around the list. They may use `{{N_PAPERS}}`, `{{N_NEW}}`, `{{N_CATEGORIES}}`, `{{UPDATED}}` and `{{UPDATED_BADGE}}`, which the generator fills from `data/papers.csv`. State claims plainly with their numbers and sources; see *How this was made* in the README for the writing conventions used in the reports.
+## Automated checks
+
+```bash
+python3 scripts/check_library.py
+node scripts/check_browser.cjs
+```
+
+The browser check requires Playwright and Chromium. Set `PLAYWRIGHT_MODULE` to an existing Playwright module and `CHROME_BIN` to an installed Chrome executable if needed. It checks desktop and mobile layouts, filters, persistence, keyboard focus, storage failures, and the no-JavaScript fallback. Screenshots and its report are written to a temporary directory.
