@@ -16,9 +16,9 @@
 > **Limits** · Matched on training step time, not FLOPs (nominal +42%); inference cost unreported; the reference is an 800B-token reproduction.  
 > **Plain words** · The win does not come from loops replacing parameters; it comes from the memory loops save, spent on a wider model that wins within the same training time.  
 
-![](../../assets/figures/diagrams/loopie_recipe.png)
+![Loopie recipe](../../assets/figures/en/loopie_recipe.svg)
 
-*Figure (labels in Chinese): the three-step Loopie Recipe and the layer-loop execution order.*
+*Figure: the three-step Loopie Recipe and the layer-loop execution order.*
 
 ## One sentence
 
@@ -166,7 +166,7 @@ Loopie-6B-A0.6B: MMLU 78.36, **AIME24 80.42, AIME25 70.83** (Ouro 2.6B Thinking:
 | Term | One-line meaning |
 |---|---|
 | Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
-| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/en/loop_granularity.svg` |
 | Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
 | Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
 | Adaptive halting (ACT) | Let each token decide how many loops it needs |

@@ -16,9 +16,9 @@
 > **Limits** · Every extra loop is another core forward; weak factual memory (MMLU 31); a single large run whose LR was never cooled.  
 > **Plain words** · Few parameters, but the model can think several rounds before speaking; the harder the question, the more the rounds help.  
 
-![](../../assets/figures/diagrams/huginn_architecture.png)
+![Huginn architecture](../../assets/figures/en/huginn_architecture.svg)
 
-*Figure (labels in Chinese): the three-stage architecture and training recipe; bottom-right, ARC-E rising with loop count and the correct reading of the fair comparison.*
+*Figure: the three-stage architecture and training recipe; bottom-right, ARC-E rising with loop count and the correct reading of the fair comparison.*
 
 ## One sentence
 
@@ -167,7 +167,7 @@ None of this geometry is in the training objective; it emerges from scale. The a
 | Term | One-line meaning |
 |---|---|
 | Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
-| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/en/loop_granularity.svg` |
 | Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
 | Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
 | Adaptive halting (ACT) | Let each token decide how many loops it needs |

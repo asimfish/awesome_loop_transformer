@@ -16,9 +16,9 @@
 > **Limits** · Poor parameter-to-compute ratio, unstable training, inference cost undiscussed — the research agenda of the next eight years.  
 > **Plain words** · Run the same circuit several times: hard tokens get more rounds, easy ones stop early.  
 
-![](../../assets/figures/diagrams/ut_act.png)
+![Ut act](../../assets/figures/en/ut_act.svg)
 
-*Figure (labels in Chinese): one shared block repeated over time steps; positions halt at different steps.*
+*Figure: one shared block repeated over time steps; positions halt at different steps.*
 
 ## One sentence
 
@@ -111,7 +111,7 @@ It also left three problems open that define the following seven years of resear
 | Term | One-line meaning |
 |---|---|
 | Recurrent depth / looped transformer | The same parameters are applied repeatedly along depth; effective depth = stored layers × loop count, parameters unchanged |
-| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/diagrams/loop_granularity.png` |
+| model-loop / block-loop / layer-loop | Loop the whole stack / only a middle segment / each layer several times before the next; see `assets/figures/en/loop_granularity.svg` |
 | Input injection | Re-feed the input embedding at every loop; without it the iteration is unstable |
 | Truncated backprop | Compute gradients through only the last k loops so memory is independent of the loop count |
 | Adaptive halting (ACT) | Let each token decide how many loops it needs |
